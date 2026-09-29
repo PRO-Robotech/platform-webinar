@@ -79,7 +79,7 @@ function render(): void {
   dom.eventPosition.textContent = opening ? 'L0 → L1 → L2' : `СОБЫТИЕ ${String(offsets[chapter] + step + 1).padStart(2, '0')} / ${total}`;
   dom.headline.textContent = opening ? 'Что происходит после «Создать кластер»?' : beat.title;
   dom.explanation.innerHTML = formatExplanation(opening
-    ? 'Одна заявка запускает создание целой платформы. Проследим, кто действует, что появляется и почему разрешён следующий шаг.' : beat.summary);
+    ? 'Одна заявка запускает создание целой платформы. Проследим, кто действует, что появляется и почему разрешен следующий шаг.' : beat.summary);
   dom.contextLine.textContent = opening ? 'ТРИ УРОВНЯ ОДНОЙ ПЛАТФОРМЫ'
     : chapter === 2 ? 'ВЕТКИ ИДУТ ОДНОВРЕМЕННО · МЕНЯЕТСЯ ТОЛЬКО ФОКУС РАССКАЗА' : current.question;
   dom.sceneContext.classList.toggle('parallel', chapter === 2);

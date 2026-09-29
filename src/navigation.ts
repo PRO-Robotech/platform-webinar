@@ -17,7 +17,7 @@ export const intro: DiagramScene = {
     { id: 'intro-client', at: 0, x: 860, y: 132, w: 287, h: 159, title: 'Предоставляет L2', sub: ['API L2 и', 'пользовательские приложения'], kind: 'endpoint', tier: 'l2' },
   ],
   edges: [
-    { from: 'intro-management', to: 'intro-infra', at: 0, path: 'M341 212H457', label: 'создаёт', lx: 398, ly: 191, kind: 'command' },
+    { from: 'intro-management', to: 'intro-infra', at: 0, path: 'M341 212H457', label: 'создает', lx: 398, ly: 191, kind: 'command' },
     { from: 'intro-infra', to: 'intro-client', at: 0, path: 'M744 212H860', label: 'обслуживает', lx: 803, ly: 191, kind: 'link' },
   ],
   beats: [{ active: [] }],

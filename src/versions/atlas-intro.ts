@@ -125,7 +125,7 @@ export function createStarMap(chapters: Chapter[], options: { entrance?: boolean
   const { entities, links } = platformMap(chapters);
 
   const svg = el('svg', { class: 'dg stars', width: WIDTH, height: HEIGHT, viewBox: `0 0 ${WIDTH} ${HEIGHT}`, role: 'group',
-    'aria-label': `Одна заявка ClusterClaim и ${entities.size} компонентов платформы, которые из неё вырастут` });
+    'aria-label': `Одна заявка ClusterClaim и ${entities.size} компонентов платформы, которые из нее вырастут` });
 
   for (const region of REGIONS) {
     const count = [...entities.values()].filter(entity => region.tiers.includes(entity.tier)).length;

@@ -97,7 +97,7 @@ const subWidth = (text: string): number => textWidth(text, SUB.size);
  */
 export function joinParts(value: TextLines | undefined): string {
   return lines(value).reduce((text, part) => !text ? part
-    : /^[a-zа-яё]/.test(part) || /(:|\s(и|в|на|для|с|к|по))$/.test(text) || part === 'Operator' ? `${text} ${part}` : `${text} · ${part}`, '');
+    : /^[a-zа-яе]/.test(part) || /(:|\s(и|в|на|для|с|к|по))$/.test(text) || part === 'Operator' ? `${text} ${part}` : `${text} · ${part}`, '');
 }
 
 /** Items share a line when they all fit; otherwise each item starts a new line. */

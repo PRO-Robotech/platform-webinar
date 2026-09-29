@@ -158,7 +158,7 @@ export function validatePlacement(id: string, scene: DiagramScene): string[] {
   }
   for (const node of scene.nodes) {
     const place = spec.nodes[node.id];
-    if (!place) { problems.push(`${id}: блок ${node.id} не размещён`); continue; }
+    if (!place) { problems.push(`${id}: блок ${node.id} не размещен`); continue; }
     const cols: Span = typeof place.cols === 'number' ? [place.cols, place.cols] : place.cols;
     if (!within(cols, spec.columns) || place.row < 1 || place.row > spec.rows) problems.push(`${id}: блок ${node.id} вне сетки`);
   }

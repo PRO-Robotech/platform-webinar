@@ -578,7 +578,7 @@ export function mountAtlas(chapters: Chapter[]): void {
     retype([
       [
         { element: dom.headline, html: esc(opening ? 'Что происходит после «Создать кластер»?' : beat.title), rate: TYPE_RATE.headline },
-        { element: dom.summary, html: terms(opening ? 'Одна заявка запускает создание целой платформы. Проследим, кто действует, что появляется и почему разрешён следующий шаг.' : beat.summary), rate: TYPE_RATE.text },
+        { element: dom.summary, html: terms(opening ? 'Одна заявка запускает создание целой платформы. Проследим, кто действует, что появляется и почему разрешен следующий шаг.' : beat.summary), rate: TYPE_RATE.text },
       ],
       [{ element: dom.result, html: opening ? esc('Как из конфигурации получить Kubernetes, готовый для приложений пользователя?') : terms(beat.result), rate: TYPE_RATE.text }],
     ]);
@@ -760,7 +760,7 @@ export function mountAtlas(chapters: Chapter[]): void {
           if (overflow.length) problems.push(`${where}: не помещается ${overflow.join(', ')}`);
           if (dom.headline.scrollWidth > dom.headline.clientWidth + 1) problems.push(`${where}: заголовок не помещается`);
           if (dom.summary.offsetHeight > 48) problems.push(`${where}: пояснение длиннее двух строк`);
-          if (dom.result.offsetHeight > 72) problems.push(`${where}: итог длиннее трёх строк`);
+          if (dom.result.offsetHeight > 72) problems.push(`${where}: итог длиннее трех строк`);
           const drawing = view?.svg;
           if (drawing && Number(drawing.getAttribute('height')) > dom.diagram.clientHeight) problems.push(`${where}: схема ${drawing.getAttribute('height')} выше области ${dom.diagram.clientHeight}`);
         }
