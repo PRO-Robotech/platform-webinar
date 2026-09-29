@@ -1,12 +1,21 @@
-(function () {
-  'use strict';
+import type { Chapter, DiagramGraph } from './types.js';
 
-  var chapters = window.NarrativeContent.chapters;
+export function applyGraphsB(chapters: Chapter[]): void {
+  const chapterAt = (index: number): Chapter => {
+    const chapter = chapters[index];
+    if (!chapter) throw new Error(`Missing chapter ${index + 1}`);
+    return chapter;
+  };
+  const activate = (chapterIndex: number, beatIndex: number, active: string[]): void => {
+    const beat = chapterAt(chapterIndex).beats[beatIndex];
+    if (!beat) throw new Error(`Missing beat ${beatIndex + 1} in chapter ${chapterIndex + 1}`);
+    beat.active = active;
+  };
 
   // Chapter 3 keeps both branches in place throughout the explanation.
   // Moving attention between beats does not complete either branch. The only
   // readiness transition is the explicitly explained join on the final beat.
-  Object.assign(chapters[2], {
+  Object.assign(chapterAt(2), {
     zones: [
       { id: 'parallel-l1', x: 16, y: 16, w: 928, h: 184, label: 'L1 · ФАЗЫ ADDONOPERATOR', tier: 'l1', at: 0 },
       { id: 'parallel-vault', x: 16, y: 216, w: 928, h: 176, label: 'VAULT · НАСТРОЙКИ КЛАСТЕРА', tier: 'external', at: 0 },
@@ -80,7 +89,7 @@
       { from: 'parallel-firewall', to: 'parallel-join', at: 7, path: 'M919 128H985', kind: 'status' },
       { from: 'parallel-kms', to: 'parallel-join', at: 7, path: 'M919 320H952V216H1076V183', kind: 'status' }
     ]
-  });
+  } satisfies DiagramGraph);
 
   [
     ['parallel-addonoperator', 'parallel-claimoperator', 'parallel-vault'],
@@ -91,11 +100,11 @@
     ['parallel-claimoperator', 'parallel-kms'],
     ['parallel-firewall'],
     ['parallel-firewall', 'parallel-kms', 'parallel-join']
-  ].forEach(function (active, i) { chapters[2].beats[i].active = active; });
+  ].forEach(function (active, i) { activate(2, i, active); });
 
   // Chapter 5 keeps early resources fixed while revealing the complete
   // return path through Applications, Addon and AddonClaim to management.
-  Object.assign(chapters[4], {
+  Object.assign(chapterAt(4), {
     zones: [
       { id: 'hosted-l0', x: 16, y: 16, w: 432, h: 392, label: 'L0', tier: 'l0', at: 0 },
       { id: 'hosted-l1', x: 464, y: 16, w: 480, h: 392, label: 'L1', tier: 'l1', at: 0 },
@@ -168,12 +177,12 @@
       { from: 'hosted-addonclaim', to: 'hosted-client-resource', at: 3, path: 'M232 151V185', kind: 'status' },
       { from: 'hosted-client-resource', to: 'hosted-clusterclaim', at: 3, path: 'M232 271V305', kind: 'status' }
     ]
-  });
+  } satisfies DiagramGraph);
 
   [
     ['hosted-infra-nodes', 'hosted-clientcp'],
     ['hosted-clientcp', 'hosted-etcd'],
     ['hosted-clientcp', 'hosted-api-l2'],
     ['hosted-clientcp', 'hosted-applications', 'hosted-addoncp', 'hosted-addonclaim', 'hosted-client-resource', 'hosted-clusterclaim']
-  ].forEach(function (active, i) { chapters[4].beats[i].active = active; });
-})();
+  ].forEach(function (active, i) { activate(4, i, active); });
+}

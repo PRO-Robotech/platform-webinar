@@ -1,10 +1,26 @@
-(() => {
- const chapters=window.NarrativeContent.chapters;
- const N=(id,at,x,y,w,h,title,sub,kind,tier,extra={})=>({id,at,x,y,w,h,title,sub,kind,tier,...extra});
- const E=(from,to,at,path,label,lx,ly,kind='command')=>({from,to,at,path,label,lx,ly,kind});
+import type { Chapter, DiagramGraph, DiagramNode, Edge, EdgeKind, NodeKind, TextLines, Tier } from './types.js';
+
+export function applyGraphsA(chapters: Chapter[]): void {
+ const chapterAt = (index: number): Chapter => {
+  const chapter = chapters[index];
+  if (!chapter) throw new Error(`Missing chapter ${index + 1}`);
+  return chapter;
+ };
+ const activate = (chapterIndex: number, beatIndex: number, active: string[]): void => {
+  const beat = chapterAt(chapterIndex).beats[beatIndex];
+  if (!beat) throw new Error(`Missing beat ${beatIndex + 1} in chapter ${chapterIndex + 1}`);
+  beat.active = active;
+ };
+ const N = (id: string, at: number, x: number, y: number, w: number, h: number,
+  title: TextLines, sub: TextLines, kind: NodeKind, tier: Tier,
+  extra: Partial<Pick<DiagramNode, 'detail' | 'detailKind' | 'phase' | 'readyAt' | 'variants' | 'badges'>> = {}): DiagramNode =>
+  ({ id, at, x, y, w, h, title, sub, kind, tier, ...extra });
+ const E = (from: string, to: string, at: number, path: string, label?: string,
+  lx?: number, ly?: number, kind: EdgeKind = 'command'): Edge =>
+  ({ from, to, at, path, label, lx, ly, kind });
  // Card positions use an 8 px grid. Ports terminate on the visible shape,
  // including the inset front face of machines and curved storage caps.
- Object.assign(chapters[0],{
+ Object.assign(chapterAt(0),{
   zones:[{id:'l0',x:224,y:24,w:560,h:384,label:'L0',tier:'l0'},{id:'ext',x:904,y:24,w:272,h:384,label:'ВНЕШНИЕ СЕРВИСЫ',tier:'external'}],
   nodes:[
    N('customer',0,24,88,176,136,'Заказчик','Заказ платформы','user','actor'),
@@ -15,9 +31,9 @@
    N('vault',4,936,272,216,112,'Vault',['Credentials бакета','Сертификаты'],'storage','external')
   ],
   edges:[E('customer','claim',0,'M199 156H249'),E('operator','claim',1,'M529 156H479'),E('operator','bucket',2,'M759 156H937','запрос',848,132),E('operator','certificates',3,'M644 223V273','выпуск',704,248),E('bucket','vault',4,'M1044 223V273','credentials',1112,248)]
- });
- [['customer','claim'],['claim','operator'],['operator','bucket'],['operator','certificates'],['bucket','certificates','vault']].forEach((active,i)=>chapters[0].beats[i].active=active);
- Object.assign(chapters[1],{
+ } satisfies DiagramGraph);
+ [['customer','claim'],['claim','operator'],['operator','bucket'],['operator','certificates'],['bucket','certificates','vault']].forEach((active,i)=>activate(0,i,active));
+ Object.assign(chapterAt(1),{
   zones:[{id:'l0',x:16,y:16,w:800,h:232,label:'L0',tier:'l0'},{id:'ext',x:856,y:16,w:328,h:232,label:'ВНЕШНЕЕ ОБЛАКО',tier:'external'},{id:'l1',x:16,y:264,w:1168,h:144,label:'L1',tier:'l1',at:1}],
   nodes:[
    N('infra-claim',0,40,64,208,88,'ClusterClaim','Исходный заказ','resource','l0',{variants:[{at:2,sub:'L1 инициализирован'}]}),
@@ -43,9 +59,9 @@
    E('machines','network',3,'M889 352H727','bootstrap',808,328),
    E('network','delivery',4,'M465 352H303')
   ]
- });
- [['infra-claim','infra-operator','infra-resource','services'],['capi','cloud','machines'],['machines','capi','infra-resource','infra-claim'],['machines','network'],['network','delivery']].forEach((active,i)=>chapters[1].beats[i].active=active);
- Object.assign(chapters[3],{
+ } satisfies DiagramGraph);
+ [['infra-claim','infra-operator','infra-resource','services'],['capi','cloud','machines'],['machines','capi','infra-resource','infra-claim'],['machines','network'],['network','delivery']].forEach((active,i)=>activate(1,i,active));
+ Object.assign(chapterAt(3),{
   zones:[{id:'l0',x:24,y:24,w:744,h:384,label:'L0',tier:'l0'},{id:'l1',x:808,y:24,w:368,h:384,label:'L1',tier:'l1'}],
   nodes:[
    N('client-claim',0,48,72,208,112,'ClusterClaim','Исходный заказ','resource','l0'),
@@ -68,9 +84,9 @@
    E('addon-cp','cp-applications',3,'M992 159V185','AddonOperator',1091,172),
    E('cp-applications','client-app',4,'M992 271V297','Argo CD',1068,284)
   ]
- });
- [['client-claim','client-operator','client-resource','client-services'],['client-capi','addonclaim'],['addonclaim','addon-cp'],['addon-cp','cp-applications'],['cp-applications','client-app']].forEach((active,i)=>chapters[3].beats[i].active=active);
- Object.assign(chapters[5],{
+ } satisfies DiagramGraph);
+ [['client-claim','client-operator','client-resource','client-services'],['client-capi','addonclaim'],['addonclaim','addon-cp'],['addon-cp','cp-applications'],['cp-applications','client-app']].forEach((active,i)=>activate(3,i,active));
+ Object.assign(chapterAt(5),{
   zones:[{id:'l0',x:16,y:16,w:264,h:392,label:'L0',tier:'l0'},{id:'l1',x:304,y:16,w:520,h:224,label:'L1 · ДОСТАВКА АДДОНОВ',tier:'l1'},{id:'l2',x:848,y:16,w:336,h:224,label:'L2',tier:'l2'}],
   nodes:[
    N('defaults-operator',0,40,272,216,120,['ClusterClaim','Operator'],'Заказывает аддоны L2','operator','l0'),
@@ -81,9 +97,9 @@
    N('hand-off',4,872,272,288,120,['Пользователь','получает кластер'],'Можно запускать приложения','user','actor')
   ],
   edges:[E('defaults-operator','defaults-claim',0,'M148 273V215','создаёт',216,244),E('defaults-claim','defaults-addon',1,'M255 152H329'),E('defaults-addon','defaults-applications',2,'M535 152H585'),E('defaults-applications','default-addons',3,'M799 152H873','Argo CD',836,128),E('default-addons','hand-off',4,'M1016 215V273','L2 готов',1080,244,'status')]
- });
- [['defaults-operator','defaults-claim'],['defaults-claim','defaults-addon'],['defaults-addon','defaults-applications'],['defaults-applications','default-addons'],['default-addons','hand-off']].forEach((active,i)=>chapters[5].beats[i].active=active);
- Object.assign(chapters[6],{
+ } satisfies DiagramGraph);
+ [['defaults-operator','defaults-claim'],['defaults-claim','defaults-addon'],['defaults-addon','defaults-applications'],['defaults-applications','default-addons'],['default-addons','hand-off']].forEach((active,i)=>activate(5,i,active));
+ Object.assign(chapterAt(6),{
   zones:[{id:'user-l0',x:224,y:16,w:232,h:392,label:'L0',tier:'l0'},{id:'user-l1',x:464,y:16,w:496,h:392,label:'L1 · ДОСТАВКА ПРИЛОЖЕНИЯ',tier:'l1'},{id:'user-l2',x:968,y:16,w:216,h:392,label:'L2',tier:'l2'}],
   nodes:[
    N('user-order',0,16,160,176,136,'Пользователь',['Заказывает','приложение'],'user','actor'),
@@ -93,6 +109,6 @@
    N('user-workload',3,984,160,184,136,'Приложение',['Для пользователя','Работает в L2'],'app','l2',{detail:'Приложение, заказанное пользователем через AddonClaim. Его ресурсы развёрнуты и работают в L2.'})
   ],
   edges:[E('user-order','user-addonclaim',0,'M191 228H241'),E('user-addonclaim','user-addon',1,'M439 228H489'),E('user-addon','user-applications',2,'M671 228H721'),E('user-applications','user-workload',3,'M927 228H985')]
- });
- [['user-order','user-addonclaim'],['user-addonclaim','user-addon'],['user-addon','user-applications'],['user-applications','user-workload']].forEach((active,i)=>chapters[6].beats[i].active=active);
-})();
+ } satisfies DiagramGraph);
+ [['user-order','user-addonclaim'],['user-addonclaim','user-addon'],['user-addon','user-applications'],['user-applications','user-workload']].forEach((active,i)=>activate(6,i,active));
+}

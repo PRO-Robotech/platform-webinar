@@ -1,5 +1,6 @@
-window.NarrativeContent = {
-  chapters: [
+import type { Chapter } from './types.js';
+
+export const chapters: Chapter[] = [
     {
       id: 'prepare',
       title: 'От заказа к зависимостям',
@@ -279,5 +280,4 @@ window.NarrativeContent = {
         }
       ]
     }
-  ]
-};
+].map(chapter => ({ ...chapter, zones: [], nodes: [], edges: [] }));
