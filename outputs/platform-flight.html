@@ -1,0 +1,704 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark">
+<meta name="description" content="Интерактивный полёт по маршруту создания Kubernetes-платформы L0–L2: от ClusterClaim до готового клиентского кластера.">
+<title>Platform Odyssey · PRO Robotech</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='32' fill='%23030710'/%3E%3Cpath d='M12 44Q32 0 52 25T25 53' fill='none' stroke='%238ce5ec' stroke-width='3'/%3E%3Ccircle cx='52' cy='25' r='4' fill='%23f9cb82'/%3E%3C/svg%3E">
+<style>:root{color-scheme:dark;--bg:#030710;--text:#f0f5f8;--muted:#a3b3c4;--dim:#5f768f;--line:#b6dfff22;--cyan:#9be8ee;--gold:#edc080;--violet:#c4b5f5;--font:Inter,'Segoe UI',Arial,sans-serif;--mono:'SFMono-Regular',Consolas,'Liberation Mono',monospace}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);font-family:var(--font);color:var(--text)}body{overflow:hidden}button,a{-webkit-tap-highlight-color:transparent}button{font:inherit;color:inherit;cursor:pointer}button:disabled{opacity:.25;cursor:default}a{color:inherit}button:focus-visible,a:focus-visible,summary:focus-visible{outline:1px solid var(--cyan);outline-offset:5px}[hidden]{display:none!important}#universe{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}#universe:active{cursor:grabbing}.atmosphere{pointer-events:none;position:fixed;inset:0;background:linear-gradient(90deg,#030710ec 0%,#030710bd 26%,#03071019 47%,transparent 68%),linear-gradient(0deg,#030710 0%,#030710aa 14%,transparent 30%,transparent 88%,#030710a6 100%)}.cockpit{position:relative;min-height:100svh;height:100svh;pointer-events:none;padding:0 38px;display:flex;flex-direction:column}.cockpit button,.cockpit a,.story,.notes-panel,dialog{pointer-events:auto}.masthead{height:92px;flex-shrink:0;border-bottom:1px solid #9be8ee16;display:flex;align-items:center;justify-content:space-between;gap:30px}.brand{display:flex;align-items:center;gap:13px;text-decoration:none;font-size:13px;letter-spacing:.5px;white-space:nowrap}.brand strong{font-weight:400}.brand small{display:block;font:8px var(--mono);letter-spacing:3.3px;color:#68879e;margin-top:6px}.brand-mark{display:flex;flex-direction:column;gap:4px;transform:skewY(-19deg)}.brand-mark i{height:4px;width:21px;background:var(--gold)}.brand-mark i:nth-child(2){width:16px}.brand-mark i:nth-child(3){width:11px}.header-center{font:8px var(--mono);letter-spacing:2px;color:#748c9e;display:flex;align-items:center;gap:10px;white-space:nowrap}.signal{width:4px;height:4px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px #9be8ee99}.tools{display:flex;align-items:center;gap:25px}.tool{padding:8px 0;font-size:11px;background:transparent;border:0;color:#b0c3d0;white-space:nowrap}.tool:hover{color:white}.tool[aria-pressed=true]{color:var(--gold)}.play-icon{font-size:16px;vertical-align:-1px;margin-right:7px}.circle-tool{display:inline-grid;place-items:center;flex-shrink:0;width:35px;height:35px;border:1px solid #b6dfff2b;border-radius:50%;background:#09131b33;font-size:20px;line-height:1;color:#c5dce7}.circle-tool:hover{border-color:#a7d9e4;color:white;background:#16303d66}main{flex:1;position:relative;min-height:0;display:flex;align-items:center}.story{width:345px;max-width:32vw;padding:12px 0 20px;position:relative}.eyebrow{display:flex;align-items:center;gap:15px;font:9px var(--mono);letter-spacing:1.7px;color:var(--gold);line-height:1.5;margin-bottom:24px}.small-line{height:1px;width:28px;background:#b6916155}h1{font-size:clamp(32px,3.3vw,59px);font-weight:430;line-height:1.11;letter-spacing:-.055em;margin:0 0 22px}h1 span{color:#96adbf;font-weight:350}.summary{font-size:14px;color:#a7bacb;line-height:1.8;margin:0;max-width:360px}.facts{margin:25px 0 26px;display:grid;gap:10px}.fact{border-left:1px solid #9be8ee32;padding:3px 0 3px 13px}.fact summary{font:11px var(--mono);letter-spacing:.25px;color:#bccfd9;cursor:pointer;list-style:none;line-height:1.5}.fact summary::-webkit-details-marker{display:none}.fact summary:before{content:'+';font-size:12px;margin-right:10px;color:var(--cyan)}.fact[open] summary:before{content:'−'}.fact p{font-size:11px;line-height:1.75;margin:7px 0 4px;color:#96afbf;max-width:330px}.intro-layer{display:flex;gap:15px;align-items:center;min-height:28px;font-size:11px;color:#8fa6b8}.intro-layer b{font:10px var(--mono);font-weight:400;color:var(--gold)}.intro-layer:nth-child(2) b{color:var(--cyan)}.intro-layer:nth-child(3) b{color:var(--violet)}.story-actions{display:flex;align-items:center;gap:14px}.primary{min-height:43px;display:flex;align-items:center;justify-content:space-between;gap:25px;border:1px solid #94dbe17d;border-radius:3px;padding:12px 17px;background:linear-gradient(110deg,#87dde51c,#87dde507);box-shadow:inset 0 0 20px #9be8ee04,0 0 30px #9be8ee05;color:#d7f8f8;font-size:11px;letter-spacing:.3px;min-width:200px}.primary:hover{background:#a1e0e725;border-color:var(--cyan);box-shadow:0 0 30px #9be8ee12}.primary span{font-size:18px}.takeaway{margin-top:20px;color:#607f93;font-size:10px;line-height:1.8;min-height:35px;max-width:330px}.destination{position:absolute;right:2px;top:31px;text-align:right;opacity:.85}.tiny{font:8px var(--mono);letter-spacing:1.8px;color:#839db1;line-height:1.5}.destination-title{font-size:14px;font-weight:350;margin-top:8px;color:#c8d9e6}.destination-sub{font:9px var(--mono);color:#6e889d;margin-top:6px}.destination-line{width:33px;height:1px;background:var(--gold);margin:15px 0 0 auto}.map-hint{position:absolute;right:3px;bottom:16px;display:flex;gap:10px;align-items:center;font:8px var(--mono);color:#59768f}.reticle{font-size:19px;color:#92bcc988}.map-hint button{border:0;background:transparent;padding:0;color:#90b4c6;font:8px var(--mono);margin-left:8px;border-bottom:1px solid #90b4c633;padding-bottom:3px}.parallel{position:absolute;left:40%;right:70px;bottom:42px;display:flex;gap:15px;max-width:560px;padding:11px 16px;border-left:1px solid #ebc78655;background:linear-gradient(90deg,#151c26cf,#08101c22);backdrop-filter:blur(3px)}.parallel .tiny{color:var(--gold);font-size:7px}.parallel p{font-size:10px;line-height:1.65;color:#afc0cf;margin:4px 0 0}.branch-symbol{font-size:30px;color:var(--gold);font-weight:200;line-height:1}.flight-deck{flex-shrink:0;height:150px;position:relative}.deck-caption{border-top:1px solid #9be8ee23;padding-top:16px;display:flex;justify-content:space-between;align-items:center;font:8px var(--mono);letter-spacing:1.4px;color:#68879e}.legend{display:flex;align-items:center;gap:8px;letter-spacing:.5px;font-size:9px;color:#8ba2b3}.legend i{width:4px;height:4px;border-radius:50%;margin-left:13px;background:var(--cyan)}.legend .gold{background:var(--gold)}.legend .violet{background:var(--violet)}.route{display:grid;grid-template-columns:repeat(9,1fr);gap:0;margin-top:13px}.stop{position:relative;background:transparent;border:0;text-align:left;padding:10px 0 6px;color:#506c83;min-width:0}.stop:before{content:'';position:absolute;top:12px;left:22px;right:0;height:1px;background:#8cd4e329}.stop:last-child:before{display:none}.stop-dot{display:inline-block;width:5px;height:5px;border-radius:50%;border:1px solid #668399;background:#07101b;box-shadow:0 0 0 4px #09131b}.stop-num{position:absolute;left:22px;top:24px;font:7px var(--mono);color:#456176}.stop-label{display:block;font-size:10px;margin-top:10px;white-space:nowrap}.stop.done{color:#728fa5}.stop.done .stop-dot{background:#78b2c3;border-color:#78b2c3}.stop[aria-current=step]{color:#d8f6f9}.stop[aria-current=step] .stop-dot{background:var(--cyan);border-color:#dbf7ff;box-shadow:0 0 14px #9be8ee,0 0 0 4px #123039}.stop[aria-current=step] .stop-num{color:var(--cyan)}.stop:hover{color:var(--cyan)}.footer-line{display:flex;justify-content:space-between;margin-top:17px;align-items:center;font:8px var(--mono);color:#3d5c73}.footer-line b{font-weight:400;color:#345064;margin:0 8px}.footer-line a{text-decoration:none;color:#7492a7}.footer-line a:hover{color:#c7e6ed}.footer-line button{font:8px var(--mono);color:#7492a7;border:0;background:transparent;padding:0}.notes-panel{position:fixed;z-index:10;right:28px;top:90px;width:370px;max-width:calc(100% - 36px);padding:25px;background:#091322ed;border:1px solid #9be8ee33;border-radius:6px;backdrop-filter:blur(20px);box-shadow:0 20px 80px #000a;max-height:calc(100svh - 125px);overflow:auto}.panel-top{display:flex;align-items:center;justify-content:space-between;gap:20px}.notes-panel h2,dialog h2{font-size:27px;font-weight:400;letter-spacing:-1px;line-height:1.2}.notes-panel p,dialog p{font-size:13px;line-height:1.9;color:#9fb5c8}.notes-panel .notes-tip{font-size:10px;border-top:1px solid var(--line);padding-top:13px;color:#6a879d}dialog{width:560px;max-width:calc(100% - 32px);max-height:90svh;background:#08121feb;border:1px solid #b4e5f23b;border-radius:7px;color:var(--text);padding:30px;box-shadow:0 30px 100px #000a;backdrop-filter:blur(24px)}dialog::backdrop{background:#02060bbb;backdrop-filter:blur(8px)}dialog .muted{font-size:10px;color:#5a7a91}.dialog-links{display:grid;gap:5px}.dialog-links a{color:var(--cyan);text-decoration:none;font-size:11px}.toast{position:fixed;z-index:20;bottom:180px;left:50%;transform:translateX(-50%);padding:13px 22px;background:#102437;border:1px solid #9be8ee44;border-radius:4px;max-width:90vw;color:#c4e1eb;font-size:12px}.story.arrive{animation:story-arrive .7s ease both}@keyframes story-arrive{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(min-width:1600px){.cockpit{padding:0 54px}.story{width:440px;max-width:32vw}.summary{font-size:16px;max-width:430px}.facts{gap:14px;margin:32px 0}.fact summary{font-size:12px}.fact p{font-size:13px;max-width:400px}.intro-layer{font-size:13px}.primary{font-size:13px;padding:14px 21px;min-width:230px}.takeaway{font-size:12px;max-width:400px}.eyebrow{font-size:11px}.stop-label{font-size:12px}.parallel p{font-size:12px}.map-hint{font-size:10px}.header-center{font-size:10px}.tool{font-size:12px}}
+@media(max-height:760px) and (min-width:861px){.masthead{height:75px}.flight-deck{height:132px}.story{padding:12px 0 8px}.eyebrow{margin-bottom:17px}h1{font-size:36px;margin-bottom:17px}.summary{font-size:13px;line-height:1.7}.facts{margin:18px 0 20px;gap:7px}.takeaway{margin-top:15px;min-height:30px;font-size:9px}.parallel{bottom:34px}.map-hint{bottom:6px}.footer-line{margin-top:12px}.deck-caption{padding-top:12px}.route{margin-top:9px}}
+@media(max-width:1100px){.cockpit{padding:0 25px}.header-center{display:none}.tools{gap:20px}.story{max-width:35vw;width:330px}.summary{font-size:12px}.stop-label{font-size:9px}.destination-title{font-size:12px}.parallel{left:41%;right:0}.map-hint{font-size:7px}.map-hint button{font-size:7px}}
+@media(max-width:860px){body{overflow:auto}.cockpit{height:auto;min-height:100svh;padding:0 20px}.masthead{height:72px;gap:15px}.brand{font-size:11px}.brand small{font-size:6px;letter-spacing:2.7px}.tools{gap:15px}.tool{font-size:10px}.tools #notes{display:none}.circle-tool{width:30px;height:30px}main{min-height:680px;align-items:flex-start}.story{width:360px;max-width:75vw;padding-top:33px;pointer-events:none}.story button,.story a,.story details{pointer-events:auto}h1{font-size:40px}.summary{font-size:13px}.facts{margin:20px 0}.takeaway{max-width:290px}.atmosphere{background:linear-gradient(90deg,#030710bd,transparent),linear-gradient(0deg,#030710 0%,transparent 28%,#03071080 82%,#030710a6)}.destination{top:auto;bottom:100px;right:0}.parallel{left:0;right:0;bottom:36px;max-width:90%;padding:9px 12px}.parallel p{font-size:10px}.map-hint{left:0;right:auto;bottom:9px;font-size:7px}.flight-deck{height:139px}.stop-label{font-size:8px;white-space:normal;max-width:72px}.stop-num{display:none}.footer-line{font-size:7px;gap:10px}.footer-line a{font-size:7px}.footer-line>span{display:none}.header-center{display:none}}
+@media(max-width:540px){.deck-caption .legend{display:none}.tools{gap:13px}.tools #overview{display:none}.brand small{letter-spacing:2px}.brand-mark{display:none}.tools .circle-tool{width:28px;height:28px}.cockpit{padding:0 17px}.story{max-width:90vw;width:330px}h1{font-size:36px}.eyebrow{font-size:8px}.destination{bottom:115px}.destination-title{font-size:11px}.map-hint>span:nth-child(2){max-width:170px;line-height:1.5}.parallel{bottom:46px}.stop-label{display:none}.route{margin-top:17px}.stop-num{display:block;top:23px;left:0}.flight-deck{height:127px}.footer-line{margin-top:25px}.deck-caption{font-size:7px;letter-spacing:.5px}.legend{font-size:8px;gap:5px}.legend i{margin-left:7px}main{min-height:710px}.story{padding-top:26px}.facts{gap:8px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+
+.parallel-inline{display:block;font:8px var(--mono);letter-spacing:1.4px;color:var(--gold);margin-bottom:5px}.takeaway.with-parallel{border-left:1px solid #edc08055;padding-left:12px;color:#97adbd;font-size:10px;line-height:1.65;max-width:345px}
+</style>
+</head>
+<body>
+<canvas id="universe" aria-label="Космическая карта создания платформы. Выберите этап в нижней навигации или на карте."></canvas>
+<div class="atmosphere" aria-hidden="true"></div>
+<div class="cockpit">
+<header class="masthead">
+ <a class="brand" href="#overview" aria-label="PRO Robotech: весь маршрут"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>PRO <strong>ROBOTECH</strong><small>PLATFORM ODYSSEY</small></span></a>
+ <div class="header-center"><span class="signal"></span> ОТ ЗАЯВКИ ДО KUBERNETES</div>
+ <nav class="tools" aria-label="Управление полётом">
+  <button id="overview" class="tool" title="Весь маршрут (M)">Весь маршрут</button>
+  <button id="autoplay" class="tool" aria-pressed="false"><span class="play-icon" aria-hidden="true">▷</span><span id="autoplay-label">Автополёт</span></button>
+  <button id="notes" class="tool" aria-label="Заметки ведущего" aria-expanded="false">Заметки</button>
+  <button id="fullscreen" class="circle-tool" aria-label="Полный экран" title="Полный экран (F)">⛶</button>
+ </nav>
+</header>
+<main>
+ <section class="story" aria-labelledby="story-title">
+  <div class="eyebrow"><span id="story-index">ЭКСПЕДИЦИЯ / L0 — L2</span><span class="small-line"></span></div>
+  <h1 id="story-title">Одна заявка.<br><span>Целая платформа.</span></h1>
+  <p id="story-summary" class="summary">Маршрут через три уровня Kubernetes. Проследите, как операторы создают инфраструктуру, готовят доступы и запускают клиентский кластер.</p>
+  <div id="facts" class="facts"></div>
+  <div class="story-actions"><button id="next" class="primary">Начать полёт <span aria-hidden="true">↗</span></button><button id="previous" class="circle-tool" aria-label="Предыдущая остановка">←</button></div>
+  <div id="takeaway" class="takeaway"></div>
+ </section>
+ <aside class="destination" aria-label="Пункт назначения"><div class="tiny">ПУНКТ НАЗНАЧЕНИЯ</div><div class="destination-title">Клиентский Kubernetes</div><div class="destination-sub">L2 · control plane в L1</div><div class="destination-line"></div></aside>
+ <div class="map-hint"><span class="reticle" aria-hidden="true">⌖</span><span id="map-hint">Вращайте карту мышью · колесо — масштаб</span><button id="recenter">Вернуть ракурс</button></div>
+</main>
+<footer class="flight-deck">
+ <div class="deck-caption"><span id="flight-state">ОБЗОР МАРШРУТА</span><span class="legend"><i class="cyan"></i>маршрут <i class="gold"></i>аддоны L0 <i class="violet"></i>секреты / данные</span><span id="flight-count">09 ОСТАНОВОК</span></div>
+ <nav id="route" class="route" aria-label="Остановки маршрута"></nav>
+ <div class="footer-line"><span>← → полёт <b>·</b> 1–9 остановки <b>·</b> M карта</span><a href="platform-webinar-classic.html">Классическая версия ↗</a><button id="about">О маршруте</button></div>
+</footer>
+</div>
+<aside id="notes-panel" class="notes-panel" hidden><div class="panel-top"><span class="tiny">ЗАМЕТКИ ВЕДУЩЕГО</span><button id="close-notes" class="circle-tool" aria-label="Закрыть заметки">×</button></div><h2 id="notes-title"></h2><div id="notes-time" class="tiny"></div><p id="notes-body"></p><p class="notes-tip">Заметки видны в этом окне и попадут в трансляцию при показе экрана.</p></aside>
+<dialog id="about-dialog" aria-labelledby="about-title"><div class="panel-top"><span class="tiny">PLATFORM ODYSSEY</span><button id="close-about" class="circle-tool" aria-label="Закрыть описание">×</button></div><h2 id="about-title">Один маршрут.<br>Несколько процессов.</h2><p>Это визуальная история создания платформы по описанию её команды. Расстояние между остановками условно: карта показывает связи и порядок, а не длительность операций.</p><p>Две траектории после bootstrap — параллельные процессы: настройка аддонов L1 и подготовка Vault / KMS. Они сходятся перед запуском клиентского кластера. CSR approver и CCM работают в L0 и создаются вместе с ресурсами Cluster.</p><p>Перетаскивайте карту для смены ракурса, используйте колесо для масштаба. Выбирайте остановки на карте или в нижней панели. Автополёт переключает этапы каждые 18 секунд; для выступления удобнее ручное управление.</p><p>← / → — этапы · 1–9 — переход · M — весь маршрут · N — заметки · F — полный экран · Esc — пауза.</p><p class="dialog-links"><a href="platform-webinar-classic.html">Сохранённая классическая версия ↗</a><a href="webinar-guide-classic.md">Подробный сценарий ↗</a></p><p class="muted">Самостоятельная HTML-страница. Все изображения и маршруты рисуются локально, подключение к инфраструктуре не требуется.</p></dialog>
+<div id="toast" class="toast" hidden role="status"></div>
+<noscript>Для полёта нужен JavaScript. <a href="webinar-guide-classic.md">Открыть текстовый сценарий</a>.</noscript>
+<script>window.FlightContent = {
+  scenes: [
+    {
+      id: 'claim',
+      title: 'Версия\nплатформы',
+      eyebrow: 'L0 · НАЧАЛО МАРШРУТА',
+      summary: 'Заказ превращается в ClusterClaim. Целевая конфигурация задаёт версию всей платформы.',
+      facts: [
+        { label: 'Сети', body: 'Параметры infra и client' },
+        { label: 'Версии', body: 'Аддоны, infra и client' },
+        { label: 'Ресурсы', body: 'Конфигурация мастер-нод' }
+      ],
+      takeaway: 'Одна заявка описывает целевую платформу.',
+      note: 'Начните с заказа клиентского кластера. Его параметры сохраняются в ClusterClaim в управляющем кластере L0. Версия платформы объединяет сетевые настройки, версии аддонов, инфраструктурного и клиентского Kubernetes, ресурсы мастер-нод. Дальше проследим маршрут одной заявки: от подготовки зависимостей и L1 до работающего control plane и готового L2.',
+      layer: 'L0',
+      minute: '01:10',
+      parallel: null
+    },
+    {
+      id: 'prepare',
+      title: 'Доверие\nи доступы',
+      eyebrow: 'L0 · ПОДГОТОВКА ЗАВИСИМОСТЕЙ',
+      summary: 'ClusterClaim Operator заказывает backup-бакет у облака и подготавливает сертификаты. Credentials бакета и сертификаты сохраняются в Vault.',
+      facts: [
+        { label: 'Бакет у облака', body: 'Запрос на создание S3-бакета для резервных копий' },
+        { label: 'Credentials → Vault', body: 'Полученные данные доступа к бакету сохраняются в Vault' },
+        { label: 'Сертификаты → Vault', body: 'Подготовленные сертификаты также сохраняются в Vault' }
+      ],
+      takeaway: 'Vault хранит credentials бакета и подготовленные сертификаты.',
+      note: 'Покажите две ветки от ClusterClaim Operator. Первая заказывает у облака S3-бакет для резервных копий, а полученные credentials сохраняет в Vault. Вторая подготавливает сертификаты и также помещает их в Vault. Подчеркните два разных вида данных в хранилище: доступ к бакету и сертификаты. Затем основной маршрут переходит к созданию инфраструктурного кластера.',
+      layer: 'L0',
+      minute: '01:10',
+      parallel: null
+    },
+    {
+      id: 'infra',
+      title: 'Основа\nL1',
+      eyebrow: 'L0 → L1 · INFRA И BOOTSTRAP',
+      summary: 'Cluster API обращается к облаку и создаёт машины L1. После infra initialized bootstrap устанавливает Cilium, CoreDNS, Argo CD и AddonOperator.',
+      facts: [
+        { label: 'CAPI → облако', body: 'Запрос на создание виртуальных машин infra' },
+        { label: 'Машины → L1', body: 'Машины формируют инфраструктурный кластер' },
+        { label: 'Infra initialized → bootstrap', body: 'Cilium · CoreDNS · Argo CD · AddonOperator' },
+        { label: 'Отдельная ветка в L0', body: 'CSR approver и CCM создаются вместе с Cluster' }
+      ],
+      takeaway: 'Инициализированный L1 получает исходный набор компонентов.',
+      note: 'При создании Cluster infra процесс разделяется. По основной ветке Cluster API отправляет запрос к облаку, облако создаёт виртуальные машины, и на них формируется инфраструктурный кластер L1. Параллельно в L0 создаются аддоны CSR approver для подписи сертификатов нод и CCM для интеграции с облаком. Сначала подтверждается infra initialized, затем разворачивается bootstrap L1: Cilium, CoreDNS, Argo CD и AddonOperator.',
+      layer: 'L0 + L1',
+      minute: '01:25',
+      parallel: 'В L0 вместе с Cluster infra создаются CSR approver и CCM.'
+    },
+    {
+      id: 'addons',
+      title: 'L1 достигает\nцелевого состояния',
+      eyebrow: 'L1 · ФАЗЫ АДДОНОВ',
+      summary: 'AddonOperator задаёт порядок Argo CD Applications. Сервисы и настройки защиты разворачиваются по фазам.',
+      facts: [
+        { label: 'Порядок', body: 'Addon → AddonOperator → Applications' },
+        { label: 'Соединения', body: 'mTLS и сетевые политики' },
+        { label: 'Наблюдаемость', body: 'Мониторинг и сбор логов' },
+        { label: 'В финале', body: 'Host firewall · default deny' }
+      ],
+      takeaway: 'Host firewall с default deny завершает настройку L1.',
+      note: 'После bootstrap AddonOperator управляет фазами и очередностью Argo CD Applications. Последовательно настраиваются mTLS и сетевые политики, разворачиваются мониторинг и сбор логов. Завершающий этап — host firewall с default deny. Пока L1 доводится до целевого состояния, параллельная ветка готовит в Vault аутентификацию, роли, секреты и ключи для будущего L2.',
+      layer: 'L1',
+      minute: '01:40',
+      parallel: 'Параллельно в Vault готовятся auth, роли, секреты и KMS для L2.'
+    },
+    {
+      id: 'vault',
+      title: 'Права, секреты\nи ключи L2',
+      eyebrow: 'ПАРАЛЛЕЛЬНАЯ ВЕТКА · VAULT',
+      summary: 'Пока настраивается L1, в Vault готовятся доступы компонентов. Для L2 создаётся KMS transit.',
+      facts: [
+        { label: 'Аутентификация', body: 'ServiceAccount auth' },
+        { label: 'Права', body: 'Точечные роли компонентов' },
+        { label: 'Секреты', body: 'Индивидуальные, с высокой энтропией' },
+        { label: 'Ключи L2', body: 'KMS Transit Key' }
+      ],
+      takeaway: 'Доступы и ключи готовятся до запуска client control plane.',
+      note: 'Переведите внимание на параллельную ветку подготовки. В Vault создаются ServiceAccount auth, точечные роли и индивидуальные высокоэнтропийные секреты. Каждому компоненту предназначены собственные данные доступа и необходимые права. Для клиентского кластера подготавливается KMS transit. Эта работа выполняется одновременно с hardening L1, а затем зависимости сходятся перед созданием client.',
+      layer: 'L0 + L1',
+      minute: '01:25',
+      parallel: 'Выполняется одновременно с фазами аддонов и hardening L1.'
+    },
+    {
+      id: 'client',
+      title: 'Переход\nк control plane L2',
+      eyebrow: 'L0 → L1 · СОЗДАНИЕ CLIENT',
+      summary: 'После готовности аддонов L1 создаётся Cluster client. CAPI через AddonClaim разворачивает client-control-plane в infra.',
+      facts: [
+        { label: 'Условие перехода', body: 'Аддоны L1 готовы' },
+        { label: 'Ветка в L0', body: 'Cluster client + CSR approver + CCM' },
+        { label: 'Заявка на аддон', body: 'Cluster client → CAPI → AddonClaim' },
+        { label: 'Размещение', body: 'client-control-plane внутри L1' }
+      ],
+      takeaway: 'Готовый L1 принимает клиентский control plane.',
+      note: 'Покажите точку перехода: аддоны L1 готовы, можно создавать Cluster client. Одновременно с ресурсом Cluster в L0 создаются CSR approver для сертификатов нод и CCM для интеграции с облаком. Основная цепочка проходит через CAPI и AddonClaim к аддону client-control-plane, который разворачивается в инфраструктурном кластере.',
+      layer: 'L0 + L1',
+      minute: '01:25',
+      parallel: 'В L0 вместе с Cluster client создаются CSR approver и CCM.'
+    },
+    {
+      id: 'controlplane',
+      title: 'Control plane L2\nкак приложение',
+      eyebrow: 'L1 · УСТРОЙСТВО CLIENT CONTROL PLANE',
+      summary: 'Client control plane работает на нодах infra как DaemonSet. Его состояние хранится в общем etcd L1 под отдельным префиксом.',
+      facts: [
+        { label: 'Исполнение', body: 'DaemonSet на нодах L1' },
+        { label: 'Хранилище', body: 'Общий etcd infra-кластера' },
+        { label: 'Данные L2', body: 'Отдельный префикс в etcd L1' },
+        { label: 'Клиентский доступ', body: 'Отдельный Kubernetes API L2' }
+      ],
+      takeaway: 'Компоненты работают в L1 и управляют отдельным кластером L2.',
+      note: 'Приблизьте client control plane внутри L1. Это приложение DaemonSet, размещённое на нодах инфраструктурного кластера. Для хранения состояния оно использует общий etcd L1, выделяя данным L2 отдельный префикс. Одновременно покажите линию к клиентскому Kubernetes API: место исполнения управляющих компонентов и обслуживаемый ими кластер имеют разные роли.',
+      layer: 'L1',
+      minute: '01:40',
+      parallel: null
+    },
+    {
+      id: 'status',
+      title: 'Создание\nподтверждено',
+      eyebrow: 'L1 → L0 · СОСТОЯНИЕ В CAPI',
+      summary: 'Статус client control plane возвращается в Cluster API. Инициализация Cluster client подтверждена; дальше готовится стандартный состав L2.',
+      facts: [
+        { label: 'Control plane', body: 'clientCP initialized' },
+        { label: 'Cluster API', body: 'Получает подтверждение инициализации' },
+        { label: 'Дальше', body: 'Развёртывание базовых аддонов L2' }
+      ],
+      takeaway: 'Инициализация подтверждена. Следующий этап — готовность клиентской среды.',
+      note: 'Проследите обратную связь: работающий client control plane передаёт состояние в цепочку CAPI, и Cluster отражает подтверждённую инициализацию. На этом этапе создано управление клиентским Kubernetes. Для передачи пользователю платформа ещё развернёт стандартные аддоны в самом L2. В рассказе это два последовательных результата.',
+      layer: 'L0 + L1',
+      minute: '01:00',
+      parallel: null
+    },
+    {
+      id: 'delivery',
+      title: 'Готовый\nклиентский кластер',
+      eyebrow: 'L2 · ЗАВЕРШЕНИЕ МАРШРУТА',
+      summary: 'Через AddonClaim в L2 разворачиваются Cilium, CoreDNS и Konnectivity. После подготовки этого набора пользователь получает готовый кластер.',
+      facts: [
+        { label: 'Доставка', body: 'AddonClaim для клиентского кластера' },
+        { label: 'Базовый набор', body: 'Cilium · CoreDNS · Konnectivity' },
+        { label: 'Результат', body: 'Готовый Kubernetes передаётся пользователю' }
+      ],
+      takeaway: 'От ClusterClaim — к клиентскому Kubernetes с базовыми аддонами.',
+      note: 'Завершите маршрут внутри L2. После создания control plane через AddonClaim разворачиваются Cilium, CoreDNS и Konnectivity. Когда стандартный набор подготовлен, пользователь получает готовый Kubernetes для своих приложений. Вернитесь к общей карте по необходимости: L0 координирует создание, L1 размещает инфраструктуру и client control plane, L2 предоставляет клиентскую среду.',
+      layer: 'L2',
+      minute: '01:15',
+      parallel: null
+    }
+  ]
+};
+</script>
+<script>(function () {
+  'use strict';
+
+  var TAU = Math.PI * 2;
+  var PALETTE = { cyan: '#77e8ef', white: '#e7fbff', gold: '#f0bc75', violet: '#b9a0fb', green: '#cdebab' };
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+  function mix(a, b, t) { return a + (b - a) * t; }
+  function vec(x, y, z) { return { x: x, y: y, z: z }; }
+  function minus(a, b) { return vec(a.x-b.x, a.y-b.y, a.z-b.z); }
+  function dot(a, b) { return a.x*b.x+a.y*b.y+a.z*b.z; }
+  function cross(a, b) { return vec(a.y*b.z-a.z*b.y,a.z*b.x-a.x*b.z,a.x*b.y-a.y*b.x); }
+  function normalized(a) { var n=Math.hypot(a.x,a.y,a.z)||1; return vec(a.x/n,a.y/n,a.z/n); }
+  function point(x, y, z, label, color, owner) { return { x:x,y:y,z:z,label:label,color:color||'cyan',owner:owner }; }
+  function rgba(hex, a) { var c=parseInt(hex.slice(1),16); return 'rgba('+((c>>16)&255)+','+((c>>8)&255)+','+(c&255)+','+clamp(a,0,1)+')'; }
+  function catmull(a,b,c,d,t) {
+    var t2=t*t,t3=t2*t;
+    function at(k) { return .5*((2*b[k])+(-a[k]+c[k])*t+(2*a[k]-5*b[k]+4*c[k]-d[k])*t2+(-a[k]+3*b[k]-3*c[k]+d[k])*t3); }
+    return vec(at('x'),at('y'),at('z'));
+  }
+  function smoothPath(points) {
+    var result=[];
+    for(var i=0;i<points.length-1;i++) {
+      var a=points[Math.max(0,i-1)],b=points[i],c=points[i+1],d=points[Math.min(points.length-1,i+2)];
+      for(var j=0;j<30;j++) result.push(catmull(a,b,c,d,j/30));
+    }
+    result.push(points[points.length-1]);
+    var total=0;
+    result.forEach(function(p,i){ if(i) total+=Math.hypot(p.x-result[i-1].x,p.y-result[i-1].y,p.z-result[i-1].z); p.arc=total; });
+    result.forEach(function(p){ p.arc/=total||1; });
+    return result;
+  }
+  function along(samples,t) {
+    t=((t%1)+1)%1;
+    var lo=0,hi=samples.length-1;
+    while(hi-lo>1) { var m=(lo+hi)>>1;if(samples[m].arc<t)lo=m;else hi=m; }
+    var a=samples[lo],b=samples[hi],f=(t-a.arc)/(b.arc-a.arc||1);
+    return vec(mix(a.x,b.x,f),mix(a.y,b.y,f),mix(a.z,b.z,f));
+  }
+
+  function create(settings) {
+    settings=settings||{};
+    var canvas=settings.canvas;
+    if(!canvas||typeof canvas.getContext!=='function') throw new TypeError('FlightMap.create requires a canvas element.');
+    var ctx=canvas.getContext('2d',{alpha:false});
+    if(!ctx) throw new Error('Canvas 2D is unavailable.');
+    var previousTouchAction=canvas.style.touchAction,previousCursor=canvas.style.cursor;
+    canvas.style.touchAction='none';canvas.style.cursor='grab';
+    var motionMedia=window.matchMedia?window.matchMedia('(prefers-reduced-motion: reduce)'):null;
+    var motionEnabled=true,reduced=!!(motionMedia&&motionMedia.matches), destroyed=false, frameId=0;
+    var width=1,height=1,dpr=1,focusX=0,focusY=0,focal=1,safeLeft=0,safeTop=0,safeBottom=0,safeWidth=1,safeHeight=1;
+    var currentScene=0,mode='scene',hovered=-1,lastTime=0,elapsed=0,lastNotice=0;
+    var hits=[],lastEye=null,drag=null;
+
+    var main=[
+      point(-2100,-370,-180,'ClusterClaim','cyan',0),
+      point(-1530,-180,200,'Подготовка','cyan',1),
+      point(-890,105,0,'Infra + bootstrap','cyan',2),
+      point(155,490,-100,'Фазы L1','cyan',3),
+      point(180,-190,220,'Vault + KMS','violet',4),
+      point(870,160,-80,'Cluster client','cyan',5),
+      point(1420,-180,-100,'Control plane L2','cyan',6),
+      point(1940,-35,190,'Статус CAPI','cyan',7),
+      point(2460,255,25,'L2 готов','green',8)
+    ];
+    var subtitles=['L0 · ЦЕЛЕВАЯ ПЛАТФОРМА','CLUSTERCLAIM OPERATOR · L0','L0 → CAPI → L1','L1 · HARDENING','ВНЕШНИЙ VAULT · AUTH / KMS','L0 · CLUSTER CLIENT','DAEMONSET В L1','INITIALIZED ≠ CUSTOMER READY','CILIUM · COREDNS · KONNECTIVITY'];
+    var prepCloud=point(-1730,110,330,'Облако · S3-бакет','gold',1);
+    var prepCredentials=point(-1450,160,380,'Credentials','gold',1);
+    var prepCertificates=point(-1550,-460,360,'Сертификаты','violet',1);
+    var prepVault=point(-1160,-70,410,'Vault','violet',1);
+    var prepNodes=[prepCloud,prepCredentials,prepCertificates,prepVault];
+    prepNodes.forEach(function(n){n.preparation=true;});
+    var capi=point(-820,310,-35,'CAPI','cyan',2);
+    var infraCloud=point(-650,480,50,'Облако · создание VM','gold',2);
+    var machines=point(-350,430,10,'Машины · L1','cyan',2);
+    var infraInitialized=point(-230,240,30,'infra initialized','white',2);
+    var bootstrap=point(-50,310,-45,'Bootstrap · L1','cyan',2);
+    [capi,infraCloud,machines,infraInitialized,bootstrap].forEach(function(n){n.infraDetail=true;});
+    var infraCSR=point(-700,-190,80,'CSR approver · L0','gold',2);
+    var infraCCM=point(-425,-255,-70,'CCM · L0','gold',2);
+    var clientCSR=point(985,485,110,'CSR approver · L0','gold',5);
+    var clientCCM=point(1240,420,230,'CCM · L0','gold',5);
+    var join=point(625,185,60,'Зависимости готовы','white',5);
+    var addon=point(1130,40,-75,'AddonClaim','cyan',5);
+    var etcd=point(1340,-470,100,'etcd · L1 / prefix L2','violet',6);
+    var minor=[capi,infraCloud,machines,infraInitialized,bootstrap,infraCSR,infraCCM,clientCSR,clientCCM,join,addon,etcd].concat(prepNodes);
+    var paths=[];
+    function route(points,color,owners,width) { var r={samples:smoothPath(points),color:color||'cyan',owners:owners,width:width||1,phase:paths.length*.171};paths.push(r);return r; }
+    route([main[0],point(-1840,-285,80),main[1],point(-1180,-100,200),main[2]],'cyan',[0,1,2],1.25);
+    route([main[2],capi,infraCloud,machines,infraInitialized,bootstrap],'cyan',[2],1.2);
+    // Both branches start after bootstrap; there is deliberately no 3 -> 4 edge.
+    route([bootstrap,point(-5,390,-105),main[3],point(405,410,-30),join],'cyan',[3],1.15);
+    route([bootstrap,point(-15,-45,185),main[4],point(445,-60,235),join],'violet',[4],1.15);
+    route([join,main[5],addon,main[6],main[7],main[8]],'cyan',[5,6,7,8],1.25);
+    route([main[2],point(-805,-60,85),infraCSR],'gold',[2],.8);
+    route([main[2],point(-665,-115,-75),infraCCM],'gold',[2],.8);
+    route([main[5],point(900,350,50),clientCSR],'gold',[5],.8);
+    route([main[5],point(1100,310,200),clientCCM],'gold',[5],.8);
+    route([main[6],point(1330,-330,-25),etcd],'violet',[6],.85);
+    // Preparation has two independent deliveries to one external Vault.
+    // These branches are separate from the cyan route continuing to infra.
+    route([main[1],point(-1690,-60,280),prepCloud,prepCredentials,prepVault],'gold',[1],1.05).preparation=true;
+    route([main[1],prepCertificates,point(-1260,-405,390),prepVault],'violet',[1],1.05).preparation=true;
+
+    var camera={x:main[0].x,y:main[0].y,z:main[0].z,yaw:-.2,pitch:.2,distance:1300};
+    var goal=Object.assign({},camera),speed={x:0,y:0,z:0,yaw:0,pitch:0,distance:0};
+    var basis={eye:vec(0,0,0),right:vec(1,0,0),up:vec(0,1,0),forward:vec(0,0,-1)};
+    var seed=317761;
+    function random() { seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296; }
+    var stars=Array.from({length:1120},function(){return {x:random()*18000-8000,y:random()*11000-5500,z:random()*12500-9200,size:.35+random()*1.4,shine:.3+random()*.85,tint:random(),last:null};});
+    var dust=Array.from({length:50},function(){return {x:random()*7300-3300,y:random()*2600-1300,z:random()*2600-700,size:1+random()*2.8,phase:random()*TAU};});
+    var clouds=[{x:-2000,y:500,z:-2700,size:1200,color:'#133f51'},{x:100,y:-650,z:-2800,size:1700,color:'#271d51'},{x:1700,y:600,z:-2100,size:1200,color:'#114649'}];
+
+    function calculateBasis() {
+      var cp=Math.cos(camera.pitch),sp=Math.sin(camera.pitch),sy=Math.sin(camera.yaw),cy=Math.cos(camera.yaw);
+      basis.eye=vec(camera.x+sy*cp*camera.distance,camera.y+sp*camera.distance,camera.z+cy*cp*camera.distance);
+      basis.forward=normalized(minus(vec(camera.x,camera.y,camera.z),basis.eye));
+      basis.right=normalized(cross(basis.forward,vec(0,1,0)));
+      basis.up=cross(basis.right,basis.forward);
+    }
+    function project(p,margin) {
+      var v=minus(p,basis.eye),depth=dot(v,basis.forward);
+      if(depth<35)return null;
+      var scale=focal/depth;
+      var x=focusX+dot(v,basis.right)*scale,y=focusY-dot(v,basis.up)*scale;
+      if(margin!=null&&(x < -margin||x>width+margin||y < -margin||y>height+margin))return null;
+      return {x:x,y:y,scale:scale,depth:depth};
+    }
+    function overviewDistance() {
+      return Math.max(2700,4900*focal/Math.max(320,safeWidth)*1.16,1320*focal/Math.max(200,safeHeight)*1.2);
+    }
+    function sceneGoal(index) {
+      var p=main[index],x=p.x,y=p.y,z=p.z,dist=1180;
+      if(index===0){x+=130;dist=1280;}
+      if(index===1){x+=100;dist=1510;}
+      if(index===2){x+=360;y-=5;dist=1770;}
+      if(index===3){x=180;y=200;z=65;dist=2300;}
+      if(index===4){x=180;y=120;z=65;dist=2300;}
+      if(index===5){x+=160;y+=65;dist=1420;}
+      if(index===6){x+=35;y-=55;dist=1320;}
+      if(index===8){x-=105;dist=1160;}
+      var mobileFactor=width<800?1.18:1;
+      return {x:x,y:y,z:z,yaw:[-.22,-.06,.11,-.07,-.07,.17,-.12,-.23,-.08][index],pitch:[.14,.22,.31,.15,.15,.3,.16,.24,.32][index],distance:dist*mobileFactor};
+    }
+    function setGoal(next,immediate) {
+      goal=next;
+      if(immediate||reduced) {
+        Object.keys(goal).forEach(function(k){camera[k]=goal[k];speed[k]=0;});
+        stars.forEach(function(s){s.last=null;});lastEye=null;
+      }
+      invalidate();
+    }
+    function setScene(index,options) {
+      if(destroyed)return;
+      currentScene=clamp(Math.floor(Number(index)||0),0,8);mode='scene';hovered=-1;
+      setGoal(sceneGoal(currentScene),!!(options&&options.immediate));
+    }
+    function overview(options) {
+      if(destroyed)return;
+      mode='overview';hovered=-1;
+      setGoal({x:190,y:90,z:10,yaw:-.13,pitch:.24,distance:overviewDistance()},!!(options&&options.immediate));
+    }
+    function reset() { if(mode==='overview')overview();else setScene(currentScene); }
+    function resize() {
+      if(destroyed)return;
+      var rect=canvas.getBoundingClientRect();
+      width=Math.max(1,rect.width||canvas.clientWidth||window.innerWidth);
+      height=Math.max(1,rect.height||canvas.clientHeight||window.innerHeight);
+      dpr=clamp(window.devicePixelRatio||1,1,2.5);
+      canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);
+      safeLeft=width>=1100?Math.min(405,width*.31):width>=800?Math.min(345,width*.34):26;
+      safeTop=width>=800?96:Math.min(155,height*.24);
+      safeBottom=width>=800?148:Math.min(166,height*.25);
+      safeWidth=Math.max(220,width-safeLeft-38);safeHeight=Math.max(155,height-safeTop-safeBottom);
+      focusX=safeLeft+safeWidth*.51;focusY=safeTop+safeHeight*.50;
+      focal=Math.min(width,height)*1.03;
+      if(mode==='overview')overview({immediate:true});else setScene(currentScene,{immediate:true});
+      invalidate();
+    }
+    function notifyMotion() {
+      var now=performance.now();
+      if(now-lastNotice>160){lastNotice=now;if(typeof settings.onMotion==='function')settings.onMotion();}
+    }
+
+    function roundRect(x,y,w,h,r) {
+      ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
+    }
+    function glow(x,y,r,color,alpha) {
+      if(r<.3)return;
+      var g=ctx.createRadialGradient(x,y,0,x,y,r);
+      g.addColorStop(0,rgba(color,alpha));g.addColorStop(.18,rgba(color,alpha*.46));g.addColorStop(.56,rgba(color,alpha*.13));g.addColorStop(1,rgba(color,0));
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fill();
+    }
+    function background(t) {
+      ctx.fillStyle='#04080e';ctx.fillRect(0,0,width,height);
+      var base=ctx.createRadialGradient(focusX,focusY,0,focusX,focusY,Math.max(width,height)*.8);
+      base.addColorStop(0,'#081522');base.addColorStop(.5,'#060d16');base.addColorStop(1,'#03060b');ctx.fillStyle=base;ctx.fillRect(0,0,width,height);
+      clouds.forEach(function(c){var p=project(c,1500);if(p)glow(p.x,p.y,clamp(c.size*p.scale,70,900),c.color,.30);});
+      ctx.lineWidth=.7;
+      stars.forEach(function(s){
+        var p=project(s,20);if(!p){s.last=null;return;}
+        var radius=clamp(s.size*(.7+p.scale*.6),.35,2.2);
+        var alpha=s.shine*clamp(1-p.depth/24000,.24,.88);
+        ctx.fillStyle=s.tint>.88?rgba('#a8b2d9',alpha):rgba('#bad6e2',alpha);
+        if(s.last&&!reduced){var dx=p.x-s.last.x,dy=p.y-s.last.y,len=Math.hypot(dx,dy);if(len>1.2&&len<110){var factor=Math.min(1,24/len);ctx.strokeStyle=rgba('#a6e3ed',alpha*.32);ctx.beginPath();ctx.moveTo(p.x-dx*factor,p.y-dy*factor);ctx.lineTo(p.x,p.y);ctx.stroke();}}
+        ctx.beginPath();ctx.arc(p.x,p.y,radius,0,TAU);ctx.fill();
+        if(s.tint>.975&&alpha>.28){ctx.strokeStyle=rgba('#d0edff',alpha*.22);ctx.beginPath();ctx.moveTo(p.x-3.5,p.y);ctx.lineTo(p.x+3.5,p.y);ctx.moveTo(p.x,p.y-3.5);ctx.lineTo(p.x,p.y+3.5);ctx.stroke();}
+        s.last=p;
+      });
+      dust.forEach(function(d){
+        var p=project(vec(d.x,d.y+(reduced?0:Math.sin(t*.09+d.phase)*18),d.z),25);if(!p)return;
+        var r=clamp(d.size*p.scale,.45,2.2);ctx.fillStyle=rgba('#8bdce2',.045+Math.min(.06,p.scale*.05));ctx.beginPath();ctx.arc(p.x,p.y,r,0,TAU);ctx.fill();
+      });
+      // Subtle vignetting keeps the navigation field inside the page chrome.
+      var vignette=ctx.createLinearGradient(0,0,width,0);vignette.addColorStop(0,'rgba(2,5,10,.65)');vignette.addColorStop(.30,'rgba(2,5,10,.08)');vignette.addColorStop(.65,'rgba(2,5,10,0)');vignette.addColorStop(1,'rgba(2,5,10,.24)');ctx.fillStyle=vignette;ctx.fillRect(0,0,width,height);
+    }
+    function strokeSamples(samples,color,lineWidth,alpha,shadow) {
+      ctx.beginPath();var started=false;
+      for(var i=0;i<samples.length;i++){var p=project(samples[i]);if(!p){started=false;continue;}if(!started){ctx.moveTo(p.x,p.y);started=true;}else ctx.lineTo(p.x,p.y);}
+      ctx.strokeStyle=rgba(color,alpha);ctx.lineWidth=lineWidth;
+      ctx.shadowColor=rgba(color,.7);ctx.shadowBlur=shadow||0;ctx.stroke();ctx.shadowBlur=0;
+    }
+    function renderPaths(t) {
+      paths.forEach(function(path){
+        if(path.preparation&&mode==='scene'&&currentScene!==1)return;
+        var hot=mode==='overview'||path.owners.indexOf(currentScene)!==-1;
+        var color=PALETTE[path.color],alpha=hot?.74:.30;
+        var scale=mode==='overview'?1:1.12;
+        strokeSamples(path.samples,color,path.width*scale+3,alpha*.045,0);
+        strokeSamples(path.samples,color,path.width*scale,alpha,hot?9:3);
+        if(hot&&path.color==='cyan')strokeSamples(path.samples,PALETTE.white,.45,.52,0);
+        var packets=mode==='overview'?2:hot?3:1;
+        for(var j=0;j<packets;j++){
+          var at=(reduced?.22: t*.047)+path.phase+j/packets;
+          var p=project(along(path.samples,at),20);if(!p)continue;
+          var radius=hot?1.8:1.1;glow(p.x,p.y,hot?12:7,color,hot?.45:.20);
+          ctx.fillStyle=rgba(hot?PALETTE.white:color,hot?.97:.58);ctx.beginPath();ctx.arc(p.x,p.y,radius,0,TAU);ctx.fill();
+        }
+      });
+    }
+    function orbitalRing(node,radius,tilt,color,alpha,t) {
+      var samples=[];
+      for(var i=0;i<=84;i++){
+        var a=(i/84)*TAU+t;
+        samples.push(vec(node.x+Math.cos(a)*radius,node.y+Math.sin(a)*radius*Math.cos(tilt),node.z+Math.sin(a)*radius*Math.sin(tilt)));
+      }
+      strokeSamples(samples,color,.75,alpha,0);
+    }
+    function hologram(node,p,color,index,t) {
+      var screenRadius=index===0||index===8?70:55;
+      var radius=screenRadius/p.scale;
+      var fill=ctx.createRadialGradient(p.x-screenRadius*.24,p.y-screenRadius*.28,0,p.x,p.y,screenRadius);
+      fill.addColorStop(0,rgba(color,.065));fill.addColorStop(.72,rgba(color,.015));fill.addColorStop(1,rgba(color,.055));
+      ctx.fillStyle=fill;ctx.beginPath();ctx.arc(p.x,p.y,screenRadius,0,TAU);ctx.fill();
+      var rotation=reduced?0:t*.035;
+      for(var lat=-2;lat<=2;lat++){
+        var phi=lat*Math.PI/6, ring=[];
+        for(var k=0;k<=64;k++){var a=k/64*TAU+rotation;ring.push(vec(node.x+Math.cos(a)*radius*Math.cos(phi),node.y+Math.sin(phi)*radius,node.z+Math.sin(a)*radius*Math.cos(phi)));}
+        strokeSamples(ring,color,.65,lat===0?.23:.14,0);
+      }
+      for(var lon=0;lon<7;lon++){
+        var meridian=[],theta=lon*Math.PI/7+rotation;
+        for(var m=0;m<=64;m++){var a=m/64*TAU;meridian.push(vec(node.x+Math.cos(a)*radius*Math.cos(theta),node.y+Math.sin(a)*radius,node.z+Math.cos(a)*radius*Math.sin(theta)));}
+        strokeSamples(meridian,color,.65,.15,0);
+      }
+      ctx.strokeStyle=rgba(color,.35);ctx.lineWidth=.8;ctx.beginPath();ctx.arc(p.x,p.y,screenRadius,0,TAU);ctx.stroke();
+      orbitalRing(node,radius*1.37,.55,color,.23,rotation);
+      orbitalRing(node,radius*1.8,1.15,color,.075,-rotation);
+      var satellite=project(vec(node.x+Math.cos(t*.11)*radius*1.37,node.y+Math.sin(t*.11)*radius*1.37*Math.cos(.55),node.z+Math.sin(t*.11)*radius*1.37*Math.sin(.55)),20);
+      if(satellite){glow(satellite.x,satellite.y,10,color,.3);ctx.fillStyle=rgba(color,.9);ctx.beginPath();ctx.arc(satellite.x,satellite.y,1.8,0,TAU);ctx.fill();}
+    }
+    function freeLabel(p,w,h,preferredY,occupied,big) {
+      var left=safeLeft+8,right=width-14,top=safeTop-8,bottom=height-safeBottom+14;
+      function available(r){return r.x>=left&&r.x+r.w<=right&&r.y>=top&&r.y+r.h<=bottom&&(!big||!(r.x<p.x+70&&r.x+r.w>p.x-70&&r.y<p.y+70&&r.y+r.h>p.y-70))&&!occupied.some(function(o){return r.x<o.x+o.w+6&&r.x+r.w>o.x-6&&r.y<o.y+o.h+5&&r.y+r.h>o.y-5;});}
+      var candidates=[],ys=[preferredY,p.y-h-23,p.y+28,p.y-h-52,p.y+55,p.y-h-82,p.y+87,p.y-h-115,p.y+118];
+      ys.forEach(function(y,iy){[p.x-w/2,p.x+24,p.x-w-24,p.x-w/2-65,p.x-w/2+65].forEach(function(x,ix){var r={x:clamp(x,left,Math.max(left,right-w)),y:y,w:w,h:h};r.score=Math.hypot(r.x+w/2-p.x,(r.y+h/2-p.y)*1.1)+iy*.5+ix*.25;candidates.push(r);});});
+      candidates.sort(function(a,b){return a.score-b.score;});
+      for(var i=0;i<candidates.length;i++)if(available(candidates[i]))return candidates[i];
+      // Compact overview labels may need to move beyond their local neighbourhood.
+      var winner=null;
+      for(var y=top;y+h<=bottom;y+=18)for(var x=left;x+w<=right;x+=22){var r={x:x,y:y,w:w,h:h};if(available(r)){var score=Math.hypot(x+w/2-p.x,y+h/2-p.y);if(!winner||score<winner.score){r.score=score;winner=r;}}}
+      return winner;
+    }
+    function drawLabel(p,text,sub,color,active,index,occupied) {
+      var overviewMode=mode==='overview',big=active||hovered===index;
+      var fs=big?21:14;
+      ctx.font=(big?'600 ':'500 ')+fs+'px Inter, system-ui, sans-serif';
+      var tw=ctx.measureText(text).width;
+      ctx.font='500 10px Inter, system-ui, sans-serif';var sw=big&&sub?ctx.measureText(sub).width:0;
+      if(p.x<safeLeft-30||p.x>width+35||p.y<safeTop-25||p.y>height-safeBottom+35)return;
+      var preferred=p.y+(big?80:15);
+      if(overviewMode&&(index===1||index===3||index===6||index===8))preferred=p.y-50;
+      var rect=freeLabel(p,Math.max(tw,sw)+22,big?59:33,preferred,occupied,big);
+      if(!rect)return;
+      occupied.push(rect);
+      var x=rect.x+(rect.w-tw)/2,y=rect.y+fs+7;
+      if(Math.hypot(rect.x+rect.w/2-p.x,rect.y+rect.h/2-p.y)>48){ctx.strokeStyle=rgba(color,.20);ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(clamp(p.x,rect.x+7,rect.x+rect.w-7),p.y>rect.y?rect.y+rect.h:rect.y);ctx.stroke();}
+      var bg=ctx.createLinearGradient(rect.x,0,rect.x+rect.w,0);bg.addColorStop(0,'rgba(5,12,20,0)');bg.addColorStop(.14,'rgba(5,12,20,.89)');bg.addColorStop(.86,'rgba(5,12,20,.89)');bg.addColorStop(1,'rgba(5,12,20,0)');ctx.fillStyle=bg;roundRect(rect.x,rect.y,rect.w,rect.h,6);ctx.fill();
+      ctx.font=(big?'600 ':'500 ')+fs+'px Inter, system-ui, sans-serif';
+      ctx.fillStyle=big?'#eafaff':rgba('#d2e6ed',overviewMode?.88:.74);ctx.fillText(text,x,y);
+      if(big&&sub){ctx.font='500 10px Inter, system-ui, sans-serif';ctx.fillStyle=rgba(color,.88);ctx.fillText(sub,rect.x+(rect.w-sw)/2,y+21);}
+      if(index>=0)hits.push({index:index,x:p.x,y:p.y,radius:big?27:19,label:rect,depth:p.depth});
+    }
+    function renderNodes(t) {
+      var occupied=[],labels=[],smallLabels=[];hits=[];
+      minor.forEach(function(node){
+        if(node.preparation&&mode!=='overview'&&currentScene!==1)return;
+        var p=project(node,30);if(!p)return;
+        var color=PALETTE[node.color],hot=mode==='overview'||node.owner===currentScene;
+        var r=clamp(4+p.scale*2,3.5,6.5);
+        if(node.preparation&&mode==='overview'){r=2;hot=false;}
+        glow(p.x,p.y,r*3,color,hot?.27:.10);
+        ctx.beginPath();ctx.arc(p.x,p.y,r,0,TAU);ctx.strokeStyle=rgba(color,hot?.8:.33);ctx.lineWidth=.8;ctx.stroke();
+        ctx.fillStyle=rgba(color,hot?.8:.4);ctx.beginPath();ctx.arc(p.x,p.y,1.9,0,TAU);ctx.fill();
+        var labelRequired=node===bootstrap||node===join;
+        if(node.preparation){
+          if(mode==='scene'&&currentScene===1&&p.x>safeLeft+5&&p.x<width-35&&p.y>safeTop&&p.y<height-safeBottom+12)smallLabels.push({p:p,text:node.label,color:color,hot:true,priority:2,fontSize:14});
+        }else if(node.infraDetail&&mode==='scene'&&currentScene===2&&p.x>safeLeft+5&&p.x<width-35&&p.y>safeTop&&p.y<height-safeBottom+12){
+          smallLabels.push({p:p,text:node.label,color:color,hot:true,priority:2,fontSize:14});
+        }else if((mode!=='overview'||node===bootstrap)&&node.color!=='gold'&&(hot||labelRequired)&&p.x>safeLeft+5&&p.x<width-35&&p.y>safeTop&&p.y<height-safeBottom+12)smallLabels.push({p:p,text:node.label,color:color,hot:hot,priority:0});
+      });
+      if(mode==='overview'){var prepCaption=project(vec(-1420,135,385));if(prepCaption)smallLabels.push({p:prepCaption,text:'Облако / Vault',color:PALETTE.gold,hot:false,priority:0});}
+      [[infraCSR,infraCCM],[clientCSR,clientCCM]].forEach(function(pair){var p=project(vec((pair[0].x+pair[1].x)/2,(pair[0].y+pair[1].y)/2,(pair[0].z+pair[1].z)/2));if(p&&p.x>safeLeft&&p.x<width-25&&p.y>safeTop&&p.y<height-safeBottom)smallLabels.push({p:p,text:'CSR approver + CCM · L0',color:PALETTE.gold,hot:true,priority:1});});
+      var ordered=main.map(function(n,i){return {n:n,i:i,p:project(n,80)};}).filter(function(a){return !!a.p;}).sort(function(a,b){return b.p.depth-a.p.depth;});
+      ordered.forEach(function(item){
+        var node=item.n,i=item.i,p=item.p,active=mode==='scene'&&currentScene===i,hover=hovered===i;
+        var color=PALETTE[node.color],r=active?12:mode==='overview'?6.2:clamp(6+p.scale*2,6,10);
+        if(active){
+          hologram(node,p,color,i,t);
+        }
+        glow(p.x,p.y,active?90:hover?51:28,color,active?.36:hover?.3:.15);
+        ctx.strokeStyle=rgba(color,active?.88:.55);ctx.lineWidth=active?1.2:.75;
+        ctx.beginPath();ctx.arc(p.x,p.y,r+(active?11:5),0,TAU);ctx.stroke();
+        ctx.fillStyle=rgba(color,.20);ctx.beginPath();ctx.arc(p.x,p.y,r,0,TAU);ctx.fill();
+        ctx.shadowColor=color;ctx.shadowBlur=active?20:7;ctx.fillStyle=active?'#efffff':rgba(color,.92);ctx.beginPath();ctx.arc(p.x,p.y,active?4:2.7,0,TAU);ctx.fill();ctx.shadowBlur=0;
+        if(active){ctx.strokeStyle=rgba(color,.42);ctx.lineWidth=.65;ctx.beginPath();ctx.moveTo(p.x-31,p.y);ctx.lineTo(p.x-23,p.y);ctx.moveTo(p.x+23,p.y);ctx.lineTo(p.x+31,p.y);ctx.moveTo(p.x,p.y-31);ctx.lineTo(p.x,p.y-23);ctx.stroke();}
+        if(p.x>=safeLeft-25&&p.x<width+20&&p.y>safeTop-30&&p.y<height-safeBottom+40)labels.push({p:p,text:node.label,sub:subtitles[i],color:color,active:active,i:i});
+        if(p.x>safeLeft&&p.x<width&&p.y>0&&p.y<height)hits.push({index:i,x:p.x,y:p.y,radius:active?30:20,depth:p.depth});
+      });
+      // Give the selected station first choice of label space.
+      labels.sort(function(a,b){return Number(b.active)-Number(a.active);}).forEach(function(l){drawLabel(l.p,l.text,l.sub,l.color,l.active,l.i,occupied);});
+      smallLabels.sort(function(a,b){return b.priority-a.priority;}).forEach(function(l){
+        var fs=l.fontSize||(mode==='overview'?11:12);ctx.font='500 '+fs+'px Inter, system-ui, sans-serif';var tw=ctx.measureText(l.text).width;
+        var r=freeLabel(l.p,tw+14,24,l.p.y+16,occupied,false);if(!r)return;occupied.push(r);
+        if(Math.hypot(r.x+r.w/2-l.p.x,r.y+r.h/2-l.p.y)>36){ctx.strokeStyle=rgba(l.color,.17);ctx.lineWidth=.55;ctx.beginPath();ctx.moveTo(l.p.x,l.p.y);ctx.lineTo(r.x+r.w/2,r.y+r.h/2);ctx.stroke();}
+        ctx.fillStyle='rgba(4,10,17,.87)';roundRect(r.x,r.y,r.w,r.h,4);ctx.fill();ctx.font='500 '+fs+'px Inter, system-ui, sans-serif';ctx.fillStyle=rgba(l.color,l.hot?.88:.62);ctx.fillText(l.text,r.x+7,r.y+16);
+      });
+    }
+    function draw(t) {
+      ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,width,height);
+      calculateBasis();background(t);renderPaths(t);renderNodes(t);
+      lastEye=basis.eye;
+    }
+    function tick(now) {
+      frameId=0;if(destroyed)return;
+      var dt=Math.min(.04,Math.max(.001,(now-(lastTime||now-16.7))/1000));lastTime=now;
+      if(!reduced)elapsed+=dt;
+      var moving=false;
+      Object.keys(camera).forEach(function(k){
+        var delta=goal[k]-camera[k];
+        if(reduced){camera[k]=goal[k];speed[k]=0;return;}
+        speed[k]+=delta*25*dt;speed[k]*=Math.exp(-8.6*dt);camera[k]+=speed[k]*dt;
+        var threshold=k==='yaw'||k==='pitch'?.00003:.035;
+        if(Math.abs(delta)>threshold||Math.abs(speed[k])>threshold)moving=true;else{camera[k]=goal[k];speed[k]=0;}
+      });
+      draw(elapsed);
+      if(!destroyed&&(!reduced||moving)&&!document.hidden)frameId=requestAnimationFrame(tick);
+    }
+    function invalidate() { if(!destroyed&&!frameId)frameId=requestAnimationFrame(tick); }
+    function local(event) { var r=canvas.getBoundingClientRect();return {x:event.clientX-r.left,y:event.clientY-r.top}; }
+    function hitAt(p) {
+      var sorted=hits.slice().sort(function(a,b){return a.depth-b.depth;});
+      for(var i=0;i<sorted.length;i++){var h=sorted[i],r=h.label;if(Math.hypot(p.x-h.x,p.y-h.y)<h.radius||(r&&p.x>=r.x&&p.x<=r.x+r.w&&p.y>=r.y&&p.y<=r.y+r.h))return h.index;}
+      return -1;
+    }
+    function down(e) {
+      if(e.button!==0&&e.button!==2)return;
+      var p=local(e);drag={id:e.pointerId,x:p.x,y:p.y,startX:p.x,startY:p.y,moved:false,pan:e.shiftKey||e.button===2};
+      if(canvas.setPointerCapture)canvas.setPointerCapture(e.pointerId);canvas.style.cursor='grabbing';
+    }
+    function move(e) {
+      var p=local(e);
+      if(drag&&drag.id===e.pointerId){
+        var dx=p.x-drag.x,dy=p.y-drag.y;
+        if(Math.hypot(p.x-drag.startX,p.y-drag.startY)>4)drag.moved=true;
+        if(drag.moved){
+          if(drag.pan||e.shiftKey){var unit=goal.distance/focal;goal.x-=basis.right.x*dx*unit-basis.up.x*dy*unit;goal.y-=basis.right.y*dx*unit-basis.up.y*dy*unit;goal.z-=basis.right.z*dx*unit-basis.up.z*dy*unit;}
+          else{goal.yaw-=dx*.004;goal.pitch=clamp(goal.pitch+dy*.003,-.85,1.1);}
+          notifyMotion();invalidate();
+        }
+        drag.x=p.x;drag.y=p.y;
+      }else{var h=hitAt(p);if(h!==hovered){hovered=h;canvas.style.cursor=h>=0?'pointer':'grab';invalidate();}}
+    }
+    function up(e) {
+      if(!drag||drag.id!==e.pointerId)return;
+      var was=drag;drag=null;if(canvas.releasePointerCapture&&canvas.hasPointerCapture&&canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);
+      canvas.style.cursor='grab';
+      if(!was.moved){var index=hitAt(local(e));if(index>=0){if(typeof settings.onSelect==='function')settings.onSelect(index);else setScene(index);}}
+    }
+    function cancel(){drag=null;canvas.style.cursor='grab';}
+    function wheel(e) {
+      e.preventDefault();var amount=e.deltaY*(e.deltaMode===1?18:e.deltaMode===2?height:1);
+      goal.distance=clamp(goal.distance*Math.exp(clamp(amount,-200,200)*.0014),420,overviewDistance()*2.1);notifyMotion();invalidate();
+    }
+    function contextmenu(e){e.preventDefault();}
+    function leave(){if(!drag){hovered=-1;canvas.style.cursor='grab';invalidate();}}
+    function visibility(){lastTime=0;if(!document.hidden)invalidate();else if(frameId){cancelAnimationFrame(frameId);frameId=0;}}
+    function preference(){reduced=!motionEnabled||!!(motionMedia&&motionMedia.matches);if(reduced)setGoal(Object.assign({},goal),true);invalidate();}
+    function setMotion(enabled){motionEnabled=enabled!==false;preference();}
+    var bindings=[['pointerdown',down],['pointermove',move],['pointerup',up],['pointercancel',cancel],['pointerleave',leave],['contextmenu',contextmenu]];
+    bindings.forEach(function(b){canvas.addEventListener(b[0],b[1]);});canvas.addEventListener('wheel',wheel,{passive:false});
+    document.addEventListener('visibilitychange',visibility);
+    if(motionMedia){if(motionMedia.addEventListener)motionMedia.addEventListener('change',preference);else if(motionMedia.addListener)motionMedia.addListener(preference);}
+    var observer=typeof ResizeObserver!=='undefined'?new ResizeObserver(resize):null;
+    if(observer)observer.observe(canvas);else window.addEventListener('resize',resize);
+    resize();
+    function destroy(){
+      if(destroyed)return;destroyed=true;if(frameId)cancelAnimationFrame(frameId);frameId=0;
+      if(observer)observer.disconnect();else window.removeEventListener('resize',resize);
+      bindings.forEach(function(b){canvas.removeEventListener(b[0],b[1]);});canvas.removeEventListener('wheel',wheel);
+      document.removeEventListener('visibilitychange',visibility);
+      if(motionMedia){if(motionMedia.removeEventListener)motionMedia.removeEventListener('change',preference);else if(motionMedia.removeListener)motionMedia.removeListener(preference);}
+      canvas.style.touchAction=previousTouchAction;canvas.style.cursor=previousCursor;hits=[];
+    }
+    return {setScene:setScene,overview:overview,reset:reset,setMotion:setMotion,destroy:destroy};
+  }
+  window.FlightMap={create:create};
+})();
+</script>
+<script>(() => {
+ 'use strict';
+ const scenes=window.FlightContent.scenes;
+ const names=['ClusterClaim','Подготовка','Infra + bootstrap','Фазы L1','Vault + KMS','Cluster client','Control plane L2','Статус CAPI','Готовый L2'];
+ const $=id=>document.getElementById(id);
+ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ let current=-1,auto=false,flightTimer=0,toastTimer=0;
+ const map=window.FlightMap.create({canvas:$('universe'),onSelect:index=>go(index),onMotion:()=>{pause();$('map-hint').textContent='Свободный ракурс · выберите остановку';}});
+ const shortTitle=s=>s.replace(/\n/g,' ');
+ function updateAuto(){ $('autoplay').setAttribute('aria-pressed',String(auto));$('autoplay-label').textContent=auto?'Пауза':'Автополёт';$('autoplay').querySelector('.play-icon').textContent=auto?'Ⅱ':'▷';$('flight-state').textContent=auto?'АВТОПОЛЁТ · 18 СЕК / ЭТАП':current<0?'ОБЗОР МАРШРУТА':'ОСТАНОВКА / '+names[current].toUpperCase();}
+ function pause(){auto=false;clearTimeout(flightTimer);updateAuto();}
+ function schedule(){clearTimeout(flightTimer);if(!auto)return;flightTimer=setTimeout(()=>{if(current>=8){pause();return;}go(current+1,{keepAuto:true});schedule();},18000);}
+ function toggleAuto(){if(auto){pause();return;}auto=true;if(current<0||current===8)go(0,{keepAuto:true});updateAuto();schedule();}
+ function render(){
+  const overview=current<0,s=scenes[Math.max(0,current)];
+  document.querySelector('.story').classList.remove('arrive');
+  $('story-index').textContent=overview?'ЭКСПЕДИЦИЯ / L0 — L2':String(current+1).padStart(2,'0')+' / '+s.eyebrow;
+  $('story-title').innerHTML=overview?'Одна заявка.<br><span>Целая платформа.</span>':s.title.split('\n').map((part,i)=>i?'<span>'+esc(part)+'</span>':esc(part)).join('<br>');
+  $('story-summary').textContent=overview?'Маршрут через три уровня Kubernetes. Проследите, как операторы создают инфраструктуру, готовят доступы и запускают клиентский кластер.':s.summary;
+  $('facts').innerHTML=overview?'<div class="intro-layer"><b>L0</b><span>Управление и оркестрация</span></div><div class="intro-layer"><b>L1</b><span>Инфраструктура и control plane L2</span></div><div class="intro-layer"><b>L2</b><span>Клиентский Kubernetes</span></div>':s.facts.map(f=>'<details class="fact" name="flight-facts"><summary>'+esc(f.label)+'</summary><p>'+esc(f.body)+'</p></details>').join('');
+  $('next').innerHTML=(overview?'Начать полёт':current===8?'Весь маршрут':'Следующая остановка')+' <span aria-hidden="true">'+(current===8?'↗':'→')+'</span>';
+  $('previous').disabled=overview;
+  $('takeaway').innerHTML=overview?'Девять остановок. Параллельные ветки. Одна готовая платформа.':s.parallel?'<span class="parallel-inline">ПАРАЛЛЕЛЬНО</span>'+esc(s.parallel):esc(s.takeaway);
+  $('takeaway').classList.toggle('with-parallel',!overview&&!!s.parallel);
+  $('flight-count').textContent=overview?'09 ОСТАНОВОК':String(current+1).padStart(2,'0')+' / 09 · '+s.layer;
+  $('map-hint').textContent='Вращайте карту мышью · колесо — масштаб';
+  document.querySelectorAll('.stop').forEach((el,i)=>{el.classList.toggle('done',i<current);if(i===current)el.setAttribute('aria-current','step');else el.removeAttribute('aria-current');});
+  $('notes-title').textContent=overview?'От заявки до готовой платформы':shortTitle(s.title);$('notes-time').textContent=overview?'10–15 МИНУТ · 9 ЭТАПОВ':'ОСТАНОВКА '+(current+1)+' · '+s.minute;$('notes-body').textContent=overview?'Начните с общего маршрута. Каждая остановка показывает один этап создания платформы, а расходящиеся траектории — параллельные процессы. Нажмите «Начать полёт» и двигайтесь по этапам по ходу рассказа. Карту можно вращать и приближать, затем вернуться к выбранной остановке кнопкой «Вернуть ракурс».':s.note;
+  updateAuto();document.title=(overview?'Platform Odyssey':names[current]+' · Platform Odyssey')+' · PRO Robotech';
+  void document.querySelector('.story').offsetWidth;document.querySelector('.story').classList.add('arrive');
+ }
+ function go(index,options={}){
+  if(!options.keepAuto)pause();current=Math.max(-1,Math.min(8,index));
+  if(current<0)map.overview({immediate:!!options.immediate});else map.setScene(current,{immediate:!!options.immediate});
+  if(!options.fromHash)history.replaceState(null,'',current<0?'#overview':'#stop-'+(current+1));render();
+ }
+ function next(){go(current<0?0:current===8?-1:current+1);}
+ function back(){go(current<=0?-1:current-1);}
+ function notes(){const shown=$('notes-panel').hidden;if(shown)pause();$('notes-panel').hidden=!shown;$('notes').setAttribute('aria-expanded',String(shown));}
+ function toast(s){clearTimeout(toastTimer);$('toast').textContent=s;$('toast').hidden=false;toastTimer=setTimeout(()=>{$('toast').hidden=true;},4000);}
+ $('route').innerHTML=names.map((name,i)=>'<button class="stop" data-stop="'+i+'" aria-label="Остановка '+(i+1)+': '+esc(name)+'"><span class="stop-dot" aria-hidden="true"></span><span class="stop-num">'+String(i+1).padStart(2,'0')+'</span><span class="stop-label">'+esc(name)+'</span></button>').join('');
+ $('route').addEventListener('click',e=>{const n=e.target.closest('[data-stop]');if(n)go(Number(n.dataset.stop));});
+ $('facts').addEventListener('toggle',e=>{if(e.target.open)pause();},true);
+ $('next').addEventListener('click',next);$('previous').addEventListener('click',back);$('overview').addEventListener('click',()=>go(-1));$('autoplay').addEventListener('click',toggleAuto);
+ $('recenter').addEventListener('click',()=>{if(current<0)map.overview();else map.setScene(current);$('map-hint').textContent='Вращайте карту мышью · колесо — масштаб';});
+ $('notes').addEventListener('click',notes);$('close-notes').addEventListener('click',notes);
+ $('about').addEventListener('click',()=>{pause();$('about-dialog').showModal();});$('close-about').addEventListener('click',()=>$('about-dialog').close());
+ $('about-dialog').addEventListener('click',e=>{if(e.target===$('about-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
+ $('fullscreen').addEventListener('click',async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{toast('Откройте HTML в отдельном браузере и нажмите F11.');}});
+ document.addEventListener('keydown',e=>{if(e.altKey||e.ctrlKey||e.metaKey||$('about-dialog').open||e.target.closest('input,textarea,select'))return;
+  if(e.key==='Escape'){pause();if(!$('notes-panel').hidden)notes();return;}
+  if(['ArrowRight','PageDown'].includes(e.key)){e.preventDefault();next();}
+  else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();back();}
+  else if(e.key===' '&&!e.target.closest('button,a,summary')){e.preventDefault();toggleAuto();}
+  else if(/^[1-9]$/.test(e.key))go(Number(e.key)-1);
+  else if(e.key==='Home'||['m','ь'].includes(e.key.toLowerCase()))go(-1);
+  else if(e.key==='End')go(8);
+  else if(['n','т'].includes(e.key.toLowerCase()))notes();
+  else if(['f','а'].includes(e.key.toLowerCase()))$('fullscreen').click();
+ });
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();});
+ function readHash(){const m=location.hash.match(/^#stop-([1-9])$/);return m?Number(m[1])-1:-1;}
+ window.addEventListener('hashchange',()=>go(readHash(),{fromHash:true}));
+ go(readHash(),{immediate:true,fromHash:true});
+})();
+</script>
+</body>
+</html>

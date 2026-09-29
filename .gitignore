@@ -1,0 +1,27 @@
+# Keep the published presentation and its editable sources.
+/work/*
+!/work/webinar/
+/work/webinar/*
+!/work/webinar/build-beget.py
+!/work/webinar/beget/
+!/work/webinar/brand/
+
+/work/webinar/beget/*
+!/work/webinar/beget/*.js
+!/work/webinar/beget/*.css
+!/work/webinar/beget/shell.html
+
+/work/webinar/brand/*
+!/work/webinar/brand/*.woff2
+!/work/webinar/brand/beget-official-fonts.css
+!/work/webinar/brand/beget-official-logo-white.svg
+!/work/webinar/brand/beget-favicon.png
+!/work/webinar/brand/source.md
+
+__pycache__/
+*.py[cod]
+.DS_Store
+*~
+.env
+.env.*
+!.env.example
