@@ -39,10 +39,12 @@ for (let index = 0; index < 150; index++) {
 const map = createStarMap(chapters, { entrance: false });
 find('#map').append(map.svg);
 map.apply(0, 0);
-// Star names under the text would only compete with it.
-for (const star of map.svg.querySelectorAll('.s-star')) {
-  const x = Number(star.getAttribute('transform')?.match(/translate\((-?[\d.]+)/)?.[1] ?? 0);
-  if (x < 520) star.querySelector('.s-name')?.remove();
+// The same map one frame width to the left, so the part past the right edge re-enters on the left.
+find('#map-wrap').append(map.svg.cloneNode(true));
+// Star names under the text would only compete with it, and those past the right edge are cut off.
+for (const name of document.querySelectorAll('.og-map .s-name')) {
+  const box = name.getBoundingClientRect();
+  if (box.left < 700 || box.right > 1200 - 16) name.remove();
 }
 
 // Timeline: chapters in proportion to their events, stage marks where a level first appears.
