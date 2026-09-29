@@ -21,6 +21,7 @@
 .view-switcher-check{flex:none;color:var(--vs-accent);font-size:14px}
 .view-switcher-swatch{display:block;flex:none;width:17px;height:17px;border:1px solid #ffffff3b;border-radius:5px;background:#172c4c}
 .view-switcher-swatch-platform-beget{background:radial-gradient(circle at 70% 30%,#bfc9ff 0 8%,transparent 13%),linear-gradient(135deg,#182e50,#332a67)}
+.view-switcher-swatch-platform-beget-atlas{background:linear-gradient(90deg,transparent 7px,#f4f4f5 7px 8px,transparent 8px),linear-gradient(0deg,transparent 7px,#60a5fa 7px 8px,transparent 8px),#27272a}
 .view-switcher-swatch-platform-beget-light-v1{background:linear-gradient(135deg,#fff 50%,#4a9ef5 50%);border-color:#b5c8e2}
 .view-switcher-swatch-platform-story{background:linear-gradient(135deg,#152033 55%,#6caeff 55%)}
 .view-switcher-swatch-platform-story-dark-v1{background:linear-gradient(135deg,#111b2a 55%,#73d6c6 55%)}

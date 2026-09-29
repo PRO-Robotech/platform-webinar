@@ -15,7 +15,7 @@ const fingerprint = createHash('sha256').update(JSON.stringify(chapters)).digest
 const metadata = `<meta name="platform-flow" content="${fingerprint}">`;
 const stamp = (html: string): string => html.replace(/<meta name="platform-flow" content="[^"]+">/g, '').replace('</head>', `${metadata}</head>`);
 
-async function runtime(family: 'classic' | 'flight' | 'view-switcher'): Promise<string> {
+async function runtime(family: 'classic' | 'flight' | 'atlas' | 'view-switcher'): Promise<string> {
   const result = await build({
     root,
     configFile: false,
@@ -38,17 +38,32 @@ async function runtime(family: 'classic' | 'flight' | 'view-switcher'): Promise<
   return chunks[0].code.replace(/<\/script/gi, '<\\/script');
 }
 
-async function themedPage(family: 'classic' | 'flight'): Promise<string> {
+async function themedPage(family: 'classic' | 'flight' | 'atlas', fonts = ''): Promise<string> {
   const shell = await readFile(resolve(root, `templates/${family}/shell.html`), 'utf8');
   const style = await readFile(resolve(root, `templates/${family}/style.css`), 'utf8');
   const code = await runtime(family);
-  return shell.replace('__STYLE__', () => `${style}\n${switcherStyle}`).replace('__SCRIPT__', () => code);
+  return shell.replace('__STYLE__', () => `${fonts}\n${style}\n${switcherStyle}`).replace('__SCRIPT__', () => code);
+}
+
+/** PT Sans and PT Sans Caption, embedded so the file works offline. */
+async function embeddedFonts(): Promise<string> {
+  const css = await readFile(resolve(root, 'src/assets/atlas-fonts.css'), 'utf8');
+  const faces = css.match(/@font-face\{[^}]+\}/g) ?? [];
+  if (!faces.length) throw new Error('Font faces are missing from atlas-fonts.css.');
+  const embedded = await Promise.all(faces.map(async face => {
+    const file = face.match(/url\(\.\/([^)]+\.woff2)\)/)?.[1];
+    if (!file) throw new Error('A font face has no local woff2 source.');
+    const data = (await readFile(resolve(root, 'src/assets', file))).toString('base64');
+    return face.replace(/url\([^)]+\)/, `url(data:font/woff2;base64,${data})`);
+  }));
+  return embedded.join('\n');
 }
 
 const switcherStyle = await readFile(resolve(root, 'src/versions/view-switcher.css'), 'utf8');
 const narrativeSwitcher = await runtime('view-switcher');
 const classic = await themedPage('classic');
 const flight = await themedPage('flight');
+const atlas = await themedPage('atlas', await embeddedFonts());
 await mkdir(resolve(dist, 'outputs'), { recursive: true });
 for (const version of versions) {
   let html: string;
@@ -59,6 +74,7 @@ for (const version of versions) {
       .replace('</body>', () => `<script>${narrativeSwitcher}</script></body>`);
   } else if (version.family === 'classic') html = classic;
   else if (version.family === 'flight') html = flight;
+  else if (version.family === 'atlas') html = atlas;
   else html = await readFile(resolve(outputs, `${version.name}.html`), 'utf8');
   html = html.replace(/href="(?:\.\/)?(?:outputs\/)?[\w-]*guide[\w-]*\.md"/g, `href="${version.guide}.md"`);
   await writeFile(resolve(outputs, `${version.name}.html`), stamp(html));

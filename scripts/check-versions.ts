@@ -7,6 +7,9 @@ import { Script } from 'node:vm';
 import { chapters } from '../src/flow.ts';
 import { versions } from '../src/versions/catalog.ts';
 import { createFlightContent } from '../src/versions/flight.ts';
+import { validatePlacement } from '../src/versions/atlas-layout.ts';
+import { validateStarMap } from '../src/versions/atlas-intro.ts';
+import { intro } from '../src/navigation.ts';
 import type { Chapter } from '../src/types.ts';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -40,6 +43,10 @@ for (const chapter of chapters) {
     for (const id of [edge.from, edge.to]) assert(chapter.nodes.find(node => node.id === id)!.at <= edge.at);
   }
 }
+
+// The atlas skin places every zone, block and edge override on its own grid.
+const placementProblems = [validatePlacement('intro', intro), ...chapters.map(chapter => validatePlacement(chapter.id, chapter)), validateStarMap(chapters)].flat();
+assert.deepEqual(placementProblems, [], `Atlas layout is out of date:\n${placementProblems.join('\n')}`);
 
 const flight = createFlightContent(chapters);
 assert.equal(flight.scenes.length, beats.length);
