@@ -125,6 +125,11 @@ a{color:inherit}
 .n.on .sym{color:var(--paper)}
 .n.on .kind{fill:var(--paper-2)}
 .n.new .box{stroke:var(--signal)}
+/* Frame marks by kind: coloured like the frame, so they follow the block's state. */
+.n .deco{fill:none;stroke:rgba(var(--tint),.32);stroke-width:1.5;stroke-linejoin:round;transition:stroke .24s var(--ease),fill .24s var(--ease)}
+.n.on .deco{stroke:var(--focus-line)}
+.n.new .deco{stroke:var(--signal)}
+.n.dashed .box{stroke-dasharray:6 4}
 .n.new .kind{fill:var(--signal)}
 .n.new .sym{color:var(--signal)}
 .n.ready .check{opacity:1}

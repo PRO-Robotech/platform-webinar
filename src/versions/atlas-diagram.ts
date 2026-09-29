@@ -163,6 +163,35 @@ export function symbol(kind: NodeKind, parent: Element): void {
   }
 }
 
+/**
+ * Each kind of block keeps the same rectangle but gets its own mark, always inside the
+ * block: machines show a small rack of three squares, storage a double base, a cloud a
+ * dashed outline, a gate a double frame, a participant rounded corners. Resources,
+ * operators, apps and endpoints — most of the map — stay plain, so the marks keep their meaning.
+ * Marks are coloured like the frame, so they follow the block's state.
+ */
+function frameOver(kind: NodeKind, g: SVGGElement, w: number, h: number): void {
+  if (kind === 'machines') {
+    // Three small squares in the bottom-right corner, one above two, like a rack of servers.
+    const size = 8;
+    const gap = 3;
+    const right = w - PAD;
+    const bottom = h - PAD;
+    for (const [x, y] of [[right - size, bottom - size * 2 - gap], [right - size * 2 - gap, bottom - size], [right - size, bottom - size]]) {
+      el('rect', { class: 'deco', x: x + .75, y: y + .75, width: size - 1.5, height: size - 1.5 }, g);
+    }
+  } else if (kind === 'storage') {
+    // A second line just above the bottom edge: a base.
+    el('path', { class: 'deco', d: `M.75 ${h - 5}H${w - .75}` }, g);
+  } else if (kind === 'gate') {
+    // A double frame: a checkpoint.
+    el('rect', { class: 'deco', x: 4.75, y: 4.75, width: w - 9.5, height: h - 9.5 }, g);
+  } else if (kind === 'cloud') {
+    // A dashed outline over the frame: outside the platform.
+    g.classList.add('dashed');
+  }
+}
+
 /** The arrowhead is a separate filled element, so it can appear after the line is drawn. */
 export function arrowhead(path: string): string {
   const list = [...path.matchAll(/[ML](-?[\d.]+) (-?[\d.]+)/g)].map(match => [Number(match[1]), Number(match[2])]);
@@ -295,7 +324,8 @@ export function createDiagram(id: string, scene: DiagramScene, label: string, op
   const nodes: NodeView[] = scene.nodes.map(node => {
     const rect = geometry.nodes.get(node.id)!;
     const g = el('g', { class: 'n', transform: `translate(${rect.x} ${rect.y})`, role: 'img', 'data-node': node.id }, nodeLayer);
-    el('rect', { class: 'box', x: .75, y: .75, width: rect.w - 1.5, height: rect.h - 1.5 }, g);
+    el('rect', { class: 'box', x: .75, y: .75, width: rect.w - 1.5, height: rect.h - 1.5, rx: node.kind === 'user' ? 10 : 0 }, g);
+    frameOver(node.kind, g, rect.w, rect.h);
     return { node, rect, g, content: el('g', {}, g), key: '' };
   });
 
