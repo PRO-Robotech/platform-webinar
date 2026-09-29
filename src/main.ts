@@ -1,14 +1,11 @@
 import './assets/beget-official-fonts.css';
 import './style.css';
-import { chapters } from './content';
-import { applyGraphsA } from './graphs-a';
-import { applyGraphsB } from './graphs-b';
+import './versions/view-switcher.css';
+import { mountViewSwitcher } from './versions/view-switcher';
+import { chapters } from './flow';
 import { render as renderDiagram } from './diagram';
 import { startSpace } from './space';
 import type { DiagramScene, NodeKind, TextLines } from './types';
-
-applyGraphsA(chapters);
-applyGraphsB(chapters);
 
 function element<T extends HTMLElement>(selector: string, type: { new(): T }): T {
   const found = document.querySelector(selector);
@@ -243,3 +240,4 @@ void document.fonts.ready.then(alignFrame);
 startSpace();
 const initial = hashState();
 go(initial.chapter, initial.step, { fromHash: true });
+mountViewSwitcher(chapters.map(chapter => chapter.beats.length), import.meta.env.DEV ? './outputs/' : './');

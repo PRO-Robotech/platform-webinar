@@ -2,11 +2,11 @@
 <html lang="ru"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark">
 <meta name="description" content="Как платформа создаёт клиентский Kubernetes: от ClusterClaim и подготовки L1 до client control plane и аддонов L2.">
-<title>От заказа до Kubernetes · L0 / L1 / L2</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b1017'/%3E%3Cpath d='M12 22 32 12 52 22 32 32ZM12 32 32 42 52 32M12 42 32 52 52 42' fill='none' stroke='%23ff825c' stroke-width='4'/%3E%3C/svg%3E">
+<title>От заказа до Kubernetes · Beget</title>
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAABI1BMVEUAAABA1SI4vVdA1SQTy90Bktk5wFEBhNM4vFo8x0IBxO87xEg9zDdB1x8BsOc5vlQBvOwBouAASrk+0qs6wU5B1x4BwO4ZzNYBidUAVb43t2M5vlQBtukBquQBdc0Ba8g90qs3t2M5vlQ9zTQBx/E/0SwBtukBqeQAPbRK1JwASrk+0qo7xUZA1SJB1iFA1SMBxvABm90BmtwBbMgBa8gx0Lky0Lg9yzc/0SsASrkASbk7xUZA1SIByPEBx/A4u1tB1x8lzsc7xUY9yzdA1SQBgNEBdc0Ba8gAYMMAVb4x0Lk3t2M5vlQ6wU49yTw+zzA/0ioByPEBuusBsugAYcMBwe4LyuUBquQBouABmt0BktkYzNYZzNUBidUNyuMXwrAtxm2DlfbNAAAAP3RSTlMAYCDAYGBgQNDAYGBgIPDw0NDQ0NDQwMDAwMDAYGBgYGBgQEAwMCAgICDw8PDw8NDAwMDAwMDAkJBgYFBQQEBuRzXvAAABNElEQVQ4y62R11bCQBiEN4QYCQTBQlGa0uy9t/SEICWNDur7P4VwPGZzdhO8Ya7+2fnO5M8uWK2ojKJqjexzQFxPjsazBaFvHvrltfhgeE3RdOG2oR/7EQnbzv9OxXkHnjM9K/c3Fx39CQMueylobpwsBpgmA01BczCgb1agoVUNAyb9Nw+gqBggTMLQUDMFA+6ENDRX4wwGlJqCW5EfjiiAacslcvYgCXAdnTSFdLjyzqQsK14HfsS8Y/opdb6/EjXgr9K9MJU6orgdAsEqxyJiewMhEEXbrXX89PEBzmstbh/NXw3pBbo9bhfJ2TNDOg3BCu4DAXZkQxLhhw9cAIrnq+AfgPBs6QOQPIksiYhwK+BvInvyMrHsogB7LstkrFwNvmr2Qja63aWPRZALIBL1nv0A5V8vZGuCGZAAAAAASUVORK5CYII=">
 <style>:root{--bg:#0b1017;--text:#edf1f4;--muted:#a2aebd;--subtle:#708093;--line:#ffffff16;--orange:#ff825c;--cyan:#65d9e5;--lime:#d2f58b;--font:Inter,"Segoe UI",Arial,sans-serif;--mono:Consolas,"Liberation Mono",monospace}
 *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased}a{color:inherit}button{font:inherit;cursor:pointer;border:0;color:inherit}button:disabled{cursor:default;opacity:.28}button:focus-visible,a:focus-visible,[role=button]:focus-visible{outline:2px solid var(--orange);outline-offset:4px}[hidden]{display:none!important}
-.deck{min-height:100svh;max-width:1920px;margin:auto;padding:0 clamp(20px,3.2vw,64px);position:relative;overflow:hidden;background:radial-gradient(ellipse at 82% 45%,#19354920,transparent 52%)}.masthead{height:82px;display:flex;align-items:center;gap:25px;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:13px;text-decoration:none;white-space:nowrap;font-size:17px;letter-spacing:-.6px;font-weight:750}.brand-light{font-weight:450;margin-left:5px}.brand-symbol{width:26px;display:grid;gap:4px;transform:skewY(-17deg)}.brand-symbol i{display:block;height:5px;background:var(--orange)}.brand-symbol i:nth-child(2){width:20px}.brand-symbol i:nth-child(3){width:14px}.masthead-caption{font:10px var(--mono);letter-spacing:1.5px;color:var(--subtle);margin-left:auto}.header-actions{display:flex;align-items:center;gap:23px;margin-left:auto}.quiet{background:none;font-size:12px;color:var(--muted);padding:10px 0}.quiet:hover{color:var(--text)}kbd{margin-left:7px;font:10px var(--mono);border:1px solid #ffffff25;border-radius:3px;padding:2px 4px}.icon-button{display:inline-grid;place-items:center;width:38px;height:38px;background:transparent;border:1px solid #ffffff24;border-radius:50%;font-size:21px;line-height:1;color:#c4cdd7}.icon-button:hover{border-color:var(--orange);color:var(--orange)}
+.deck{min-height:100svh;max-width:1920px;margin:auto;padding:0 clamp(20px,3.2vw,64px);position:relative;overflow:hidden;background:radial-gradient(ellipse at 82% 45%,#19354920,transparent 52%)}.masthead{height:82px;display:flex;align-items:center;gap:25px;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;flex-shrink:0;text-decoration:none}.brand-logo{display:block;width:87px;height:40px;object-fit:contain}.masthead-caption{font:10px var(--mono);letter-spacing:1.5px;color:var(--subtle);margin-left:auto}.header-actions{display:flex;align-items:center;gap:23px;margin-left:auto}.quiet{background:none;font-size:12px;color:var(--muted);padding:10px 0}.quiet:hover{color:var(--text)}kbd{margin-left:7px;font:10px var(--mono);border:1px solid #ffffff25;border-radius:3px;padding:2px 4px}.icon-button{display:inline-grid;place-items:center;width:38px;height:38px;background:transparent;border:1px solid #ffffff24;border-radius:50%;font-size:21px;line-height:1;color:#c4cdd7}.icon-button:hover{border-color:var(--orange);color:var(--orange)}
 .stage-layout{display:grid;grid-template-columns:minmax(330px,.84fr) minmax(480px,1.46fr);align-items:center;gap:30px;min-height:calc(100svh - 195px);padding:25px 0}.story{min-width:0}.eyebrow{font:10px var(--mono);color:var(--orange);letter-spacing:1.5px;display:flex;gap:10px;align-items:center;margin-bottom:23px;line-height:1.5}.section-marker{width:6px;height:6px;background:var(--orange);flex-shrink:0}h1{font-size:clamp(34px,3.45vw,67px);font-weight:550;letter-spacing:-.052em;line-height:1.11;margin:0 0 23px}h1 span{color:#a4b0bf}.scene-description{font-size:clamp(14px,1.2vw,19px);color:#aeb9c7;line-height:1.7;margin:0 0 25px;max-width:500px}.stage-list{display:flex;flex-direction:column;gap:1px;max-width:520px}.step-button{display:flex;align-items:center;gap:13px;text-align:left;background:transparent;padding:10px 0;color:#7b8a9d;font-size:12px;line-height:1.4;min-height:37px}.step-number{font:10px var(--mono);width:22px;height:22px;display:grid;place-items:center;flex-shrink:0;border:1px solid #ffffff19;border-radius:50%;color:#8490a1}.step-button.done{color:#b5c0cd}.step-button.done .step-number{border-color:#65d9e54a;color:var(--cyan)}.step-button[aria-current=step]{color:var(--text)}.step-button[aria-current=step] .step-number{background:var(--orange);border-color:var(--orange);color:#21150f}.step-button:hover{color:var(--text)}.story-actions{display:flex;gap:21px;align-items:center;flex-wrap:wrap;margin-top:24px}.primary{padding:14px 19px;border-radius:4px;background:var(--orange);color:#181512;font-size:13px;font-weight:600;display:flex;gap:34px;align-items:center;min-height:46px}.primary:hover{background:#ff956f}.primary span{font-size:19px}.step-count{font:10px var(--mono);letter-spacing:1px;color:var(--subtle)}.takeaway{min-height:43px;margin-top:24px;color:var(--cyan);font-size:12px;line-height:1.65;padding-left:14px;border-left:1px solid #65d9e54a;max-width:460px;display:flex;align-items:center;transition:opacity .2s}.takeaway.pending{opacity:0;pointer-events:none}
 .visual{align-self:stretch;display:flex;flex-direction:column;justify-content:center;min-width:0}.visual-topline,.visual-bottomline{display:flex;align-items:center;justify-content:space-between;gap:14px;font:9px var(--mono);letter-spacing:.8px;color:#8998ab}.visual-topline{padding:0 10px}.visual-kicker{color:#9aa8b8;letter-spacing:1px}.demo-label{font-size:8px;letter-spacing:.8px;white-space:nowrap;color:#607287}.diagram-wrap{position:relative;width:100%;margin:16px 0 10px;min-height:0}.diagram-wrap>svg{width:100%;height:auto;max-height:calc(100svh - 280px);display:block;overflow:visible}.diagram-wrap [data-component]{cursor:pointer}.diagram-wrap [data-component]:hover{filter:brightness(1.12)}.visual-bottomline{padding:0 10px;letter-spacing:0;font-size:10px;color:#75869a}.scene-time{font:10px var(--mono)}
 .navigation{display:flex;align-items:center;gap:22px;border-top:1px solid var(--line);height:77px}.chapter-count{display:flex;align-items:baseline;gap:7px;width:58px;flex-shrink:0;font:20px var(--mono)}.total-number{font-size:11px;color:var(--subtle)}.chapters{display:flex;align-items:stretch;flex:1;gap:6px;min-width:0}.chapter{flex:1;text-align:left;background:none;position:relative;padding:13px 3px 9px;min-width:0;color:var(--subtle)}.chapter:before{content:"";position:absolute;left:3px;right:3px;top:0;height:2px;background:#ffffff12}.chapter[aria-current=step]{color:var(--text)}.chapter[aria-current=step]:before{background:var(--orange)}.chapter.done:before{background:#ff825c55}.chapter-number{font:9px var(--mono);display:block;margin-bottom:5px}.chapter-title{font-size:10px;white-space:nowrap}.transport{display:flex;gap:8px}.bottom-hints{height:36px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;font:9px var(--mono);color:#6f8196}.hint-dot{margin:0 8px;color:#425162}.text-button{background:none;font:9px var(--mono);color:var(--muted);padding:0;line-height:1.5}.edition{letter-spacing:1.2px}
@@ -16,15 +16,117 @@ dialog{color:var(--text);border:1px solid #3a4654;background:#111923;border-radi
 @media(min-width:821px) and (max-height:800px){.masthead{height:72px}.stage-layout{min-height:calc(100svh - 176px);padding:12px 0;gap:24px}.eyebrow{margin-bottom:18px;font-size:9px}h1{font-size:clamp(32px,3.25vw,48px);margin-bottom:18px}.scene-description{font-size:14px;line-height:1.6;margin-bottom:16px}.step-button{padding:7px 0;min-height:32px;font-size:11px}.step-number{width:21px;height:21px}.story-actions{margin-top:19px}.primary{padding:11px 16px;min-height:43px}.takeaway{margin-top:19px;min-height:35px;font-size:11px}.navigation{height:68px}.diagram-wrap>svg{max-height:calc(100svh - 250px)}}
 @media(max-width:820px){.deck{padding:0 22px}.masthead{height:74px;gap:15px}.header-actions{gap:14px}.stage-layout{grid-template-columns:1fr;min-height:0;padding-top:30px;gap:26px}.scene-description{max-width:600px;font-size:16px}h1{font-size:clamp(36px,6.8vw,55px);max-width:680px}.eyebrow{margin-bottom:18px}.stage-list{max-width:600px}.step-button{font-size:13px;padding:8px 0;min-height:38px}.story-actions{margin-top:20px}.takeaway{min-height:35px;margin-top:19px;font-size:12px}.visual{padding-bottom:5px}.diagram-wrap>svg{max-height:none}.navigation{height:auto;min-height:89px;flex-wrap:wrap;gap:15px;padding:16px 0}.chapters{order:3;flex-basis:100%;gap:3px}.transport{margin-left:auto}.chapter-count{width:auto}.chapter-title{font-size:9px}.bottom-hints{height:auto;min-height:45px;align-items:center;flex-wrap:wrap;font-size:8px;padding:5px 0 12px}.edition{display:none}.notes-panel{right:16px;top:75px}}
 @media(max-width:600px){.diagram-wrap>svg{display:none}.mobile-flow{display:flex;flex-direction:column;gap:11px;padding:10px 0}.mobile-flow-step{background:transparent;color:var(--text);border:0;text-align:left;display:flex;align-items:flex-start;gap:13px;border-left:2px solid #65d9e54a;padding:9px 14px}.mobile-flow-step.current{border-color:var(--orange);background:#ff825c08}.mobile-flow-step b{font:12px var(--mono);color:var(--orange);padding-top:3px}.mobile-flow-step span{font-size:14px;line-height:1.55}.mobile-flow-status{font:10px var(--mono);color:var(--subtle);padding:10px 0}.diagram-wrap{margin:10px 0}.visual-bottomline span:first-child{visibility:hidden}.overview-svg{overflow:auto}.overview-svg>svg{min-width:620px}.overview-fallback{display:block}}
-@media(max-width:450px){.deck{padding:0 18px}.brand{font-size:14px;gap:9px}.brand-symbol{width:21px}.brand-light{margin-left:4px}.header-actions{gap:12px}.quiet{font-size:10px}.quiet kbd{display:none}.header-actions .icon-button{width:31px;height:31px}.masthead{gap:10px}.chapter-title{display:none}.chapter-number{font-size:10px;margin:0}.chapter{padding:12px 3px}.visual-topline{font-size:8px;padding:0;gap:8px}.demo-label{font-size:7px}.visual-bottomline{padding:0;font-size:9px}.bottom-hints{font-size:8px}.hint-dot{margin:0 3px}.scene-description{font-size:15px}.step-button{font-size:12px}.step-count{font-size:9px}.primary{font-size:12px;gap:24px}}
+@media(max-width:450px){.deck{padding:0 18px}.brand-logo{width:78.3px;height:36px}.header-actions{gap:12px}.quiet{font-size:10px}.quiet kbd{display:none}.header-actions .icon-button{width:31px;height:31px}.masthead{gap:10px}.chapter-title{display:none}.chapter-number{font-size:10px;margin:0}.chapter{padding:12px 3px}.visual-topline{font-size:8px;padding:0;gap:8px}.demo-label{font-size:7px}.visual-bottomline{padding:0;font-size:9px}.bottom-hints{font-size:8px}.hint-dot{margin:0 3px}.scene-description{font-size:15px}.step-button{font-size:12px}.step-count{font-size:9px}.primary{font-size:12px;gap:24px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 @media print{.header-actions,.navigation,.bottom-hints,.story-actions,.stage-list{display:none}.stage-layout{min-height:0;grid-template-columns:1fr 1.5fr}.diagram-wrap>svg{max-height:none}.takeaway.pending{opacity:1}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
-</style></head><body>
+
+/* The classic palette and chrome stay intact; the shared wide diagrams get a full row. */
+.nd-root{font-family:var(--font)!important}
+.deck{height:100svh;min-height:680px;display:flex;flex-direction:column}
+.masthead{height:65px;flex-shrink:0}
+.stage-layout{display:flex;flex-direction:column;align-items:stretch;gap:8px;min-height:0;flex:1;padding:18px 0 12px}
+.story{display:grid;grid-template-columns:minmax(0,1fr) 315px;column-gap:42px;grid-template-rows:20px 72px 68px;flex-shrink:0;align-items:start}
+.eyebrow{grid-column:1;grid-row:1;margin:0;font-size:9px;white-space:nowrap}
+.story h1{grid-column:1;grid-row:2;font-size:clamp(28px,2.8vw,42px);line-height:1.12;letter-spacing:-.045em;margin:0;max-width:100%;align-self:center}
+.scene-description{grid-column:1;grid-row:3;align-self:center;max-width:950px;font-size:clamp(13px,1.1vw,17px);line-height:1.5;margin:0;color:#aeb9c7}
+.stage-list{grid-column:2;grid-row:1 / 3;align-self:center;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;width:100%;max-width:none;padding:0}
+.step-button{display:grid;place-items:center;padding:7px 0;min-height:35px}
+.step-number{width:29px;height:29px;font-size:11px}
+.step-label{display:none}
+.story-actions{grid-column:2;grid-row:3;align-self:center;margin:0;gap:12px;flex-wrap:nowrap;justify-content:space-between}
+.primary{padding:12px 15px;font-size:12px;gap:16px;min-height:43px;white-space:nowrap}
+.step-count{font-size:9px;white-space:nowrap}
+.visual{align-self:auto;min-height:200px;flex:1;justify-content:flex-start}
+.visual-topline{font-size:9px;padding:0;min-height:15px}
+.diagram-wrap{margin:5px 0;flex:1;min-height:0;display:flex;justify-content:center}
+.diagram-wrap>svg{display:block;height:100%;width:100%;max-height:none}
+.visual-bottomline{font-size:9px;padding:0;min-height:14px}
+.takeaway{font-size:12px;margin:4px 0 0;max-width:100%;min-height:37px;flex-shrink:0}
+.navigation{height:66px;flex-shrink:0;gap:16px}
+.chapter-title{display:block;font-size:10px;white-space:normal;line-height:1.25}
+.chapter{padding-top:10px;padding-bottom:6px}
+.chapter-number{margin-bottom:3px}
+.bottom-hints{height:28px;flex-shrink:0;padding-top:5px}
+.overview-fallback{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.overview-chapter{display:flex;gap:14px;padding:16px;text-align:left;background:#16212e;border:1px solid #ffffff1a;border-radius:5px}
+.overview-chapter>span{font:13px var(--mono);color:var(--orange);padding-top:2px}
+.overview-chapter h3{font:17px/1.3 var(--font);color:var(--text);margin:0 0 7px}
+.overview-chapter p{font-size:13px;line-height:1.5;margin:0}
+.overview-chapter small{display:block;margin-top:12px;font:10px var(--mono);color:var(--cyan)}
+.overview-chapter:hover{border-color:var(--orange)}
+@media(min-width:1700px){
+ .masthead{height:80px}.stage-layout{padding-top:22px;gap:12px}
+ .story{grid-template-columns:minmax(0,1fr) 385px;grid-template-rows:25px 85px 75px}
+ .story h1{font-size:43px}.scene-description{font-size:18px}.eyebrow{font-size:11px}
+ .stage-list{gap:9px}.step-number{width:35px;height:35px;font-size:12px}
+ .primary{font-size:14px;min-height:48px}.step-count{font-size:10px}
+ .takeaway{font-size:15px;min-height:46px}.navigation{height:81px}.chapter-title{font-size:12px}
+ .visual-topline,.visual-bottomline{font-size:11px}
+}
+@media(max-width:1000px) and (min-width:821px){
+ .story{grid-template-columns:minmax(0,1fr) 265px;column-gap:24px}
+ .stage-list{gap:2px}.step-number{width:25px;height:25px;font-size:10px}
+ .primary{font-size:11px;padding:10px;gap:8px}.step-count{font-size:8px}
+ .chapter-title{font-size:9px}
+}
+@media(max-width:820px){
+ .deck{height:auto;min-height:100svh}.masthead{height:70px}
+ .stage-layout{padding:22px 0 18px;gap:16px}
+ .story{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto;row-gap:14px}
+ .eyebrow,.story h1,.scene-description,.stage-list,.story-actions{grid-column:1;grid-row:auto}
+ .eyebrow{font-size:9px;white-space:normal}.story h1{font-size:32px;min-height:72px;align-self:start}
+ .scene-description{font-size:15px;min-height:90px;align-self:start}
+ .stage-list{width:315px;max-width:100%;gap:5px;align-self:start}.story-actions{justify-content:flex-start;gap:22px}
+ .visual{min-height:0}.diagram-wrap{overflow-x:auto;padding:5px 0 14px;justify-content:flex-start;flex:none}
+ .diagram-wrap>svg{display:block;min-width:900px;height:auto;width:100%;flex-shrink:0}
+ .visual-bottomline span:first-child{visibility:visible;font-size:9px}
+ .takeaway{min-height:40px;font-size:13px;margin:0}
+ .navigation{height:auto;min-height:94px;padding:12px 0}.chapters{gap:6px}.chapter-title{display:block;font-size:9px}
+ .bottom-hints{height:auto;min-height:33px}.overview-fallback{grid-template-columns:1fr}
+}
+@media(max-width:450px){.story h1{font-size:29px}.chapter-title{display:none}.visual-topline{font-size:8px}.overview-chapter h3{font-size:16px}}
+@media print{.deck{height:auto;min-height:0}.stage-layout{display:flex}.story{display:block}.story h1{margin:15px 0}.visual{height:400px}.takeaway{margin-top:20px}.diagram-wrap>svg{min-width:0}.visual-bottomline{display:none}}
+
+[data-view-switcher-host]{gap:8px}
+.view-switcher{--vs-bg:#111d2d;--vs-fg:#eaf1fb;--vs-muted:#94a7bf;--vs-line:#34445c;--vs-accent:#8cb9fa;--vs-hover:#1d3048;position:relative;z-index:80;flex:none;pointer-events:auto;color:var(--vs-fg);font-family:inherit;line-height:1.4;letter-spacing:normal}
+.view-switcher[data-theme=light]{--vs-bg:#fff;--vs-fg:#172b46;--vs-muted:#62758e;--vs-line:#d4deeb;--vs-accent:#2269c7;--vs-hover:#eef5fd;color-scheme:light}
+.view-switcher-trigger{display:flex;align-items:center;justify-content:center;gap:7px;min-width:36px;height:36px;padding:0 10px;border:1px solid var(--vs-line);border-radius:18px;background:transparent;color:var(--vs-muted);font-family:inherit;font-size:11px;font-weight:500;line-height:1;list-style:none;cursor:pointer;user-select:none;white-space:nowrap}
+.view-switcher-trigger::-webkit-details-marker{display:none}
+.view-switcher-trigger::marker{content:""}
+.view-switcher-trigger:hover,.view-switcher[open]>.view-switcher-trigger{background:var(--vs-hover);color:var(--vs-fg);border-color:var(--vs-accent)}
+.view-switcher-icon,.view-switcher-chevron{display:block;flex:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.view-switcher[open] .view-switcher-chevron{transform:rotate(180deg)}
+.view-switcher-panel{position:absolute;inset:auto 0 auto auto;top:calc(100% + 10px);display:block;width:294px;max-width:calc(100vw - 32px);max-height:calc(100svh - 96px);overflow:auto;padding:16px 10px 10px;border:1px solid var(--vs-line);border-radius:12px;background:var(--vs-bg);box-shadow:0 18px 55px #0006;text-align:left;color:var(--vs-fg);isolation:isolate}
+.view-switcher:not([open])>.view-switcher-panel{display:none}
+.view-switcher-caption{margin:0 9px 3px;color:var(--vs-fg);font-size:13px;font-weight:600;line-height:1.4;letter-spacing:0}
+.view-switcher-hint{margin:0 9px 12px;color:var(--vs-muted);font-size:11px;font-weight:400;line-height:1.5;letter-spacing:0}
+.view-switcher-list{display:grid;gap:3px;margin:0;padding:0;list-style:none}
+.view-switcher-list>li{margin:0;padding:0;list-style:none}
+.view-switcher-link{display:flex;align-items:center;gap:10px;min-height:38px;margin:0;padding:9px;border:1px solid transparent;border-radius:7px;color:var(--vs-fg);text-decoration:none;font-size:12px;font-weight:400;line-height:1.45;letter-spacing:0}
+.view-switcher-link:hover,.view-switcher-link[aria-current=page]{background:var(--vs-hover);color:var(--vs-fg)}
+.view-switcher-link[aria-current=page]{border-color:var(--vs-line)}
+.view-switcher-trigger:focus-visible,.view-switcher-link:focus-visible{outline:2px solid var(--vs-accent);outline-offset:2px}
+.view-switcher-label{flex:1;min-width:0}
+.view-switcher-check{flex:none;color:var(--vs-accent);font-size:14px}
+.view-switcher-swatch{display:block;flex:none;width:17px;height:17px;border:1px solid #ffffff3b;border-radius:5px;background:#172c4c}
+.view-switcher-swatch-platform-beget{background:radial-gradient(circle at 70% 30%,#bfc9ff 0 8%,transparent 13%),linear-gradient(135deg,#182e50,#332a67)}
+.view-switcher-swatch-platform-beget-light-v1{background:linear-gradient(135deg,#fff 50%,#4a9ef5 50%);border-color:#b5c8e2}
+.view-switcher-swatch-platform-story{background:linear-gradient(135deg,#152033 55%,#6caeff 55%)}
+.view-switcher-swatch-platform-story-dark-v1{background:linear-gradient(135deg,#111b2a 55%,#73d6c6 55%)}
+.view-switcher-swatch-platform-flight{background:linear-gradient(135deg,#121b39 40%,#b189ff 42%,#172948 55%)}
+.view-switcher-swatch-platform-flight-v1{background:linear-gradient(135deg,#121b39 40%,#6dc7ff 42%,#172948 55%)}
+.view-switcher-swatch-platform-webinar{background:linear-gradient(135deg,#101923 50%,#ff825c 50%)}
+.view-switcher-swatch-platform-webinar-classic{background:linear-gradient(135deg,#101923 50%,#65d9e5 50%)}
+@media(max-width:1100px){.view-switcher-trigger-label{display:none}.view-switcher-trigger{width:36px;padding:0}.view-switcher-chevron{display:none}}
+@media(max-width:450px){[data-view-switcher-host]{gap:6px}.view-switcher-trigger{width:32px;height:32px;min-width:32px}.view-switcher-panel{width:278px;padding:14px 8px 8px}.view-switcher-link{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.view-switcher *{animation:none!important;transition:none!important}}
+@media print{.view-switcher{display:none!important}}
+</style><meta name="platform-flow" content="983a9d9a70a88b44b01c7921e3dd04211b8dcfaf8d09365704f05e1bf201a86d"></head><body>
 <div class="deck" id="deck">
 <header class="masthead">
- <a class="brand" href="#scene-1-step-1" aria-label="PRO Robotech, начало презентации"><span class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i></span><span>PRO<span class="brand-light">ROBOTECH</span></span></a>
+ <a class="brand" href="#chapter-1-step-1" aria-label="Beget, начало презентации"><img class="brand-logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4NyIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDg3IDQwIiBmaWxsPSJub25lIj4KICAgIDxwYXRoIGQ9Ik01MS4xMTY5IDIzLjcwMThDNTUuMzcyNiAyNi43MTM1IDU2LjA2ODkgMzIuMTA3MyA1My42Nzg3IDM1LjkxMDNDNTEuMzAzMSAzOS42OTAzIDQ2LjUzODkgNDEuMDYxOCA0Mi41NzE0IDM5LjEzNjRDMzguODU4MiAzNy4zMzQ2IDM2LjI1OTEgMzIuNTMyNiAzOC40NTE4IDI3LjMyMDJDMzguMDk1NSAyNy4yNjU4IDM3Ljc1NTQgMjcuMjEzIDM3LjQxNTQgMjcuMTYwM0MzNy40MDQgMjcuMTE3NCAzNy4zOTI3IDI3LjA3MjkgMzcuMzgxMyAyNy4wM0MzOC43MDExIDI2LjU4NSA0MC4wMjA5IDI2LjEzOTkgNDEuNDA4NyAyNS42NzAxQzQxLjYwNjMgMjcuMTQwNSA0MS43OTU4IDI4LjU0NSA0MS45ODM2IDI5Ljk0NzhDNDEuOTQ4IDI5Ljk2NiA0MS45MTA3IDI5Ljk4NTcgNDEuODc1MSAzMC4wMDM5QzQxLjU5MDEgMjkuNTgwMiA0MS4zMDM1IDI5LjE1ODIgNDEuMDA4NyAyOC43MjE0QzM5Ljk0MTYgMzAuNjEzOCA0MC40MDQ3IDMzLjQ4NzEgNDIuMDM1NCAzNS4yNTA5QzQzLjg3NSAzNy4yMzkgNDYuNzg5OSAzNy43MjIgNDkuMTQyOSAzNi40MjYzQzUxLjQ5NTggMzUuMTMwNiA1Mi43MDU1IDMyLjM1NzkgNTIuMDYyNiAyOS43Mjg2QzUxLjQwMzUgMjcuMDMzMyA0OS4xMDQgMjUuMTcwNiA0Ni4zOTggMjUuMTM5M0M0MS44NDQzIDI1LjA4NjUgMzguMjQ0NSAyMS44MTc2IDM3LjY3NzcgMTcuMjIzM0MzNy4xNTQ2IDEyLjk3ODUgMzkuOTQgOC44NTI0MyA0NC4xMDM0IDcuNzEwMDRDNDguMDU2MyA2LjYyMzcgNTIuMjI5NCA4LjUyMjczIDU0LjA5NjUgMTIuMjU4MkM1NS45NjA0IDE1Ljk4NTMgNTUuMDA2NiAyMC41MzUxIDUxLjgxMzIgMjMuMTUyOUM1MS41OTQ2IDIzLjMyOTIgNTEuMzcxMSAyMy41MDA3IDUxLjExNjkgMjMuNzAxOFpNNDAuNDUwMSAxNi4yMzU5QzQwLjQzODcgMTkuNTYyNSA0My4wNDI3IDIyLjI1NjEgNDYuMjg5NSAyMi4yNzc1QzQ5LjU2MjMgMjIuMjk5IDUyLjIzOTEgMTkuNjAzNyA1Mi4yNDQgMTYuMjgyMUM1Mi4yNDcyIDEyLjk4MTggNDkuNjAyOCAxMC4yNzY3IDQ2LjM2NCAxMC4yNjg1QzQzLjEwNTggMTAuMjU4NiA0MC40NjE0IDEyLjkyOTEgNDAuNDUwMSAxNi4yMzU5WiIgZmlsbD0id2hpdGUiLz4KICAgIDxwYXRoIGQ9Ik0zLjk5NTI0IDEyLjM0MzdDNC4zMzg1NSAxMC45MzEgNC42Mzk3NSA5LjYxNzE0IDQuOTkxMTYgOC4zMTgxNUM1LjAzOTc0IDguMTM2ODIgNS4zMTM0MSA3Ljk2ODY4IDUuNTE5MDcgNy44ODk1NUM4LjYxMzY5IDYuNzEwOSAxMi4wNjk0IDcuNzE2NDYgMTQuMjYzNyAxMC40MTk5QzE3Ljg0NzQgMTQuODMxMiAxNi41MDk4IDIxLjgwMjYgMTEuNTk5OCAyNC4zMDVDNy40NjIzMiAyNi40MTMzIDIuNDg3NjEgMjQuMzk0IDAuNzExMTU3IDE5LjgwNjNDMC4zMTQ0MSAxOC43ODI2IDAuMDU1MzEwOSAxNy42MzIgMC4wNDA3MzY1IDE2LjUzNThDLTAuMDI3Mjc3MSAxMS4xNDM2IDAuMDA4MzQ5MDYgNS43NDgyIDAuMDA4MzQ5MDYgMC4zNTQ0MkMwLjAwODM0OTA2IDAuMjQzOTczIDAuMDE5Njg0NyAwLjEzNTE3NCAwLjAyNjE2MjIgMEMwLjk1NDA2MiAwLjAwMTY0ODQ2IDEuODQ0NzIgMC4wMDE2NDg0NiAyLjgxNzk2IDAuMDAxNjQ4NDZDMi44MTc5NiAwLjIyMDg5NCAyLjgxNzk2IDAuNDQwMTQgMi44MTc5NiAwLjY2MTAzNEMyLjgxNzk2IDUuODQ1NDYgMi44MTc5NiAxMS4wMjk5IDIuODE3OTYgMTYuMjEyN0MyLjgxNzk2IDE3LjgxNjYgMy4yODc1OCAxOS4yNTQxIDQuMzQwMTcgMjAuNDYwN0M2LjQ3Nzc0IDIyLjkxMiA5LjkwNDMzIDIyLjg4MjMgMTIuMDE2IDIwLjQwOEMxNC4xMTk2IDE3Ljk0NTIgMTMuOTQ3OSAxMy45OTU1IDExLjY0MTkgMTEuNzM1NEM5LjY0MTk5IDkuNzc3MDUgNi42NjIzNSA5Ljc3ODY5IDQuNjU5MTkgMTEuNzM3MUM0LjQ3Mjk2IDExLjkxODQgNC4yNzUzOSAxMi4wODgyIDMuOTk1MjQgMTIuMzQzN1oiIGZpbGw9IndoaXRlIi8+CiAgICA8cGF0aCBkPSJNMzUuMjQwNiAxNy42OTc3QzMzLjA2NDEgMTcuNjk3NyAzMC44NzggMTcuNjk3NyAyOC42OTAyIDE3LjY5NzdDMjYuNTAyNSAxNy42OTc3IDI0LjMxNjMgMTcuNjk3NyAyMi4wNTczIDE3LjY5NzdDMjIuNTkzMyAxOS43NjY1IDIzLjY5MjggMjEuMjYxNyAyNS42NDI2IDIxLjk5MDNDMjcuNjU4NyAyMi43NDM2IDI5LjQwOTIgMjIuMTQwMyAzMS40NjEgMjAuMDM2OUMzMi4yMzUgMjAuNDk4NCAzMy4wMTg4IDIwLjk2NSAzMy44NDc5IDIxLjQ1OTVDMzIuNTAwNiAyMy4zODk4IDMwLjc4MDggMjQuNjU0MiAyOC41MjAyIDI1LjAxMTlDMjQuMDI5NyAyNS43MjI0IDE5Ljg2NzkgMjIuNDY2NyAxOS4yMjE4IDE3Ljc5MTdDMTguODA1NiAxNC43Nzk5IDE5LjUyMTMgMTIuMTAyOCAyMS42MDA2IDkuODkzODZDMjUuNjQ1OCA1LjU5MzAyIDMyLjQ1ODUgNy4wNzk5NCAzNC43MTI3IDEyLjcyOTJDMzUuMzU4OCAxNC4zNDMxIDM1LjU1OTYgMTYuMTgxMSAzNS4yNDA2IDE3LjY5NzdaTTMyLjM2NjIgMTQuODE3OEMzMi4wNTg1IDEyLjI5NTcgMjkuNjIxNCAxMC4yMTM3IDI3LjEwOTcgMTAuMjY0OEMyNC43MzA5IDEwLjMxNDIgMjIuMzExNSAxMi41MTgyIDIyLjEzMzQgMTQuODE3OEMyNS41MzU3IDE0LjgxNzggMjguOTM2NCAxNC44MTc4IDMyLjM2NjIgMTQuODE3OFoiIGZpbGw9IndoaXRlIi8+CiAgICA8cGF0aCBkPSJNNzMuNDU2NCAxNy42OTNDNjkuMDYzIDE3LjY5MyA2NC43MDM3IDE3LjY5MyA2MC4yNTY5IDE3LjY5M0M2MC43Mzc4IDE5LjY0NjQgNjEuNzM4NiAyMS4xMjM1IDYzLjUzOTQgMjEuODYzNkM2NS45OTExIDIyLjg3MjUgNjcuOTg2MSAyMi4wMjM1IDY5LjYzNjMgMjAuMDMyMkM3MC40MjE3IDIwLjQ5ODcgNzEuMTk1NyAyMC45NTcgNzIuMDM3OCAyMS40NTgxQzcxLjg2NzggMjEuNjkwNSA3MS43MjUzIDIxLjkwMzIgNzEuNTY2NiAyMi4xMDFDNjguMzA4NCAyNi4xNDQ3IDYyLjU3MjYgMjYuMTQ0NyA1OS4zMDk2IDIyLjEwNDNDNTYuNDcyNCAxOC41ODk4IDU2LjY1MjIgMTMuMjU1MyA1OS43MTkzIDkuOTU1MTJDNjMuODcxMyA1LjQ4Nzc4IDcwLjkyMjEgNy4xMzYyNSA3My4wMzA1IDEzLjA2NzRDNzMuNTUxOSAxNC41MzI5IDczLjY5NjEgMTYuMDMxNCA3My40NTY0IDE3LjY5M1pNNzAuNTUxMiAxNC44MTQ4QzcwLjMzMSAxMi4zNDU0IDY3Ljc3ODkgMTAuMTgxIDY1LjIxODYgMTAuMjdDNjIuODY4OSAxMC4zNTI0IDYwLjM3MTkgMTIuNjc4NCA2MC4zNDU5IDE0LjgxNDhDNjMuNzQ4MiAxNC44MTQ4IDY3LjE0ODkgMTQuODE0OCA3MC41NTEyIDE0LjgxNDhaIiBmaWxsPSJ3aGl0ZSIvPgogICAgPHBhdGggZD0iTTg1LjQwNzUgMjAuNjY5OUM4NS43MDg3IDIxLjU5MTQgODYuMDI0NCAyMi41MjYxIDg2LjMwNzggMjMuNDcwN0M4Ni4zNDUxIDIzLjU5NiA4Ni4yNTYgMjMuODMzMyA4Ni4xNDc1IDIzLjkyMDdDODMuNzAzOSAyNS44OTcyIDc5LjM0MTMgMjUuNDA3NiA3Ny4zNjU3IDIyLjk0NDhDNzYuNzU1MiAyMi4xODMyIDc2LjM5ODkgMjEuMzEyOCA3Ni4zOTczIDIwLjMyMjFDNzYuMzkyNCAxNC44MTI5IDc2LjM5NCA5LjMwMzc4IDc2LjM5NTcgMy43OTQ2MUM3Ni4zOTU3IDMuNjg0MTYgNzYuNDA4NiAzLjU3MjA2IDc2LjQxODMgMy40MzM1OUM3Ny4zMzQ5IDMuNDMzNTkgNzguMjI1NiAzLjQzMzU5IDc5LjE4NDIgMy40MzM1OUM3OS4xODQyIDQuOTIzODEgNzkuMTg0MiA2LjQxODk2IDc5LjE4NDIgNy45NTg2M0M4MC44OTEgNy45NTg2MyA4Mi41MzE1IDcuOTU4NjMgODQuMjE1NiA3Ljk1ODYzQzg0LjIxNTYgOC45MjYyOCA4NC4yMTU2IDkuODQ2MTIgODQuMjE1NiAxMC44MTcxQzgyLjU2NzEgMTAuODE3MSA4MC45MjY3IDEwLjgxNzEgNzkuMjM0NCAxMC44MTcxQzc5LjIyMTUgMTEuMDQ0NiA3OS4yMDM3IDExLjIyNzUgNzkuMjAzNyAxMS40MDg5Qzc5LjIwMiAxNC4yODcxIDc5LjIxMzQgMTcuMTY1MyA3OS4xOTM5IDIwLjA0MzVDNzkuMTg5MSAyMC43MjQzIDc5LjQ2NzYgMjEuMjEyMyA3OS45NzkzIDIxLjU5MzFDODEuMTk3MSAyMi41MDMgODMuMzgxNiAyMi41MDggODQuNTg2NCAyMS41NzQ5Qzg0Ljg5MjUgMjEuMzQyNSA4NS4xMTQ0IDIwLjk5OTYgODUuNDA3NSAyMC42Njk5WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==" width="87" height="40" alt="Beget"></a>
  <div class="masthead-caption">ОТ ЗАКАЗА ДО KUBERNETES</div>
- <div class="header-actions"><button class="quiet" id="overview-button">Общая схема</button><button class="quiet" id="notes-button" aria-label="Заметки докладчика" aria-expanded="false">Заметки <kbd>N</kbd></button><button class="icon-button" id="fullscreen-button" aria-label="Полноэкранный режим" title="Полноэкранный режим (F)">⛶</button></div>
+ <div class="header-actions"><button class="quiet" id="overview-button">Весь путь</button><button class="quiet" id="notes-button" aria-label="Заметки докладчика" aria-expanded="false">Заметки <kbd>N</kbd></button><button class="icon-button" id="fullscreen-button" aria-label="Полноэкранный режим" title="Полноэкранный режим (F)">⛶</button></div>
 </header>
 <main class="stage-layout">
  <section class="story" aria-labelledby="scene-title">
@@ -32,556 +134,24 @@ dialog{color:var(--text);border:1px solid #3a4654;background:#111923;border-radi
   <h1 id="scene-title"></h1><p class="scene-description" id="scene-description"></p>
   <nav class="stage-list" id="stage-list" aria-label="Шаги текущей сцены"></nav>
   <div class="story-actions"><button class="primary" id="next-button">Продолжить <span aria-hidden="true">→</span></button><span class="step-count" id="step-count">ШАГ 01 / 04</span></div>
-  <div class="takeaway" id="takeaway"></div>
  </section>
  <section class="visual" aria-label="Схема текущего этапа">
   <div class="visual-topline"><span class="visual-kicker" id="visual-kicker"></span><span class="demo-label">СЦЕНАРИЙ СОЗДАНИЯ</span></div>
   <div class="diagram-wrap" id="diagram"></div>
   <div class="visual-bottomline"><span>Компоненты раскрываются по нажатию</span><span class="scene-time" id="scene-duration"></span></div>
  </section>
+ <div class="takeaway" id="takeaway" aria-live="polite"></div>
 </main>
 <footer class="navigation">
- <div class="chapter-count"><span id="current-number">01</span><span class="total-number">/ 09</span></div>
+ <div class="chapter-count"><span id="current-number">01</span><span class="total-number">/ 07</span></div>
  <nav class="chapters" id="chapters" aria-label="Сцены презентации"></nav>
  <div class="transport"><button class="icon-button" id="previous-button" aria-label="Предыдущий шаг">←</button><button class="icon-button" id="forward-button" aria-label="Следующий шаг">→</button></div>
 </footer>
-<div class="bottom-hints"><span>← → шаги <span class="hint-dot">·</span> 1–9 сцены <span class="hint-dot">·</span> F полный экран</span><button id="sources-button" class="text-button">О презентации</button><span class="edition">L0 / L1 / L2</span></div>
+<div class="bottom-hints"><span>← → шаги <span class="hint-dot">·</span> 1–7 главы <span class="hint-dot">·</span> F полный экран</span><button id="sources-button" class="text-button">О презентации</button><span class="edition">L0 / L1 / L2</span></div>
 </div>
 <dialog id="details-dialog" aria-labelledby="dialog-title"><div class="dialog-topline"><span id="dialog-kicker"></span><button class="icon-button" id="close-dialog" aria-label="Закрыть окно">×</button></div><h2 id="dialog-title"></h2><div id="dialog-content"></div></dialog>
 <aside id="notes-panel" class="notes-panel" aria-label="Заметки докладчика" hidden><div class="notes-header"><span>ЗАМЕТКИ ДОКЛАДЧИКА</span><button class="icon-button" id="close-notes" aria-label="Закрыть заметки">×</button></div><h2 id="notes-title"></h2><div class="notes-duration" id="notes-duration"></div><div id="notes-content"></div><p class="notes-tip">Заметки видны в этом окне. Перед показом экрана откройте отдельный сценарий на втором мониторе.</p></aside>
 <div class="toast" id="toast" role="status" hidden></div>
 <noscript>Включите JavaScript для показа последовательности. ClusterClaim задаёт итоговую версию платформы. L0 организует создание L1, а client control plane L2 работает как DaemonSet в L1 и использует etcd infra с отдельным префиксом.</noscript>
-<script>window.WebinarContent = {
-  scenes: [
-    {
-      nav: 'Целевая платформа',
-      label: 'CLUSTERCLAIM · L0',
-      title: 'Одна заявка.<br><span>Вся конфигурация.</span>',
-      text: 'ClusterClaim задаёт версию платформы: сети, версии аддонов, infra и client, а также ресурсы мастер-нод. Вместе эти параметры определяют целевую конфигурацию.',
-      takeaway: 'Целевая конфигурация задаёт версию всей платформы.',
-      duration: '01:10',
-      stages: ['Заказ → ClusterClaim', 'Параметры сети', 'Версии addons / infra / client', 'Ресурсы master nodes'],
-      notes: [
-        'Начните с того, что именно мы создаём. Вся целевая конфигурация задаёт версию платформы: сетевые параметры, версии инфраструктурного и клиентского Kubernetes, версии аддонов и ресурсы мастер-нод. Заявка ClusterClaim находится в управляющем кластере L0.',
-        'Последовательно раскройте три группы параметров. Это помогает отделить намерение от исполнения: сначала мы задаём, какой результат нужен, затем операторы разворачивают описание в ресурсы и доводят их до нужного состояния.',
-        'Дальше рассказ пойдёт по пути одной такой заявки. L0 координирует процесс, L1 станет инфраструктурной основой, а L2 — клиентским Kubernetes. Общую карту уровней можно открыть отдельно в любой момент.'
-      ]
-    },
-    {
-      nav: 'Подготовка',
-      label: 'СЕРТИФИКАТЫ И ДОСТУПЫ',
-      title: 'Подготавливаем<br><span>доверие и доступы.</span>',
-      text: 'Платформа подготавливает сертификаты, создаёт S3-бакет для резервных копий и сохраняет данные доступа в Vault. Эти зависимости потребуются следующим компонентам.',
-      takeaway: 'Сертификаты, хранилище и данные доступа готовятся до запуска следующих компонентов.',
-      duration: '01:10',
-      stages: ['ClusterClaimOperator', 'Сертификаты', 'S3 backup bucket', 'Credentials → Vault'],
-      notes: [
-        'Первый этап после заявки — подготовка внешних зависимостей. Платформа выпускает необходимые сертификаты и создаёт бакет для резервных копий. Покажите эти действия отдельно: сертификаты дают основу для доверенных соединений, бакет становится доступным ресурсом платформы.',
-        'Затем раскройте передачу credentials в Vault. Данные доступа должны оказаться в хранилище секретов, откуда их получат соответствующие компоненты. Так сведения о доступах связываются с конкретной создаваемой платформой.',
-        'На этой сцене важно показать порядок подготовки. Пока мы ещё не передаём клиенту Kubernetes: мы создаём необходимые условия для дальнейшего развёртывания инфраструктуры и её сервисов. Следующая сцена переводит заявку в инфраструктурный кластер.'
-      ]
-    },
-    {
-      nav: 'Основа L1',
-      label: 'CLUSTER API · INFRA',
-      title: 'L1 получает<br><span>свою основу.</span>',
-      text: 'В L0 вместе с Cluster infra создаются аддоны CSR approver и CCM. CAPI создаёт машины L1. После infra initialized запускается bootstrap: Cilium, CoreDNS, Argo CD и AddonOperator.',
-      takeaway: 'Bootstrap создаёт основу, на которой платформа сможет развернуть остальные аддоны.',
-      duration: '01:25',
-      stages: ['Cluster infra и служебные аддоны', 'CAPI', 'Машины L1 · инициализация', 'Bootstrap-компоненты'],
-      notes: [
-        'Заявка превращается в Cluster infra. В L0 параллельно с ресурсом Cluster создаются служебные аддоны: CSR approver для подписи сертификатов нод и CCM для интеграции с облаком. Покажите две ветки одновременно.',
-        'По основной ветке Cluster API подхватывает описание, создаются виртуальные машины и разворачивается инфраструктурный Kubernetes. Сначала подтверждается infra initialized. Затем запускается bootstrap: Cilium, CoreDNS, Argo CD и AddonOperator.',
-        'Bootstrap даёт сеть, DNS и средства дальнейшего развёртывания. Служебная ветка CSR approver и CCM начинается вместе с Cluster и имеет собственную задачу. После исходного набора L1 последовательно получает остальные аддоны, политики и настройки платформы.'
-      ]
-    },
-    {
-      nav: 'Доведение L1',
-      label: 'ADDONOPERATOR · ФАЗЫ',
-      title: 'Аддоны запускаются<br><span>в нужном порядке.</span>',
-      text: 'AddonOperator управляет фазами Argo CD Applications: mTLS, сетевые политики, мониторинг и логи. Завершает настройку host firewall с default deny.',
-      takeaway: 'Порядок развёртывания позволяет завершить L1 строгими сетевыми ограничениями.',
-      duration: '01:40',
-      stages: ['Addon → AddonOperator → Applications', 'mTLS и сетевые политики', 'Monitoring + logging', 'Host firewall + default deny'],
-      notes: [
-        'Теперь приблизьте AddonOperator. Он работает над Applications в Argo CD и задаёт фазы, зависимости и очередность. Благодаря этому состав платформы появляется последовательно, с учётом того, что должно быть подготовлено к запуску следующего компонента.',
-        'В этом процессе настраиваются mTLS и сетевые политики, разворачиваются мониторинг и сбор логов. Раскройте группы по очереди: зрителю важно увидеть управляемый порядок и назначение каждой группы, а не запомнить все имена ресурсов.',
-        'Завершающее действие — host firewall с политикой default deny. Подчеркните его положение в конце этой последовательности. На следующей сцене покажем ещё одну ветку работы, которая выполняется параллельно этому доведению и усилению защиты L1.'
-      ]
-    },
-    {
-      nav: 'Секреты и KMS',
-      label: 'VAULT · ПАРАЛЛЕЛЬНО С L1',
-      title: 'Vault готовит<br><span>доступы и ключи.</span>',
-      text: 'Параллельно настройке L1 в Vault создаются SA auth, точечные роли, индивидуальные высокоэнтропийные секреты и KMS transit для L2.',
-      takeaway: 'У компонентов свои права и секреты; ключи для L2 подготовлены к его запуску.',
-      duration: '01:25',
-      stages: ['Параллельно L1 + VaultAuth', 'SA и точечные роли', 'Уникальные секреты', 'KMS Transit Key'],
-      notes: [
-        'Эта ветка идёт параллельно работе AddonOperator над L1. Переведите внимание на Vault: здесь настраивается аутентификация через ServiceAccount и создаются точечные роли, соответствующие задачам отдельных компонентов. На схеме сохраните видимой параллельную ветку аддонов.',
-        'Далее создаются индивидуальные секреты с высокой энтропией. Объясните смысл без демонстрации значений: каждый компонент получает собственные данные доступа и необходимый ему набор прав. Так конфигурация доступов привязана к ролям внутри платформы.',
-        'Для будущего L2 также подготавливается KMS transit. К моменту запуска клиентского control plane у него должны быть готовы необходимые ключи и доступы. После подготовки зависимостей обе ветки сходятся перед переходом к созданию client.'
-      ]
-    },
-    {
-      nav: 'Заказ control plane',
-      label: 'L1 ГОТОВ · СОЗДАЁМ CLIENT',
-      title: 'L1 готов.<br><span>Запускаем client.</span>',
-      text: 'После готовности аддонов L1 в L0 создаются Cluster client и параллельные аддоны CSR approver и CCM. Через CAPI и AddonClaim разворачивается client-control-plane в infra.',
-      takeaway: 'Готовность аддонов L1 открывает переход к клиентскому control plane.',
-      duration: '01:25',
-      stages: ['L1 addons готовы', 'Cluster client и служебные аддоны', 'AddonClaim', 'Addon client-control-plane L1'],
-      notes: [
-        'Начните с барьера: аддоны L1 готовы. Только после этого создаётся Cluster client. Вместе с ним в L0 запускаются параллельные служебные аддоны: CSR approver для подписи сертификатов нод и CCM для интеграции с облаком.',
-        'Проследите основную цепочку: Cluster client, Cluster API, AddonClaim. Заявка на аддон приводит к появлению client-control-plane в infra-кластере. Служебную ветку сохраните видимой сбоку, чтобы показать одновременность действий при создании Cluster.',
-        'Клиентский Kubernetes описан через Cluster API, а управляющие компоненты доставляются как приложение в L1. Стандартные Cilium, CoreDNS и Konnectivity появятся позже в L2. Сейчас переходим к размещению control plane и хранению его состояния.'
-      ]
-    },
-    {
-      nav: 'Control plane как приложение',
-      label: 'РАЗМЕЩЕНИЕ L2 В L1',
-      title: 'Control plane L2 —<br><span>приложение в L1.</span>',
-      text: 'Клиентский control plane работает как DaemonSet на нодах infra. Он использует общий etcd L1 и хранит данные в отдельном префиксе.',
-      takeaway: 'Отдельный клиентский API опирается на управляющие компоненты и etcd внутри L1.',
-      duration: '01:40',
-      stages: ['Infra nodes L1', 'DaemonSet clientCP', 'Общий etcd L1', 'Отдельный префикс L2 / API'],
-      notes: [
-        'Приблизьте границу L1. Клиентский control plane развёрнут как обычное приложение: DaemonSet размещает его на нодах infra-кластера. При этом компоненты предоставляют API отдельного клиентского Kubernetes — L2. Место исполнения и обслуживаемый кластер показаны разными связями.',
-        'Теперь раскройте связь с etcd. Для состояния используется общий etcd инфраструктурного кластера. Данные клиентского control plane размещаются в отдельном префиксе: это разделение пространства ключей внутри используемого хранилища.',
-        'Удержите на экране одновременно приложение, etcd и клиентский API. Эта сцена объясняет центральную архитектурную идею: жизненным циклом управляющих компонентов L2 можно управлять средствами L1, а клиент взаимодействует с собственным Kubernetes API.'
-      ]
-    },
-    {
-      nav: 'Подтверждение создания',
-      label: 'СТАТУС CONTROL PLANE · CAPI',
-      title: 'Control plane создан.<br><span>CAPI получает статус.</span>',
-      text: 'Состояние control plane возвращается в Cluster API, и Cluster отмечается созданным. Далее платформа доводит клиентский кластер до передачи пользователю.',
-      takeaway: 'Создание control plane подтверждено; следующим шагом готовится стандартный состав L2.',
-      duration: '01:00',
-      stages: ['clientCP initialized', 'Статус CAPI', 'Cluster client initialized', 'Переход к аддонам L2'],
-      notes: [
-        'После запуска control plane его состояние проходит обратно по цепочке управления. Cluster API получает подтверждение, и объект Cluster отражает результат создания. Анимация теперь движется от работающего компонента к описывающему его ресурсу.',
-        'Подчеркните конкретный результат этого этапа: клиентский control plane создан и его инициализация подтверждена. Платформа получила основание перейти к развёртыванию стандартных компонентов в клиентском Kubernetes. Для истории это переход от создания управления к подготовке среды пользователя.',
-        'Не задерживайтесь на служебных именах условий. Лучше показать понятную отметку «Cluster создан» и следующий шаг. Пользователь получит готовый кластер после того, как в L2 появится предусмотренный набор базовых аддонов.'
-      ]
-    },
-    {
-      nav: 'Готовый клиентский кластер',
-      label: 'БАЗОВЫЕ АДДОНЫ · L2',
-      title: 'Базовые аддоны.<br><span>Готовый L2.</span>',
-      text: 'В L2 через AddonClaim разворачивается стандартный набор: Cilium, CoreDNS и Konnectivity. После его подготовки пользователь получает готовый кластер.',
-      takeaway: 'Путь заканчивается готовым клиентским Kubernetes со стандартными компонентами платформы.',
-      duration: '01:15',
-      stages: ['AddonClaim для L2', 'Cilium / CoreDNS', 'Konnectivity', 'Выдача пользователю'],
-      notes: [
-        'Последняя сцена переносит внимание с управляющих компонентов на сам клиентский кластер. Через AddonClaim в L2 разворачивается стандартный состав: Cilium, CoreDNS и Konnectivity. Покажите эти компоненты внутри логической границы L2.',
-        'Здесь важно завершить начатую историю: заявка описывала платформу целиком, поэтому процесс включает и подготовку клиентской среды. После стандартных аддонов пользователь получает готовый Kubernetes и может переходить к своим приложениям.',
-        'В конце откройте общую карту, если нужно повторить роли уровней: L0 координирует создание, L1 размещает инфраструктуру и client control plane, L2 предоставляет клиентский Kubernetes. На карте теперь можно проследить весь путь одной заявки и вернуться к любому компоненту для вопросов.'
-      ]
-    }
-  ],
-  components: {
-    infra_resource: {
-      title: 'Cluster infra', level: 'L0 · Ресурс Cluster API',
-      body: 'Оператор создаёт в L0 ресурс Cluster для будущего infra-кластера. Cluster API подхватывает его и создаёт машины L1.',
-      facts: ['Ресурс описания находится в L0', 'Машины формируют кластер L1', 'Параллельно в L0 создаются CSR approver и CCM'],
-      code: 'kind: Cluster'
-    },
-    client_resource: {
-      title: 'Cluster client', level: 'L0 · Ресурс Cluster API',
-      body: 'Оператор создаёт в L0 второй ресурс Cluster после готовности аддонов infra. Через Cluster API и AddonClaim он приводит к запуску client-control-plane в L1.',
-      facts: ['Ресурс описания находится в L0', 'Control plane клиентского L2 работает в L1', 'CSR approver и CCM работают в L0'],
-      code: 'kind: Cluster'
-    },
-    cluster_services: {
-      title: 'CSR approver и CCM', level: 'L0 · Параллельно созданию Cluster',
-      body: 'Служебные аддоны CSR approver и CCM работают в L0. Они создаются параллельно с ресурсом Cluster при запуске infra или client-кластера.',
-      facts: ['CSR approver подписывает сертификаты нод', 'CCM обеспечивает интеграцию с облаком', 'Эта ветка начинается при создании Cluster', 'Cilium, CoreDNS и Konnectivity устанавливаются в рамках других этапов']
-    },
-    observability: {
-      title: 'Мониторинг и логирование', level: 'L1 · Фазы установки аддонов',
-      body: 'AddonOperator организует установку компонентов мониторинга и сбора логов в ходе доведения L1 до целевого состояния.',
-      facts: ['Следуют фазам и зависимостям платформы', 'Дают наблюдаемость работы инфраструктуры', 'Устанавливаются до финального включения host firewall и default deny']
-    },
-    firewall: {
-      title: 'Host firewall и default deny', level: 'L1 · Завершение защиты',
-      body: 'Финальная фаза закрывает host firewall и включает default deny после подготовки компонентов и описания необходимых сетевых потоков.',
-      facts: ['Серверные интерфейсы защищены mTLS', 'Сетевые потоки описаны политиками', 'Мониторинг и логирование уже настроены', 'Host firewall и default deny включаются последними']
-    },
-    order: {
-      title: 'Заказ клиентского кластера', level: 'Начало создания',
-      body: 'Заказ задаёт нужную конфигурацию клиентской платформы и превращается в заявку ClusterClaim.',
-      facts: ['Выбранная версия платформы', 'Параметры сохраняются в ClusterClaim', 'Создание координируется из L0']
-    },
-    configuration: {
-      title: 'Состав версии платформы', level: 'Целевая конфигурация',
-      body: 'Версия платформы объединяет сети, версии аддонов, инфраструктурного и клиентского Kubernetes, а также ресурсы мастер-нод.',
-      facts: ['Сетевые параметры', 'Версии addons, infra и client', 'Ресурсы мастер-нод']
-    },
-    claim: {
-      title: 'ClusterClaim', level: 'L0 · Целевая конфигурация',
-      body: 'Заявка описывает целевую конфигурацию — версию платформы. Она объединяет параметры инфраструктурного и клиентского кластеров с версиями аддонов.',
-      facts: ['Сети infra и client', 'Версии Kubernetes и аддонов', 'Ресурсы мастер-нод'],
-      code: 'kind: ClusterClaim'
-    },
-    operator: {
-      title: 'ClusterClaim Operator', level: 'L0 · Оркестрация',
-      body: 'Превращает заявку в ресурсы платформы и согласует продвижение процесса с состояниями зависимостей.',
-      facts: ['Применяет ресурсы по описанию платформы', 'Связывает infra и client', 'Продолжает обработку по состояниям компонентов']
-    },
-    certificates: {
-      title: 'Сертификаты', level: 'Подготовка · Доверие',
-      body: 'Подготавливают доверенные соединения для компонентов создаваемой платформы.',
-      facts: ['Создаются на этапе подготовки', 'Используются компонентами infra и client', 'Участвуют в настройке защищённых соединений']
-    },
-    bucket: {
-      title: 'S3-бакет', level: 'Подготовка · Резервные копии',
-      body: 'Бакет для резервных копий создаётся вместе с необходимыми данными доступа.',
-      facts: ['Создаётся до следующих этапов развёртывания', 'Данные доступа передаются в Vault', 'Предназначен для резервных копий']
-    },
-    vault: {
-      title: 'Vault', level: 'Секреты и ключи',
-      body: 'Хранит данные доступа, обслуживает аутентификацию компонентов и предоставляет KMS transit для клиентского кластера.',
-      facts: ['Credentials подготовленных ресурсов', 'ServiceAccount auth и точечные роли', 'Индивидуальные секреты и KMS transit']
-    },
-    capi: {
-      title: 'Cluster API', level: 'L0 · Жизненный цикл кластеров',
-      body: 'Управляет кластерными ресурсами: создаёт основу infra и связывает описание client с развёртыванием его control plane.',
-      facts: ['Cluster infra запускает создание виртуальных машин', 'Cluster client приводит к AddonClaim', 'Получает состояние client control plane'],
-      code: 'kind: Cluster'
-    },
-    csrc: {
-      title: 'CSR approver', level: 'L0 · Служебный аддон',
-      body: 'Аддон работает в L0 и подписывает сертификаты нод. Создаётся параллельно с ресурсом Cluster.',
-      facts: ['Участвует в выдаче сертификатов нодам', 'Создаётся вместе с Cluster infra и Cluster client', 'Отдельная служебная ветка процесса']
-    },
-    ccm: {
-      title: 'Cloud Controller Manager', level: 'L0 · Служебный аддон',
-      body: 'CCM работает в L0 и обеспечивает интеграцию кластера с облаком. Аддон создаётся параллельно с ресурсом Cluster.',
-      facts: ['Интеграция Kubernetes с облаком', 'Создаётся вместе с Cluster infra и Cluster client', 'Отдельная служебная ветка процесса']
-    },
-    infra: {
-      title: 'Infra-кластер', level: 'L1 · Инфраструктурная основа',
-      body: 'Размещает компоненты платформы, управляющее приложение L2 и общий etcd, используемый клиентским control plane.',
-      facts: ['Создаётся через Cluster API', 'Получает bootstrap и последующие аддоны', 'Размещает client control plane на своих нодах']
-    },
-    bootstrap: {
-      title: 'Bootstrap L1', level: 'L1 · Исходный набор',
-      body: 'Первый набор компонентов создаёт сетевую основу и средства дальнейшей доставки аддонов.',
-      facts: ['Cilium и CoreDNS', 'Argo CD', 'AddonOperator']
-    },
-    addons: {
-      title: 'AddonOperator', level: 'L1 · Очередность аддонов',
-      body: 'Управляет фазами и очередностью Argo CD Applications, чтобы компоненты появлялись с подготовленными зависимостями.',
-      facts: ['Фазы и зависимости Applications', 'mTLS, сетевые политики, мониторинг и логи', 'Host firewall с default deny завершает настройку']
-    },
-    argocd: {
-      title: 'Argo CD Applications', level: 'L1 · Доставка компонентов',
-      body: 'Описывают доставляемые компоненты. AddonOperator задаёт фазы и порядок их развёртывания.',
-      facts: ['Argo CD входит в bootstrap', 'Компоненты представлены Applications', 'Очередностью управляет AddonOperator']
-    },
-    auth: {
-      title: 'Аутентификация и роли', level: 'Vault · Доступ компонентов',
-      body: 'ServiceAccount auth связывает компоненты с точечными ролями и необходимыми им данными доступа.',
-      facts: ['Аутентификация через ServiceAccount', 'Права по задачам компонентов', 'Индивидуальные высокоэнтропийные секреты']
-    },
-    kms: {
-      title: 'KMS transit', level: 'Vault · Ключи для L2',
-      body: 'Подготавливает ключи и доступы для клиентского control plane параллельно доведению инфраструктурного кластера.',
-      facts: ['Создаётся до запуска client control plane', 'Использует Vault transit', 'Связан с точечными ролями компонентов']
-    },
-    addonclaim: {
-      title: 'AddonClaim', level: 'Заявка на аддон',
-      body: 'Связывает желаемый компонент с его развёртыванием в нужном кластере платформы.',
-      facts: ['client-control-plane разворачивается в L1', 'Стандартные аддоны разворачиваются в L2', 'Используется в цепочке создания клиентского кластера'],
-      code: 'kind: AddonClaim'
-    },
-    hosted: {
-      title: 'Client control plane', level: 'Работает в L1 · Управляет L2',
-      body: 'Клиентский control plane развёрнут как приложение DaemonSet на нодах infra и предоставляет API отдельного Kubernetes-кластера.',
-      facts: ['Аддон client-control-plane', 'DaemonSet на нодах infra', 'Состояние хранится в etcd L1 под отдельным префиксом'],
-      code: 'kind: DaemonSet'
-    },
-    etcd: {
-      title: 'Общий etcd', level: 'L1 · Состояние кластеров',
-      body: 'Client control plane использует общий etcd инфраструктурного кластера и отдельный префикс для своих данных.',
-      facts: ['Хранилище etcd принадлежит инфраструктуре L1', 'Client control plane обращается к этому хранилищу', 'Данные client выделены отдельным префиксом']
-    },
-    status: {
-      title: 'Подтверждение создания', level: 'Control plane → CAPI',
-      body: 'Состояние client control plane возвращается в Cluster API и подтверждает создание Cluster.',
-      facts: ['Control plane запущен и инициализирован', 'CAPI получает состояние компонента', 'Далее разворачивается стандартный состав L2']
-    },
-    client: {
-      title: 'Клиентский Kubernetes', level: 'L2 · Пользовательская среда',
-      body: 'Отдельный Kubernetes-кластер, управляющие компоненты которого исполняются внутри L1.',
-      facts: ['Собственный Kubernetes API', 'Control plane размещён в infra', 'Получает стандартные аддоны перед передачей пользователю']
-    },
-    defaults: {
-      title: 'Стандартные аддоны L2', level: 'L2 · Подготовка к работе',
-      body: 'Базовый набор компонентов разворачивается через AddonClaim после создания клиентского control plane.',
-      facts: ['Cilium', 'CoreDNS', 'Konnectivity']
-    },
-    user: {
-      title: 'Готовый кластер', level: 'Передача пользователю',
-      body: 'После подготовки клиентского Kubernetes и его стандартных аддонов пользователь получает кластер для работы со своими приложениями.',
-      facts: ['Control plane создан', 'Стандартный набор L2 подготовлен', 'Пользователь работает через Kubernetes API']
-    },
-    policies: {
-      title: 'Защита соединений и сети', level: 'L1 · Настройка по фазам',
-      body: 'Настройки защиты разворачиваются в очередности, заданной AddonOperator, и завершаются политикой host firewall default deny.',
-      facts: ['mTLS', 'Сетевые политики', 'Host firewall с default deny в финале']
-    }
-  }
-};
-</script><script>(function () {
-  'use strict';
-  var serial = 0;
-  var C = { l0: '#ff825c', l1: '#65d9e5', l2: '#d2f58b', ext: '#c4afef' };
-  var E = function (v) { return String(v).replace(/[&<>"']/g, function (c) { return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]; }); };
-  function render(sceneIndex, options) {
-    options = options || {};
-    var scene = Math.max(0, Math.min(8, Math.floor(Number(sceneIndex) || 0)));
-    var step = options.step == null ? 3 : Math.max(0, Math.min(3, Math.floor(Number(options.step) || 0)));
-    var uid = 'pd2-' + (++serial);
-    var nodes = [], edges = [], frames = [], notes = [];
-    var selected = options.selectedComponent || options.selected || '';
-    function n(key, at, x, y, w, h, title, sub, tier, badges) {
-      var v = {key:key, at:at, x:x, y:y, w:w, h:h, title:Array.isArray(title)?title:[title], sub:sub || [], tier:tier || 'l0', badges:badges || []};
-      if (typeof v.sub === 'string') v.sub = [v.sub];
-      nodes.push(v); return v;
-    }
-    function edge(a,b,d,label,x,y) { edges.push({a:a,b:b,d:d,label:label,x:x,y:y}); }
-    function frame(at,x,y,w,h,tier,title) { frames.push({at:at,x:x,y:y,w:w,h:h,tier:tier,title:title}); }
-    function note(at,x,y,text,tier,size) { notes.push({at:at,x:x,y:y,text:text,tier:tier,size:size || 14}); }
-
-    // Every scene uses its own spatial story. Only revealed nodes and their edges exist.
-    switch (scene) {
-      case 0: {
-        frame(0,268,75,514,374,'l0','L0 · MANAGEMENT');
-        var user=n('order',0,28,186,188,134,['Заказ','пользователя'],['описание кластера'],'l2');
-        var claim=n('claim',0,293,186,207,134,'ClusterClaim',['декларация платформы'],'l0');
-        var fields=[];
-        if(step>=1) fields.push('Сеть');
-        if(step>=2) fields.push('Addons · infra · client');
-        if(step>=3) fields.push('Ресурсы master nodes');
-        var config=n('configuration',1,545,142,213,237,['Версия','платформы'],['конфигурация кластера'],'l0',fields);
-        edge(user,claim,'M216 253H291');
-        edge(claim,config,'M500 253H543');
-        break;
-      }
-      case 1: {
-        frame(0,16,53,486,424,'l0','L0 · ПОДГОТОВКА РЕСУРСОВ');
-        var op=n('operator',0,38,215,177,131,'Оператор',['ClusterClaimOperator'],'l0');
-        var cert=n('certificates',1,285,99,192,133,'Сертификаты',['CertificateSet'],'l0');
-        var bucket=n('bucket',2,285,317,192,133,['Backup','bucket'],['S3-хранилище'],'l0');
-        var vault=n('vault',3,575,317,204,133,'Vault',['внешний сервис','credentials бакета'],'ext');
-        edge(op,cert,'M215 251H249V165H283');
-        edge(op,bucket,'M215 310H249V383H283');
-        edge(bucket,vault,'M477 383H573','credentials',497,369);
-        note(3,577,295,'ВНЕШНЯЯ ИНТЕГРАЦИЯ','ext',12);
-        break;
-      }
-      case 2: {
-        frame(0,16,54,768,198,'l0','L0 · ОРКЕСТРАЦИЯ И СЛУЖЕБНЫЕ АДДОНЫ');
-        frame(2,246,273,539,220,'l1','L1 · INFRA CLUSTER');
-        var cluster=n('infra_resource',0,38,112,188,116,['Cluster infra'],['CAPI-ресурс'],'l0');
-        var capi=n('capi',1,298,112,188,116,'CAPI',['создаёт инфраструктуру'],'l0');
-        var service=n('cluster_services',0,546,92,215,135,['CSR approver','+ CCM'],['подпись нод / облако'],'l0');
-        var vm=n('infra',2,282,340,196,128,['Машины L1'],step>=3?['infra initialized']:['infra control plane','ждём инициализацию'],'l1');
-        var boot=n('bootstrap',3,546,318,215,153,'Bootstrap',[], 'l1',['Cilium · CoreDNS','Argo CD · AddonOperator']);
-        edge(cluster,capi,'M226 170H296');
-        edge(cluster,service,'M132 112V94H523V159H544');
-        edge(capi,vm,'M392 228V285H380V338');
-        edge(vm,boot,'M478 404H544');
-        note(0,559,249,'ПАРАЛЛЕЛЬНАЯ ВЕТКА','l0',12);
-        note(3,282,490,'инициализация infra → bootstrap','l1',12);
-        break;
-      }
-      case 3: {
-        frame(0,16,50,768,443,'l1','L1 · ПОСЛЕДОВАТЕЛЬНЫЕ ФАЗЫ АДДОНОВ');
-        var apps=n('addons',0,39,168,196,212,['Аддоны L1'],['Addon → AddonOperator','→ Applications'],'l1',['Упорядоченные фазы']);
-        var security=n('policies',1,288,110,213,139,'Security',['mTLS','сетевые политики'],'l1');
-        var observe=n('observability',2,544,110,213,139,'Observability',['monitoring + logging'],'l1');
-        var deny=n('firewall',3,439,328,318,137,['Финальный hardening'],['host firewall + default deny'],'l1',['ПОСЛЕДНИМИ']);
-        edge(apps,security,'M235 233H263V179H286');
-        edge(security,observe,'M501 179H542');
-        edge(observe,deny,'M650 249V293H598V326');
-        note(1,302,96,'01','l1',12); note(2,558,96,'02','l1',12); note(3,454,315,'03 · ПОСЛЕ ПРЕДЫДУЩИХ ФАЗ','l1',12);
-        break;
-      }
-      case 4: {
-        frame(0,16,44,768,177,'l1','ВЕТКА A · АДДОНЫ L1');
-        frame(0,16,249,768,247,'l0','ВЕТКА B · L0 → ВНЕШНИЙ VAULT');
-        var hard=n('addons',0,39,95,287,104,'Hardening L1',['установка аддонов продолжается'],'l1');
-        var op=n('operator',0,39,336,183,132,'Оператор',['независимая ветка'],'l0');
-        var auth=n('auth',0,279,336,213,132,'Vault Auth',step>=1?['ServiceAccounts','точечные роли']:['внешняя интеграция'],'ext');
-        var secrets=n('vault',2,552,299,210,84,'Секреты',['уникальные для кластера'],'ext');
-        var kms=n('kms',3,552,410,210,70,'KMS Transit Key',[],'ext');
-        edge(op,auth,'M222 402H277');
-        edge(auth,secrets,'M492 375H520V341H550');
-        edge(auth,kms,'M492 433H520V445H550');
-        note(0,411,154,'ПАРАЛЛЕЛЬНО','l1',22);
-        if(step>=1) note(1,294,483,'права для компонентов кластера','ext',12);
-        break;
-      }
-      case 5: {
-        frame(0,16,51,218,192,'l1','L1 · БАРЬЕР');
-        frame(1,268,51,516,192,'l0','L0 · ЗАПУСК CLIENT-КЛАСТЕРА');
-        frame(1,16,292,232,191,'l0','L0 · ПАРАЛЛЕЛЬНАЯ ВЕТКА');
-        frame(2,548,292,236,191,'l0','L0 · ADDON CLAIM');
-        frame(3,261,292,265,191,'l1','L1 · ПРИЛОЖЕНИЕ');
-        var gate=n('addons',0,36,105,178,114,['Аддоны L1','готовы'],[],'l1');
-        var client=n('client_resource',1,290,105,211,114,'Cluster client',['CAPI-ресурс'],'l0');
-        var capi=n('capi',1,575,105,188,114,'CAPI',[],'l0');
-        var service=n('cluster_services',1,28,340,209,135,['CSR approver','+ CCM'],['подпись нод / облако'],'l0');
-        var ac=n('addonclaim',2,572,348,188,111,'AddonClaim',[],'l0');
-        var addon=n('hosted',3,284,346,219,115,['client-control-','plane'],['Addon в infra cluster'],'l1');
-        edge(gate,client,'M214 162H288'); edge(client,capi,'M501 162H573');
-        edge(client,service,'M395 219V267H132V338');
-        edge(capi,ac,'M669 219V346'); edge(ac,addon,'M572 403H505');
-        break;
-      }
-      case 6: {
-        frame(0,16,51,503,432,'l1','L1 · ФИЗИЧЕСКОЕ РАЗМЕЩЕНИЕ');
-        frame(3,551,182,233,217,'l2','L2 · ЛОГИЧЕСКИЙ КЛАСТЕР');
-        var infra=n('infra',0,40,111,203,139,'Узлы L1',['infra cluster'],'l1');
-        var cp=n('hosted',1,289,111,205,139,['Control plane','L2'],['DaemonSet · приложение'],'l1');
-        var etcd=n('etcd',2,160,324,276,133,'Общий etcd L1',step>=3?['тот же инстанс']:['совместно используемый инстанс'],'l1',step>=3?['Отдельный префикс L2']:[]);
-        var api=n('client',3,574,240,187,135,['Kubernetes','API L2'],['логическая точка входа'],'l2');
-        edge(infra,cp,'M243 180H287');
-        edge(cp,etcd,'M392 250V287H298V322');
-        edge(cp,api,'M494 180H539V307H572');
-        break;
-      }
-      case 7: {
-        frame(0,16,54,240,220,'l1','L1 · CONTROL PLANE');
-        frame(1,279,54,505,220,'l0','L0 · ОБРАТНАЯ СВЯЗЬ');
-        var cp=n('hosted',0,37,112,197,138,['Client CP'],['initialized'],'l1');
-        var status=n('status',1,301,112,192,138,'Статус CAPI',['обновление статуса'],'l0');
-        var client=n('client_resource',2,552,112,210,138,['Cluster client'],['initialized'],'l0');
-        var addons=n('defaults',3,552,350,210,123,'Аддоны L2',['следующий этап'],'l2');
-        edge(cp,status,'M234 181H299'); edge(status,client,'M493 181H550');
-        edge(client,addons,'M657 250V348');
-        note(2,339,308,'initialized ≠ готовность для пользователя','l0',18);
-        break;
-      }
-      case 8: {
-        frame(1,276,48,265,440,'l2','L2 · БАЗОВЫЕ КОМПОНЕНТЫ');
-        var ac=n('addonclaim',0,28,181,216,159,'AddonClaim',['создаёт Application'],'l0',['доставка аддонов']);
-        var net=n('defaults',1,300,110,216,128,['Базовая сеть'],['Cilium + CoreDNS'],'l2');
-        var kon=n('defaults',2,300,329,216,129,'Konnectivity',['связность control plane'],'l2');
-        var user=n('user',3,577,191,203,143,['Кластер готов'],['выдача пользователю'],'l2');
-        edge(ac,net,'M244 225H266V174H298');
-        edge(ac,kon,'M244 297H266V394H298');
-        edge(net,user,'M516 174H555V230H575');
-        edge(kon,user,'M516 394H555V294H575');
-        break;
-      }
-    }
-
-    var visible=nodes.filter(function(v){return v.at<=step;});
-    var out='<svg xmlns="http://www.w3.org/2000/svg" class="pd2-diagram" viewBox="0 0 800 520" width="100%" height="100%" role="group" aria-labelledby="'+uid+'-title" data-scene="'+scene+'" data-step="'+step+'">';
-    out+='<title id="'+uid+'-title">Создание кластера. Сцена '+(scene+1)+', шаг '+(step+1)+' из 4.</title>';
-    out+='<defs>';
-    Object.keys(C).forEach(function(t){out+='<marker id="'+uid+'-'+t+'" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M1 1 8 5 1 9" fill="none" stroke="'+C[t]+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></marker>';});
-    out+='</defs><style>.pd2-diagram{font-family:Inter,ui-sans-serif,system-ui,sans-serif;overflow:visible}.pd2-diagram text{user-select:none;pointer-events:none}.pd2-node{cursor:pointer;outline:none}.pd2-node-body{transition:stroke-width .15s,fill .15s}.pd2-node:hover .pd2-node-body,.pd2-node:focus .pd2-node-body{stroke-width:2.5;fill:#1b2833}.pd2-node:focus-visible .pd2-node-body{stroke-dasharray:5 3}.pd2-new{animation:pd2-arrive .36s ease-out both}@keyframes pd2-arrive{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}@media(prefers-reduced-motion:reduce){.pd2-diagram *{animation:none!important;transition:none!important}}</style>';
-    frames.filter(function(f){return f.at<=step;}).forEach(function(f){
-      out+='<g><rect x="'+f.x+'" y="'+f.y+'" width="'+f.w+'" height="'+f.h+'" rx="17" fill="'+C[f.tier]+'" fill-opacity=".025" stroke="'+C[f.tier]+'" stroke-opacity=".17"/>';
-      out+='<text x="'+(f.x+18)+'" y="'+(f.y+27)+'" fill="'+C[f.tier]+'" font-size="12" letter-spacing="1.3" font-weight="650">'+E(f.title)+'</text></g>';
-    });
-    edges.filter(function(e){return e.a.at<=step&&e.b.at<=step;}).forEach(function(e){
-      var c=C[e.b.tier];
-      out+='<path d="'+e.d+'" fill="none" stroke="'+c+'" stroke-width="2" stroke-opacity=".74" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#'+uid+'-'+e.b.tier+')"/>';
-      if(e.label)out+='<text x="'+e.x+'" y="'+e.y+'" fill="#a2aeba" font-size="12">'+E(e.label)+'</text>';
-    });
-    visible.forEach(function(v){
-      var col=C[v.tier], current=v.at===step, mainTop=v.h<=85?36:38;
-      var subTop=mainTop+(v.title.length-1)*27+28;
-      var badgeTop=subTop+(v.sub.length?v.sub.length*20:0)+2;
-      out+='<g data-component="'+v.key+'" class="pd2-node'+(current?' pd2-new':'')+'" tabindex="0" role="button" aria-label="'+E(v.title.join(' ')+'. '+v.sub.join('. '))+'" aria-pressed="'+(selected===v.key)+'">';
-      out+='<rect class="pd2-node-body" x="'+v.x+'" y="'+v.y+'" width="'+v.w+'" height="'+v.h+'" rx="13" fill="#111c26" stroke="'+col+'" stroke-opacity="'+(current?'.95':'.55')+'" stroke-width="'+(selected===v.key?'2.5':'1.3')+'"/>';
-      out+='<path d="M'+(v.x+14)+' '+(v.y+1)+'H'+(v.x+v.w-14)+'" stroke="'+col+'" stroke-opacity=".48"/>';
-      v.title.forEach(function(t,i){out+='<text x="'+(v.x+17)+'" y="'+(v.y+mainTop+i*27)+'" font-size="22" font-weight="650" letter-spacing="-.55" fill="#e9edf2">'+E(t)+'</text>';});
-      v.sub.forEach(function(t,i){out+='<text x="'+(v.x+17)+'" y="'+(v.y+subTop+i*20)+'" font-size="13" fill="#a4b0bd">'+E(t)+'</text>';});
-      v.badges.forEach(function(t,i){var by=v.y+badgeTop+i*32;out+='<rect x="'+(v.x+13)+'" y="'+by+'" width="'+(v.w-26)+'" height="26" rx="6" fill="'+col+'" fill-opacity=".07"/><text x="'+(v.x+23)+'" y="'+(by+17)+'" font-size="12" fill="'+col+'">'+E(t)+'</text>';});
-      out+='</g>';
-    });
-    notes.filter(function(v){return v.at<=step;}).forEach(function(v){out+='<text x="'+v.x+'" y="'+v.y+'" font-size="'+v.size+'" font-weight="550" fill="'+(C[v.tier]||'#8e9aaa')+'">'+E(v.text)+'</text>';});
-    return out+'</svg>';
-  }
-
-  function renderOverview() {
-    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 440" role="img" aria-label="Обзор платформы: L0 управляет L1, control plane L2 работает в L1, пользователь получает L2"><style>text{font-family:Inter,system-ui,sans-serif}</style><rect x="30" y="25" width="740" height="100" rx="16" fill="#ff825c" fill-opacity=".05" stroke="#ff825c" stroke-opacity=".45"/><text x="52" y="65" font-size="25" fill="#ff825c">L0 · Management</text><text x="52" y="96" font-size="19" fill="#e9edf2">ClusterClaim · оператор · CAPI · CSR approver · CCM</text><path d="M400 125V165m-6-8 6 8 6-8" fill="none" stroke="#8e9aaa" stroke-width="2"/><rect x="30" y="168" width="740" height="114" rx="16" fill="#65d9e5" fill-opacity=".05" stroke="#65d9e5" stroke-opacity=".45"/><text x="52" y="207" font-size="25" fill="#65d9e5">L1 · Infra</text><text x="52" y="239" font-size="18" fill="#e9edf2">AddonOperator · Argo CD · etcd</text><rect x="451" y="187" width="296" height="74" rx="10" fill="#65d9e5" fill-opacity=".07" stroke="#65d9e5"/><text x="469" y="218" font-size="22" fill="#e9edf2">Control plane L2</text><text x="469" y="242" font-size="16" fill="#65d9e5">DaemonSet физически в L1</text><path d="M600 282V323m-6-8 6 8 6-8" fill="none" stroke="#8e9aaa" stroke-width="2"/><rect x="30" y="326" width="740" height="89" rx="16" fill="#d2f58b" fill-opacity=".05" stroke="#d2f58b" stroke-opacity=".45"/><text x="52" y="361" font-size="25" fill="#d2f58b">L2 · Client</text><text x="52" y="391" font-size="19" fill="#e9edf2">Kubernetes API · Cilium · CoreDNS · Konnectivity · workloads</text></svg>';
-  }
-  window.PlatformDiagram = {render:render, renderOverview:renderOverview};
-})();
-</script><script>(() => {
- 'use strict';
- const {scenes,components}=window.WebinarContent;
- const navNames=['Конфигурация','Подготовка','Infra + bootstrap','Аддоны L1','Vault + KMS','Заказ L2','Устройство CP','Статус CAPI','Готовый L2'];
- const mobileKeys=[['claim','configuration','configuration','configuration'],['operator','certificates','bucket','vault'],['infra_resource','capi','infra','bootstrap'],['addons','policies','observability','firewall'],['auth','auth','vault','kms'],['addons','client_resource','addonclaim','hosted'],['infra','hosted','etcd','etcd'],['hosted','status','client_resource','defaults'],['addonclaim','defaults','defaults','user']];
- const $=id=>document.getElementById(id);
- const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- let scene=0,step=0,toastTimer;
- const plain=s=>s.replace(/<br\s*\/?\s*>/g,' ').replace(/<[^>]*>/g,'').replace(/\s+/g,' ');
- function readHash(){const m=location.hash.match(/^#scene-([1-9])(?:-step-([1-4]))?$/);return m?{scene:Number(m[1])-1,step:m[2]?Number(m[2])-1:0}:{scene:0,step:0};}
- function writeHash(){history.replaceState(null,'','#scene-'+(scene+1)+'-step-'+(step+1));}
- function render(changedScene=false){
-  const s=scenes[scene];
-  $('scene-eyebrow').textContent=String(scene+1).padStart(2,'0')+' / '+s.label;
-  $('scene-title').innerHTML=s.title;$('scene-description').textContent=s.text;
-  $('visual-kicker').textContent=navNames[scene].toUpperCase();
-  $('scene-duration').textContent='≈ '+s.duration;
-  $('stage-list').innerHTML=s.stages.map((label,i)=>'<button class="step-button'+(i<step?' done':'')+'" data-step="'+i+'" '+(i===step?'aria-current="step"':'')+' aria-label="Шаг '+(i+1)+': '+esc(label)+'"><span class="step-number">'+(i<step?'✓':String(i+1).padStart(2,'0'))+'</span><span>'+esc(label)+'</span></button>').join('');
-  $('step-count').textContent='ШАГ '+String(step+1).padStart(2,'0')+' / 04';
-  $('next-button').innerHTML=(step<3?'Показать следующий шаг':scene<8?'Следующий этап':'К общей схеме')+' <span aria-hidden="true">'+(scene===8&&step===3?'↗':'→')+'</span>';
-  $('previous-button').disabled=scene===0&&step===0;
-  $('forward-button').disabled=scene===8&&step===3;
-  $('current-number').textContent=String(scene+1).padStart(2,'0');
-  $('takeaway').textContent=s.takeaway;$('takeaway').classList.toggle('pending',step<3);$('takeaway').setAttribute('aria-hidden',String(step<3));
-  document.querySelectorAll('.chapter').forEach((el,i)=>{el.classList.toggle('done',i<scene);if(i===scene)el.setAttribute('aria-current','step');else el.removeAttribute('aria-current');});
-  const mobile='<div class="mobile-flow">'+s.stages.slice(0,step+1).map((label,i)=>'<button class="mobile-flow-step'+(i===step?' current':'')+'" data-component="'+mobileKeys[scene][i]+'"><b>'+String(i+1).padStart(2,'0')+'</b><span>'+esc(label)+'</span></button>').join('')+'<div class="mobile-flow-status">'+(step===3?esc(s.takeaway):'Следующий шаг раскрывается кнопкой ниже')+'</div></div>';
-  $('diagram').innerHTML=window.PlatformDiagram.render(scene,{step})+mobile;
-  $('notes-title').textContent=plain(s.title);$('notes-duration').textContent='СЦЕНА '+String(scene+1).padStart(2,'0')+' / '+s.duration;
-  $('notes-content').innerHTML=s.notes.map(p=>'<p>'+esc(p)+'</p>').join('');
-  if(changedScene){const story=document.querySelector('.story');story.classList.remove('scene-enter');void story.offsetWidth;story.classList.add('scene-enter');}
-  document.title=String(scene+1).padStart(2,'0')+' · '+navNames[scene]+' · Платформа L0 / L1 / L2';
- }
- function goScene(index,desiredStep=0){const next=Math.max(0,Math.min(scenes.length-1,index));const changed=next!==scene;scene=next;step=Math.max(0,Math.min(3,desiredStep));writeHash();render(changed);}
- function advance(){if(step<3){step++;writeHash();render();}else if(scene<8)goScene(scene+1);else overview();}
- function retreat(){if(step>0){step--;writeHash();render();}else if(scene>0)goScene(scene-1,3);}
- function openDialog(kicker,title,html,wide=false){$('details-dialog').classList.toggle('wide',wide);$('dialog-kicker').textContent=kicker;$('dialog-title').textContent=title;$('dialog-content').innerHTML=html;if(!$('details-dialog').open)$('details-dialog').showModal();}
- function inspect(key){const c=components[key];if(!c)return;openDialog(c.level,c.title,'<p>'+esc(c.body)+'</p><ul>'+c.facts.map(f=>'<li>'+esc(f)+'</li>').join('')+'</ul>'+(c.code?'<p class="detail-label">Ресурс или параметр</p><code>'+esc(c.code)+'</code>':''));}
- function overview(){const visual=window.PlatformDiagram.renderOverview?'<div class="overview-svg">'+window.PlatformDiagram.renderOverview()+'</div>':'<div class="overview-fallback"><div><h3>L0 · Управление</h3><p>ClusterClaim, оператор кластеров, Cluster API, CSR approver и CCM.</p></div><div><h3>L1 · Infra</h3><p>AddonOperator и Argo CD. Client control plane работает как DaemonSet и использует etcd infra с отдельным префиксом.</p></div><div><h3>L2 · Client</h3><p>Клиентский Kubernetes API, Cilium, CoreDNS и Konnectivity.</p></div></div>';openDialog('ОБЩАЯ АРХИТЕКТУРА','Роли уровней L0, L1 и L2',visual,true);}
- function notes(){const show=$('notes-panel').hidden;$('notes-panel').hidden=!show;$('notes-button').setAttribute('aria-expanded',String(show));}
- function toast(message){clearTimeout(toastTimer);$('toast').textContent=message;$('toast').hidden=false;toastTimer=setTimeout(()=>{$('toast').hidden=true;},4000);}
- async function fullscreen(){try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{toast('Для полного экрана откройте HTML в отдельном браузере и нажмите F11.');}}
- $('chapters').innerHTML=scenes.map((s,i)=>'<button class="chapter" data-scene="'+i+'" aria-label="Сцена '+(i+1)+': '+esc(navNames[i])+'"><span class="chapter-number">'+String(i+1).padStart(2,'0')+'</span><span class="chapter-title">'+esc(navNames[i])+'</span></button>').join('');
- $('chapters').addEventListener('click',e=>{const el=e.target.closest('[data-scene]');if(el)goScene(Number(el.dataset.scene));});
- $('stage-list').addEventListener('click',e=>{const el=e.target.closest('[data-step]');if(el){step=Number(el.dataset.step);writeHash();render();$('stage-list').querySelector('[data-step="'+step+'"]').focus({preventScroll:true});}});
- $('next-button').addEventListener('click',advance);$('forward-button').addEventListener('click',advance);$('previous-button').addEventListener('click',retreat);
- function onComponentClick(e){const el=e.target.closest('[data-component]');if(el)inspect(el.dataset.component);}
- $('diagram').addEventListener('click',onComponentClick);$('dialog-content').addEventListener('click',onComponentClick);
- $('diagram').addEventListener('keydown',e=>{const el=e.target.closest('[data-component]');if(el&&(e.key==='Enter'||e.key===' ')){e.preventDefault();e.stopPropagation();inspect(el.dataset.component);}});
- $('overview-button').addEventListener('click',overview);$('notes-button').addEventListener('click',notes);$('close-notes').addEventListener('click',notes);$('fullscreen-button').addEventListener('click',fullscreen);
- $('close-dialog').addEventListener('click',()=>$('details-dialog').close());
- $('details-dialog').addEventListener('click',e=>{if(e.target===$('details-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
- $('sources-button').addEventListener('click',()=>openDialog('СЦЕНАРИЙ ВЕБИНАРА','От заявки до готовой платформы','<p>Девять сцен показывают процесс создания платформы, описанный её командой. В каждой сцене четыре последовательных раскрытия. Общая длительность рассказа около 12 минут.</p><p>На схеме отдельно видны параллельные процессы: служебные аддоны CSR approver / CCM в L0 при создании Cluster и подготовка Vault во время доведения infra до целевого состояния.</p><p>Архитектурные детали, порядок bootstrap, фаз аддонов, размещение DaemonSet и использование etcd основаны на уточнённом описании команды. Реализация части оркестрации доступна в <a href="https://github.com/PRO-Robotech/cluster-claim-operator" target="_blank" rel="noopener noreferrer">cluster-claim-operator</a>.</p><p>Это автономная иллюстрация процесса. Переключение шагов не обращается к инфраструктуре.</p><p class="detail-label">Управление</p><p>← / → или пробел: предыдущий / следующий шаг. 1–9: переход к сцене. Home / End: начало / финал. N: заметки. F: полный экран. Esc: закрыть раскрытие.</p>'));
- document.addEventListener('keydown',e=>{
-  if(e.altKey||e.ctrlKey||e.metaKey||$('details-dialog').open||e.target.closest('input,textarea,select'))return;
-  if(e.key==='Escape'&&!$('notes-panel').hidden){notes();return;}
-  if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();advance();}
-  else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();retreat();}
-  else if(e.key===' '&&!e.target.closest('button,a,[role=button]')){e.preventDefault();advance();}
-  else if(e.key==='Home'){e.preventDefault();goScene(0);}
-  else if(e.key==='End'){e.preventDefault();goScene(8,3);}
-  else if(/^[1-9]$/.test(e.key))goScene(Number(e.key)-1);
-  else if(['n','т'].includes(e.key.toLowerCase()))notes();
-  else if(['f','а'].includes(e.key.toLowerCase()))fullscreen();
- });
- window.addEventListener('hashchange',()=>{const state=readHash();const changed=scene!==state.scene;scene=state.scene;step=state.step;render(changed);});
- ({scene,step}=readHash());render();
-})();
-</script>
+<script>(function(){var e=[{id:`prepare`,title:`От заказа к зависимостям`,kicker:`L0 · ЗАЯВКА И ПОДГОТОВКА`,question:`Что должно появиться до создания инфраструктуры?`,duration:`02:15`,beats:[{title:`Собираем версию платформы`,summary:`Сети, версии аддонов, L1 и L2, ресурсы мастеров собираются в ClusterClaim. Эта конфигурация задаёт версию платформы.`,result:`Целевая конфигурация записана в ClusterClaim в L0.`,note:`Начните с заказа L2. Покажите, что версия платформы включает весь состав: сетевые параметры, версии Kubernetes и аддонов, ресурсы мастер-нод. Эти параметры становятся одной заявкой ClusterClaim в L0. С этого момента будем следить за результатами работы над одной заявкой.`},{title:`Передаём заявку оператору`,summary:`ClusterClaim Operator читает конфигурацию и начинает подготовку. Заявка превращается в действия над зависимостями.`,result:`Оператор начал подготовку ресурсов по заявке.`,note:`Оставьте заявку на месте и покажите её связь с оператором. Именно оператор переводит желаемую конфигурацию в ресурсы и дальнейшие действия. Сейчас его задача — подготовить зависимости, которые понадобятся создаваемой платформе. Следующие моменты раскроют каждую из них.`},{title:`Заказываем бакет у облака`,summary:`Оператор запрашивает S3-бакет для резервных копий. Облако создаёт бакет и возвращает необходимые данные доступа.`,result:`Созданы backup-бакет и credentials для доступа к нему.`,note:`Проследите оба направления связи: запрос от платформы в облако и ответ с результатом. В результате появляется бакет для резервных копий и данные доступа к нему. Сам бакет остаётся ресурсом облака; его credentials следующим шагом попадут в Vault.`},{title:`Подготавливаем сертификаты`,summary:`Система сертификатов подготавливает материал доверия для компонентов. Сертификаты становятся ещё одной зависимостью платформы.`,result:`Сертификаты для компонентов подготовлены.`,note:`Переведите внимание на вторую зависимость — сертификаты для компонентов платформы. Их подготовка создаёт основу доверенных соединений. Порядок объяснения бакета и сертификатов не задаёт зависимость выпуска сертификатов от бакета: на схеме между ними не требуется последовательная стрелка.`},{title:`Сохраняем зависимости в Vault`,summary:`Credentials бакета и подготовленные сертификаты записываются в Vault. Они будут доступны следующим компонентам платформы.`,result:`Vault хранит данные доступа к бакету и сертификаты.`,note:`Покажите состав зависимостей в Vault: данные доступа к бакету и подготовленные сертификаты. Содержимое секретов показывать не нужно — достаточно назначения. Сделайте короткую паузу: у заявки появились необходимые зависимости, теперь можно переходить к инфраструктуре.`}]},{id:`infra`,title:`Из ресурса появляется L1`,kicker:`L0 → ОБЛАКО → L1`,question:`Как описание кластера превращается в работающую основу?`,duration:`02:15`,beats:[{title:`Создаём Cluster L1`,summary:`ClusterClaim Operator читает ClusterClaim и создаёт Cluster L1. Параллельно он создаёт CSR approver и CCM в L0.`,result:`По ClusterClaim созданы Cluster L1, CSR approver и CCM в L0.`,note:`Начните с ClusterClaim: заявка задаёт желаемое состояние всего процесса. ClusterClaim Operator создаёт по ней Cluster L1, который подхватит CAPI. Параллельно в L0 создаются CSR approver для подписи сертификатов нод и CCM для интеграции с облаком. Сохраните исходную заявку видимой: сюда вернётся статус L1.`},{title:`CAPI заказывает машины`,summary:`Cluster API подхватывает созданный Cluster L1 и заказывает у облака виртуальные машины для L1.`,result:`Облако создало виртуальные машины L1.`,note:`Сначала покажите ClusterClaim Operator: он читает ClusterClaim и создаёт Cluster L1 и служебные CSR approver/CCM в L0. Затем проведите взгляд от Cluster L1 через CAPI к облаку. После запроса появляются виртуальные машины, из которых формируется L1. Служебная ветка CSR approver и CCM остаётся в L0; переход внимания к машинам не переносит эти компоненты в L1.`},{title:`Подтверждаем инициализацию L1`,summary:`Статус L1 проходит через CAPI и Cluster L1 в ClusterClaim. В заявке отражено «L1 инициализирован»; далее начинается bootstrap.`,result:`ClusterClaim отражает инициализацию L1.`,note:`Проследите обратную цепочку: L1 → CAPI → Cluster L1 → ClusterClaim. Фактическая инициализация отражается в исходной заявке, которая задала желаемое состояние. После подтверждения «L1 инициализирован» начинается bootstrap. Сделайте короткую паузу между появлением машин и подтверждённым результатом.`},{title:`Запускаем сеть и DNS`,summary:`После инициализации L1 bootstrap устанавливает Cilium и CoreDNS. L1 получает сеть и DNS.`,result:`В составе bootstrap L1 появились Cilium и CoreDNS.`,note:`Раскройте первую часть исходного набора: Cilium и CoreDNS. Объясните их назначение коротко — сеть и DNS для L1. Следующим моментом раскроются средства доставки. Это разделение помогает объяснить состав bootstrap и не вводит дополнительный барьер между его компонентами.`},{title:`Включаем доставку аддонов`,summary:`Bootstrap также устанавливает Argo CD и AddonOperator. В L1 появляются средства доставки компонентов и управления их очередностью.`,result:`Argo CD и AddonOperator вошли в исходный состав L1.`,note:`Теперь добавьте Argo CD и AddonOperator к уже знакомым компонентам bootstrap. У L1 есть средства, с помощью которых можно разворачивать последующий состав платформы. Следующая глава показывает, как AddonOperator ведёт фазы Applications и как параллельно готовятся доступы в Vault.`}]},{id:`parallel`,title:`Две ветки готовят платформу`,kicker:`L1 И VAULT · ПАРАЛЛЕЛЬНО`,question:`Что готовится одновременно перед запуском L2?`,duration:`03:10`,beats:[{title:`Устанавливаем аддоны L1`,summary:`AddonOperator ведёт фазы L1 через Argo CD Applications. Параллельно ClusterClaimOperator из L0 настраивает внешний Vault.`,result:`Идут фазы L1; ClusterClaimOperator параллельно настраивает Vault для этого кластера.`,note:`Покажите две ветки и их исполнителей. В L1 AddonOperator управляет фазами через Argo CD Applications. Из L0 ClusterClaimOperator отправляет запросы во внешний Vault и настраивает его индивидуально для этого кластера. Vault хранит данные и предоставляет механизмы auth и transit. Порядок рассказа не означает ожидание одной ветки другой.`},{title:`Настраиваем mTLS и политики`,summary:`Фазы аддонов настраивают mTLS и сетевые политики в L1. Компоненты получают предусмотренную защиту соединений и сети.`,result:`В L1 применяются mTLS и сетевые политики.`,note:`Выделите ветку L1, сохраняя видимой связь ClusterClaimOperator из L0 с внешним Vault. Объясните назначение фазы: настроить защищённые соединения и сетевые политики компонентов. Затем переводите внимание к запросам оператора в Vault. Оба процесса выполняются параллельно.`},{title:`Настраиваем вход и роли в Vault`,summary:`ClusterClaimOperator из L0 регистрирует кластер в Vault auth, создаёт точечные роли и привязывает ServiceAccount L1.`,result:`ClusterClaimOperator настроил в Vault auth, роли и привязки ServiceAccount L1.`,note:`Теперь рассматриваем действие ClusterClaimOperator в L0. Оператор регистрирует этот кластер в Vault auth, создаёт точечные роли и привязки ServiceAccount L1. Внешний Vault предоставляет механизм аутентификации и сохраняет настройки. Так идентичность компонента связывается с нужными правами; фазы L1 продолжаются параллельно.`},{title:`Добавляем мониторинг и логи`,summary:`Следующая показанная фаза L1 разворачивает мониторинг и сбор логов. Платформа получает средства наблюдения за компонентами.`,result:`В L1 развёрнуты мониторинг и сбор логов.`,note:`Верните внимание к L1. В составе платформы появляются мониторинг и сбор логов. Здесь достаточно назначения и названий групп компонентов: реальные показатели не нужны. Две ветки по-прежнему видны, поэтому возврат к инфраструктуре воспринимается как смена фокуса внутри одной подготовки.`},{title:`Создаём индивидуальные секреты`,summary:`ClusterClaimOperator создаёт в Vault индивидуальные высокоэнтропийные секреты для кластера. Vault хранит эти данные.`,result:`ClusterClaimOperator создал индивидуальные секреты этого кластера в Vault.`,note:`ClusterClaimOperator создаёт индивидуальные высокоэнтропийные секреты для этого кластера и сохраняет их во внешнем Vault. Покажите направление запроса из L0 к хранилищу. Подчеркните связь между компонентом, его ролью и предназначенным ему секретом; значения секретов не требуются.`},{title:`Готовим KMS для L2`,summary:`ClusterClaimOperator из L0 настраивает в Vault KMS transit для L2. Ключ и доступы готовятся до запуска control plane L2.`,result:`ClusterClaimOperator подготовил KMS transit для L2 во внешнем Vault.`,note:`Покажите ещё один запрос ClusterClaimOperator из L0: оператор настраивает KMS transit для L2 во внешнем Vault. Vault предоставляет механизм transit и хранит подготовленные ключи. Настройки создаются индивидуально для этого кластера до запуска control plane L2. Фазы аддонов L1 идут параллельно.`},{title:`Включаем host firewall`,summary:`Завершающая фаза L1 включает host firewall с default deny. Финальные сетевые ограничения применяются после подготовки компонентов.`,result:`Host firewall с default deny завершает настройку L1.`,note:`Явно обозначьте положение host firewall в конце фаз L1. Политика default deny — завершающее действие этой ветки после подготовки состава и настроек. На схеме это последний узел очереди L1; Vault остаётся соседней веткой со своими готовыми результатами.`},{title:`Собираем условия для L2`,summary:`Аддоны L1 готовы. ClusterClaimOperator подготовил в Vault настройки этого кластера: доступы, секреты и KMS transit для L2.`,result:`Можно переходить к созданию Cluster L2.`,note:`Сведите в L0 результаты двух веток: готовые аддоны L1 и настройки, созданные ClusterClaimOperator во внешнем Vault для этого кластера. Сделайте паузу на условиях перехода. Следующий этап — создание Cluster L2 в L0. Vault остаётся внешним хранилищем и поставщиком механизмов, а инициатор настройки — оператор.`}]},{id:`client`,title:`Заказываем control plane L2`,kicker:`L0 → L1 · CLUSTER L2`,question:`Как заказ кластера становится приложением в L1?`,duration:`01:50`,beats:[{title:`Создаём Cluster L2`,summary:`После готовности L1 ClusterClaim Operator читает ClusterClaim и создаёт в L0 Cluster L2, CSR approver и CCM.`,result:`ClusterClaim Operator создал Cluster L2 и его служебные компоненты в L0.`,note:`Вернитесь к исходному ClusterClaim в L0. ClusterClaim Operator читает заявку и после готовности L1 создаёт две параллельные ветки: Cluster L2 и служебные CSR approver/CCM для L2. Оба контроллера работают в L0. Далее Cluster L2 подхватит Cluster API.`},{title:`CAPI создаёт AddonClaim`,summary:`Cluster API подхватывает Cluster L2 и приводит к созданию AddonClaim. Control plane L2 заказан как аддон платформы.`,result:`Появилась заявка AddonClaim на control plane L2.`,note:`Проследите цепочку от Cluster L2 через CAPI к AddonClaim. Здесь соединяются две модели: L2 описывается кластерным ресурсом, а его управляющие компоненты заказываются как аддон. Следующим результатом обработки AddonClaim станет ресурс Addon (CP) в L1.`},{title:`Создаём Addon (CP) в L1`,summary:`Контроллер AddonClaim создаёт ресурс Addon (CP) в L1. Этот ресурс описывает аддон, из которого будет развёрнут Control plane L2.`,result:`В L1 создан ресурс Addon (CP).`,note:`Сохраните AddonClaim видимым и покажите результат его обработки — ресурс Addon (CP) внутри L1. Пока это описание аддона. Следующим исполнителем становится AddonOperator, который подхватит этот ресурс и подготовит Applications.`},{title:`Создаём Applications`,summary:`AddonOperator подхватывает Addon (CP) в L1 и создаёт Applications. Они описывают компоненты, которые затем развернёт Argo CD.`,result:`AddonOperator создал Applications для Control plane L2.`,note:`Проведите связь от Addon (CP) к AddonOperator и затем к появляющимся Applications. Здесь важно назвать исполнителя: Applications создаёт AddonOperator на основе ресурса Addon. Дальнейшее развёртывание выполняет Argo CD.`},{title:`Разворачиваем Control plane L2 в L1`,summary:`Argo CD обрабатывает созданные Applications и разворачивает приложение Control plane L2 в L1. Цепочка доставки завершена.`,result:`Argo CD развернул приложение Control plane L2 в L1.`,note:`Покажите последнее действие: Argo CD получает Applications и разворачивает приложение Control plane L2 в L1. Сохраните видимой цепочку AddonClaim → Addon (CP) → AddonOperator → Applications → Argo CD. Затем переходите к устройству приложения: DaemonSet и связи с etcd.`}]},{id:`controlplane`,title:`Показываем устройство L2`,kicker:`РАБОТАЕТ В L1 · УПРАВЛЯЕТ L2`,question:`Где работают компоненты L2 и хранится его состояние?`,duration:`02:00`,beats:[{title:`Размещаем control plane L2 на нодах L1`,summary:`DaemonSet размещает control plane L2 на нодах L1. Управляющие компоненты L2 работают как обычное приложение внутри L1.`,result:`Control plane L2 работает на нодах L1 как DaemonSet.`,note:`Раскройте внутреннее устройство приложения: control plane L2 размещён на нодах L1 как DaemonSet. Подпись «работает в L1» должна оставаться рядом с компонентом. Показанное число условных нод не задаёт число реплик; смысл кадра — механизм и место исполнения.`},{title:`Выделяем префикс в общем etcd`,summary:`Control plane L2 использует общий etcd L1. Данные L2 размещаются в отдельном префиксе.`,result:`Состояние L2 хранится в etcd L1 под отдельным префиксом.`,note:`Покажите связь приложения с уже существующим etcd L1. Для данных L2 используется отдельный префикс внутри общего хранилища. Остановитесь на этой схеме на несколько секунд. Отдельный префикс объясняет разделение пространства ключей; дополнительных свойств изоляции из него выводить не нужно.`},{title:`Открываем API L2`,summary:`Компоненты control plane исполняются в L1. API L2 — точка доступа к ним для управления клиентским кластером.`,result:`API L2 — интерфейс доступа; запросы обслуживает control plane в L1.`,note:`Покажите логическую плоскость L2 и проведите к ней связь от control plane L2. Само приложение остаётся внутри L1. Так аудитория видит одновременно место исполнения компонентов и отдельный кластер, которым они управляют. Это центральное различие всей архитектуры.`},{title:`Возвращаем статус в ClusterClaim`,summary:`Статус Control plane L2 проходит через Applications → Addon (CP) → AddonClaim → Cluster L2 и возвращается в ClusterClaim.`,result:`Инициализация L2 отражена в ClusterClaim.`,note:`Проследите всю обратную цепочку: Control plane L2 → Applications → Addon (CP) → AddonClaim → Cluster L2 → ClusterClaim. Applications и Addon находятся в L1, AddonClaim и последующие ресурсы управления — в L0. Каждый следующий участник получает статус предыдущего. Исходная заявка отражает подтверждённую инициализацию L2. Это состояние управляющих компонентов; финальная готовность и передача L2 пользователю следуют после развёртывания стандартных аддонов.`}]},{id:`delivery`,title:`Доводим L2 и передаём пользователю`,kicker:`L0 → L1 → L2 · БАЗОВЫЕ КОМПОНЕНТЫ`,question:`Что превращает созданный control plane L2 в готовый кластер?`,duration:`01:50`,beats:[{title:`Заказываем базовые аддоны L2`,summary:`ClusterClaim Operator в L0 создаёт AddonClaim на базовые аддоны L2. Заявка запускает доставку через компоненты L1.`,result:`ClusterClaim Operator создал AddonClaim для базовых аддонов L2 в L0.`,note:`Покажите инициатора: ClusterClaim Operator в L0 создаёт AddonClaim на базовые аддоны L2. Оператор запускает подготовку стандартного набора. Дальше проследите цепочку через L1 к результату в L2: AddonClaim, Addon, Applications и развёрнутые компоненты.`},{title:`Создаём Addon для L2 в L1`,summary:`Контроллер AddonClaim создаёт Addon в L1. Ресурс описывает стандартные аддоны, которые предстоит развернуть в L2.`,result:`В L1 создан Addon для базовых компонентов L2.`,note:`Сохраните AddonClaim в L0 и покажите результат его обработки — ресурс Addon внутри L1. Он описывает будущие компоненты L2. Это вход для AddonOperator; сами Cilium, CoreDNS и Konnectivity появятся после обработки Applications.`},{title:`Создаём Applications для L2`,summary:`AddonOperator в L1 подхватывает Addon и создаёт Applications. Они задают Argo CD развёртывание базовых компонентов в L2.`,result:`В L1 созданы Applications для доставки компонентов в L2.`,note:`Покажите исполнителя: AddonOperator читает ресурс Addon и создаёт Applications в L1. Цель этих Applications — ресурсы в L2. Сохраните всю цепочку видимой: AddonClaim в L0, затем Addon и Applications в L1.`},{title:`Готовим стандартный набор L2`,summary:`Argo CD в L1 обрабатывает Applications и разворачивает ресурсы Cilium, CoreDNS и Konnectivity в L2. Базовый набор готов.`,result:`Argo CD развернул Cilium, CoreDNS и Konnectivity в L2.`,note:`Проследите переход от Applications к Argo CD в L1 и затем к результату в L2. Теперь появляются ресурсы Cilium, CoreDNS и Konnectivity. Отличайте место работы контроллеров доставки от кластера назначения. После подготовки базового набора L2 можно передавать пользователю.`},{title:`Передаём готовый кластер`,summary:`После подготовки стандартных аддонов платформа передаёт пользователю готовый Kubernetes. Путь исходного ClusterClaim завершён.`,result:`Пользователь получил готовый L2.`,note:`Вернитесь к исходному заказу: по заданной конфигурации подготовлены L1 и L2. Сделайте короткую паузу на результате. Для вопросов можно открыть общую карту: L0 координирует создание, L1 размещает инфраструктуру и control plane L2, L2 предоставляет Kubernetes API пользователю.`}]},{id:`user-apps`,title:`Разворачиваем приложение пользователя`,kicker:`L0 → L1 → L2 · ЗАКАЗ ПРИЛОЖЕНИЯ`,question:`Как пользователь получает своё приложение в готовом L2?`,duration:`01:10`,beats:[{title:`Заказываем приложение`,summary:`Пользователь создаёт заказ на приложение. Платформа формирует AddonClaim в L0 и запускает уже знакомую цепочку доставки.`,result:`Заказ пользователя представлен ресурсом AddonClaim в L0.`,note:`L2 уже подготовлен. Теперь пользователь заказывает своё приложение, и по заказу появляется AddonClaim в L0. Покажите знакомое начало цепочки доставки. Конкретный способ оформления заказа здесь не требуется: важны заявка и дальнейшая работа контроллеров.`},{title:`Создаём Addon приложения`,summary:`Контроллер AddonClaim обрабатывает заказ и создаёт Addon в L1. Этот ресурс описывает пользовательское приложение для L2.`,result:`В L1 создан Addon пользовательского приложения.`,note:`Сохраните заказ и AddonClaim в кадре. Результат обработки заявки — Addon в L1. Пока это ресурс с описанием приложения; следующим его подхватит AddonOperator. Различайте этот ресурс и фактически работающее приложение, которое появится в L2.`},{title:`Создаём Applications приложения`,summary:`AddonOperator в L1 читает Addon и создаёт Applications. Argo CD получает описание того, что нужно развернуть в L2.`,result:`В L1 созданы Applications пользовательского приложения.`,note:`Покажите действие AddonOperator: из ресурса Addon появляются Applications в L1. Они передают Argo CD описание развёртывания. Цепочка доставки сохраняет ту же организацию, что и при подготовке базовых компонентов L2.`},{title:`Запускаем приложение в L2`,summary:`Argo CD в L1 обрабатывает Applications и разворачивает ресурсы приложения в L2. Пользователь получает заказанное приложение.`,result:`Пользовательское приложение развёрнуто в L2.`,note:`Завершите цепочку результатом в L2: Argo CD развернул ресурсы пользовательского приложения. API L2 остаётся точкой доступа к управлению кластером, а новое приложение — отдельной рабочей нагрузкой. Вся история теперь ведёт от заказа кластера через его подготовку к заказу и запуску приложения пользователя.`}]}].map(e=>({...e,zones:[],nodes:[],edges:[]}));function t(e){let t=t=>{let n=e[t];if(!n)throw Error(`Missing chapter ${t+1}`);return n},n=(e,n,r)=>{let i=t(e).beats[n];if(!i)throw Error(`Missing beat ${n+1} in chapter ${e+1}`);i.active=r},r=(e,t,n,r,i,a,o,s,c,l,u={})=>({id:e,at:t,x:n,y:r,w:i,h:a,title:o,sub:s,kind:c,tier:l,...u}),i=(e,t,n,r,i,a,o,s=`command`)=>({from:e,to:t,at:n,path:r,label:i,lx:a,ly:o,kind:s});Object.assign(t(0),{zones:[{id:`l0`,x:224,y:24,w:560,h:384,label:`L0`,tier:`l0`},{id:`ext`,x:904,y:24,w:272,h:384,label:`ВНЕШНИЕ СЕРВИСЫ`,tier:`external`}],nodes:[r(`customer`,0,24,88,176,136,`Заказчик`,`Заказ платформы`,`user`,`actor`),r(`claim`,0,248,88,232,136,`ClusterClaim`,[`Версия платформы`,`Сеть, версии, ресурсы`],`resource`,`l0`),r(`operator`,1,528,88,232,136,[`ClusterClaim`,`Operator`],`Исполняет описание`,`operator`,`l0`),r(`bucket`,2,936,88,216,136,[`Облако`,`Backup-бакет`],`Создан S3-бакет`,`cloud`,`external`),r(`certificates`,3,528,272,232,112,`Сертификаты`,`Материал доверия`,`resource`,`l0`),r(`vault`,4,936,272,216,112,`Vault`,[`Credentials бакета`,`Сертификаты`],`storage`,`external`)],edges:[i(`customer`,`claim`,0,`M199 156H249`),i(`operator`,`claim`,1,`M529 156H479`),i(`operator`,`bucket`,2,`M759 156H937`,`запрос`,848,132),i(`operator`,`certificates`,3,`M644 223V273`,`выпуск`,704,248),i(`bucket`,`vault`,4,`M1044 223V273`,`credentials`,1112,248)]}),[[`customer`,`claim`],[`claim`,`operator`],[`operator`,`bucket`],[`operator`,`certificates`],[`bucket`,`certificates`,`vault`]].forEach((e,t)=>n(0,t,e)),Object.assign(t(1),{zones:[{id:`l0`,x:16,y:16,w:800,h:232,label:`L0`,tier:`l0`},{id:`ext`,x:856,y:16,w:328,h:232,label:`ВНЕШНЕЕ ОБЛАКО`,tier:`external`},{id:`l1`,x:16,y:264,w:1168,h:144,label:`L1`,tier:`l1`,at:1}],nodes:[r(`infra-claim`,0,40,64,208,88,`ClusterClaim`,`Исходный заказ`,`resource`,`l0`,{variants:[{at:2,sub:`L1 инициализирован`}]}),r(`infra-operator`,0,304,64,208,88,[`ClusterClaim`,`Operator`],``,`operator`,`l0`,{detail:`ClusterClaim Operator наблюдает исходный ClusterClaim и создаёт ресурс Cluster L1. Параллельно он заказывает CSR approver для подписи сертификатов нод и CCM для интеграции с облаком; оба компонента работают в L0.`}),r(`infra-resource`,0,568,64,208,88,`Cluster L1`,`Описание в L0`,`resource`,`l0`,{variants:[{at:2,sub:`Инициализирован`}]}),r(`services`,0,304,176,208,64,`CSR + CCM`,``,`operator`,`l0`,{detail:`ClusterClaim Operator создаёт CSR approver для подписи сертификатов нод и CCM для интеграции с облаком параллельно с Cluster L1. Оба компонента работают в L0.`}),r(`capi`,1,568,176,208,64,`Cluster API`,``,`operator`,`l0`,{detail:`Cluster API наблюдает ресурс Cluster L1 и запрашивает создание виртуальных машин в облаке. Статус инициализации возвращается от машин через Cluster API и Cluster L1 в исходный ClusterClaim.`}),r(`cloud`,1,880,176,272,64,`Облако`,``,`cloud`,`external`,{detail:`По запросу Cluster API облако создаёт виртуальные машины инфраструктурного кластера L1.`}),r(`machines`,1,888,304,264,96,`Машины L1`,`Кластер инициализируется`,`machines`,`l1`,{variants:[{at:2,sub:`L1 инициализирован`}]}),r(`network`,3,464,304,264,96,[`Cilium`,`CoreDNS`],``,`app`,`l1`),r(`delivery`,4,40,304,264,96,[`Argo CD`,`AddonOperator`],``,`operator`,`l1`)],edges:[i(`infra-operator`,`infra-claim`,0,`M305 108H247`),i(`infra-operator`,`infra-resource`,0,`M511 108H569`),i(`infra-operator`,`services`,0,`M408 151V177`),i(`capi`,`infra-resource`,1,`M640 177V151`),i(`capi`,`cloud`,1,`M775 208H881`,`создать VM`,828,184),i(`cloud`,`machines`,1,`M1016 239V311`,`машины L1`,1092,280),i(`machines`,`capi`,2,`M944 311V280H704V239`,`инициализирован`,824,280,`status`),i(`capi`,`infra-resource`,2,`M704 177V151`,``,0,0,`status`),i(`infra-resource`,`infra-claim`,2,`M672 65V40H144V65`,``,0,0,`status`),i(`machines`,`network`,3,`M889 352H727`,`bootstrap`,808,328),i(`network`,`delivery`,4,`M465 352H303`)]}),[[`infra-claim`,`infra-operator`,`infra-resource`,`services`],[`capi`,`cloud`,`machines`],[`machines`,`capi`,`infra-resource`,`infra-claim`],[`machines`,`network`],[`network`,`delivery`]].forEach((e,t)=>n(1,t,e)),Object.assign(t(3),{zones:[{id:`l0`,x:24,y:24,w:744,h:384,label:`L0`,tier:`l0`},{id:`l1`,x:808,y:24,w:368,h:384,label:`L1`,tier:`l1`}],nodes:[r(`client-claim`,0,48,72,208,112,`ClusterClaim`,`Исходный заказ`,`resource`,`l0`),r(`client-operator`,0,304,72,208,112,[`ClusterClaim`,`Operator`],`Исполняет заказ`,`operator`,`l0`,{detail:`ClusterClaim Operator наблюдает ClusterClaim и создаёт ресурс Cluster L2. Параллельно он заказывает CSR approver для подписи сертификатов нод и CCM для интеграции с облаком. CSR approver и CCM работают в L0.`}),r(`client-services`,0,560,72,184,112,`CSR + CCM`,[`Сертификаты нод`,`Облако`],`operator`,`l0`,{detail:`ClusterClaim Operator создаёт CSR approver для подписи сертификатов нод и CCM для интеграции с облаком параллельно с Cluster L2. Оба компонента работают в L0.`}),r(`client-resource`,0,48,272,208,112,`Cluster L2`,`Описание L2 в L0`,`resource`,`l0`),r(`client-capi`,1,304,272,208,112,`Cluster API`,`Запрашивает Control plane L2`,`operator`,`l0`),r(`addonclaim`,1,560,272,184,112,`AddonClaim`,`Заявка на аддон`,`resource`,`l0`),r(`addon-cp`,2,832,72,320,88,`Addon (CP)`,`Ресурс Kubernetes`,`resource`,`l1`),r(`cp-applications`,3,832,184,320,88,`Applications`,`Ресурсы Argo CD`,`resource`,`l1`),r(`client-app`,4,832,296,320,88,`Control plane L2`,`Приложение в L1`,`app`,`l1`)],edges:[i(`client-operator`,`client-claim`,0,`M305 128H255`),i(`client-operator`,`client-services`,0,`M511 128H561`),i(`client-operator`,`client-resource`,0,`M408 183V228H152V273`),i(`client-capi`,`client-resource`,1,`M305 328H255`),i(`client-capi`,`addonclaim`,1,`M511 328H561`),i(`addonclaim`,`addon-cp`,2,`M743 328H784V116H833`),i(`addon-cp`,`cp-applications`,3,`M992 159V185`,`AddonOperator`,1091,172),i(`cp-applications`,`client-app`,4,`M992 271V297`,`Argo CD`,1068,284)]}),[[`client-claim`,`client-operator`,`client-resource`,`client-services`],[`client-capi`,`addonclaim`],[`addonclaim`,`addon-cp`],[`addon-cp`,`cp-applications`],[`cp-applications`,`client-app`]].forEach((e,t)=>n(3,t,e)),Object.assign(t(5),{zones:[{id:`l0`,x:16,y:16,w:264,h:392,label:`L0`,tier:`l0`},{id:`l1`,x:304,y:16,w:520,h:224,label:`L1 · ДОСТАВКА АДДОНОВ`,tier:`l1`},{id:`l2`,x:848,y:16,w:336,h:224,label:`L2`,tier:`l2`}],nodes:[r(`defaults-operator`,0,40,272,216,120,[`ClusterClaim`,`Operator`],`Заказывает аддоны L2`,`operator`,`l0`),r(`defaults-claim`,0,40,88,216,128,`AddonClaim`,[`Заявка на стандартные`,`аддоны L2`],`resource`,`l0`),r(`defaults-addon`,1,328,88,208,128,`Addon`,[`Обработчик:`,`AddonOperator`],`resource`,`l1`),r(`defaults-applications`,2,584,88,216,128,`Applications`,[`Ресурсы Argo CD`,`Целевая среда — L2`],`resource`,`l1`),r(`default-addons`,3,872,88,288,128,`Аддоны L2`,[`Cilium · CoreDNS`,`Konnectivity`],`app`,`l2`,{detail:`Итоговые базовые ресурсы L2: Cilium, CoreDNS и Konnectivity.`}),r(`hand-off`,4,872,272,288,120,[`Пользователь`,`получает кластер`],`Можно запускать приложения`,`user`,`actor`)],edges:[i(`defaults-operator`,`defaults-claim`,0,`M148 273V215`,`создаёт`,216,244),i(`defaults-claim`,`defaults-addon`,1,`M255 152H329`),i(`defaults-addon`,`defaults-applications`,2,`M535 152H585`),i(`defaults-applications`,`default-addons`,3,`M799 152H873`,`Argo CD`,836,128),i(`default-addons`,`hand-off`,4,`M1016 215V273`,`L2 готов`,1080,244,`status`)]}),[[`defaults-operator`,`defaults-claim`],[`defaults-claim`,`defaults-addon`],[`defaults-addon`,`defaults-applications`],[`defaults-applications`,`default-addons`],[`default-addons`,`hand-off`]].forEach((e,t)=>n(5,t,e)),Object.assign(t(6),{zones:[{id:`user-l0`,x:224,y:16,w:232,h:392,label:`L0`,tier:`l0`},{id:`user-l1`,x:464,y:16,w:496,h:392,label:`L1 · ДОСТАВКА ПРИЛОЖЕНИЯ`,tier:`l1`},{id:`user-l2`,x:968,y:16,w:216,h:392,label:`L2`,tier:`l2`}],nodes:[r(`user-order`,0,16,160,176,136,`Пользователь`,[`Заказывает`,`приложение`],`user`,`actor`),r(`user-addonclaim`,0,240,160,200,136,`AddonClaim`,[`Заказ приложения`,`пользователя`],`resource`,`l0`),r(`user-addon`,1,488,160,184,136,`Addon`,[`Описание`,`приложения`],`resource`,`l1`),r(`user-applications`,2,720,160,208,136,`Applications`,[`Ресурсы Argo CD`,`Целевая среда — L2`],`resource`,`l1`),r(`user-workload`,3,984,160,184,136,`Приложение`,[`Для пользователя`,`Работает в L2`],`app`,`l2`,{detail:`Приложение, заказанное пользователем через AddonClaim. Его ресурсы развёрнуты и работают в L2.`})],edges:[i(`user-order`,`user-addonclaim`,0,`M191 228H241`),i(`user-addonclaim`,`user-addon`,1,`M439 228H489`),i(`user-addon`,`user-applications`,2,`M671 228H721`),i(`user-applications`,`user-workload`,3,`M927 228H985`)]}),[[`user-order`,`user-addonclaim`],[`user-addonclaim`,`user-addon`],[`user-addon`,`user-applications`],[`user-applications`,`user-workload`]].forEach((e,t)=>n(6,t,e))}function n(e){let t=t=>{let n=e[t];if(!n)throw Error(`Missing chapter ${t+1}`);return n},n=(e,n,r)=>{let i=t(e).beats[n];if(!i)throw Error(`Missing beat ${n+1} in chapter ${e+1}`);i.active=r};Object.assign(t(2),{zones:[{id:`parallel-l1`,x:16,y:16,w:928,h:184,label:`L1 · ФАЗЫ ADDONOPERATOR`,tier:`l1`,at:0},{id:`parallel-vault`,x:16,y:216,w:928,h:176,label:`VAULT · НАСТРОЙКИ КЛАСТЕРА`,tier:`external`,at:0},{id:`parallel-l0`,x:968,y:16,w:216,h:392,label:`L0`,tier:`l0`,at:0}],nodes:[{id:`parallel-claimoperator`,x:984,y:264,w:184,h:136,title:[`ClusterClaim`,`Operator`],sub:[`Настраивает Vault`,`для кластера`],kind:`operator`,tier:`l0`,at:0},{id:`parallel-addonoperator`,x:40,y:72,w:208,h:112,title:`Аддоны`,sub:[`Установка через`,`Argo CD Applications`],detail:`Первая фаза: установка аддонов L1 через Argo CD Applications.`,kind:`app`,tier:`l1`,phase:`01`,at:0,readyAt:7},{id:`parallel-phases`,x:272,y:72,w:192,h:112,title:`Защита`,sub:[`mTLS`,`Сетевые политики`],kind:`app`,tier:`l1`,phase:`02`,at:1,readyAt:7},{id:`parallel-observability`,x:488,y:72,w:224,h:112,title:`Наблюдаемость`,sub:[`Мониторинг`,`Сбор логов`],kind:`app`,tier:`l1`,phase:`03`,at:3,readyAt:7},{id:`parallel-firewall`,x:736,y:72,w:184,h:112,title:`Изоляция`,sub:[`Host firewall`,`Default deny`],kind:`app`,tier:`l1`,phase:`04`,at:6,readyAt:7},{id:`parallel-vault`,x:40,y:256,w:208,h:128,title:`Vault`,sub:[`Настройки кластера`,`Auth, секреты, KMS`],kind:`storage`,tier:`external`,at:0,readyAt:7,variants:[{at:7,sub:[`Настройки кластера`,`подготовлены`]}]},{id:`parallel-access`,x:272,y:256,w:192,h:128,title:`Auth и роли`,sub:[`ServiceAccount L1`,`Точечные роли`],detail:`ServiceAccount auth: ServiceAccount из L1 сопоставляются с точечными ролями доступа в Vault.`,kind:`resource`,tier:`external`,at:2,readyAt:7},{id:`parallel-secrets`,x:488,y:256,w:224,h:128,title:`Секреты`,sub:[`Индивидуальные`,`для компонентов`],kind:`resource`,tier:`external`,at:4,readyAt:7,badges:[{at:4,label:`Высокая энтропия`}]},{id:`parallel-kms`,x:736,y:256,w:184,h:128,title:`KMS Transit`,sub:[`Ключ и доступы L2`],detail:`KMS Transit: ключ и доступы L2 для Control plane L2.`,kind:`storage`,tier:`external`,at:5,readyAt:7},{id:`parallel-join`,x:984,y:72,w:184,h:112,title:[`Условия`,`для L2`],sub:`L1 + Vault готовы`,kind:`gate`,tier:`l0`,at:7,readyAt:7}],edges:[{from:`parallel-claimoperator`,to:`parallel-vault`,at:0,path:`M1076 399V412H144V383`,kind:`command`,label:`настройка кластера`,lx:624,ly:404},{from:`parallel-addonoperator`,to:`parallel-phases`,at:1,path:`M247 128H273`,kind:`command`},{from:`parallel-phases`,to:`parallel-observability`,at:3,path:`M463 128H489`,kind:`command`},{from:`parallel-observability`,to:`parallel-firewall`,at:6,path:`M711 128H737`,kind:`command`},{from:`parallel-vault`,to:`parallel-access`,at:2,path:`M247 320H273`,kind:`command`},{from:`parallel-access`,to:`parallel-secrets`,at:4,path:`M463 320H489`,kind:`command`},{from:`parallel-secrets`,to:`parallel-kms`,at:5,path:`M711 320H737`,kind:`command`},{from:`parallel-firewall`,to:`parallel-join`,at:7,path:`M919 128H985`,kind:`status`},{from:`parallel-kms`,to:`parallel-join`,at:7,path:`M919 320H952V216H1076V183`,kind:`status`}]}),[[`parallel-addonoperator`,`parallel-claimoperator`,`parallel-vault`],[`parallel-addonoperator`,`parallel-phases`],[`parallel-claimoperator`,`parallel-access`],[`parallel-observability`],[`parallel-claimoperator`,`parallel-secrets`],[`parallel-claimoperator`,`parallel-kms`],[`parallel-firewall`],[`parallel-firewall`,`parallel-kms`,`parallel-join`]].forEach(function(e,t){n(2,t,e)}),Object.assign(t(4),{zones:[{id:`hosted-l0`,x:16,y:16,w:432,h:392,label:`L0`,tier:`l0`,at:0},{id:`hosted-l1`,x:464,y:16,w:480,h:392,label:`L1`,tier:`l1`,at:0},{id:`hosted-l2`,x:960,y:16,w:224,h:392,label:`L2 · ТОЧКА ДОСТУПА`,tier:`l2`,at:0}],nodes:[{id:`hosted-infra-nodes`,x:480,y:304,w:208,h:96,title:`Узлы L1`,sub:`Исполняют CP L2`,detail:`Узлы инфраструктурного кластера L1 исполняют компоненты Control plane L2 как DaemonSet.`,kind:`machines`,tier:`l1`,at:0},{id:`hosted-clientcp`,x:480,y:184,w:448,h:88,title:`Control plane L2`,sub:`DaemonSet на узлах L1`,detailKind:`Приложение · DaemonSet`,detail:`Компоненты control plane L2 исполняются как DaemonSet на узлах L1. Они обслуживают Kubernetes API L2 и используют etcd L1 с отдельным префиксом данных. Статус инициализации возвращается через Applications, Addon (CP) и AddonClaim в Cluster L2 и ClusterClaim.`,kind:`app`,tier:`l1`,at:0,variants:[{at:3,sub:`DaemonSet на узлах L1 · инициализирован`}]},{id:`hosted-etcd`,x:720,y:304,w:208,h:96,title:`Общий etcd L1`,sub:`отдельный префикс L2`,detail:`Существующее общее хранилище etcd в L1. Данные Control plane L2 используют отдельный префикс L2.`,kind:`storage`,tier:`l1`,at:1},{id:`hosted-api-l2`,x:976,y:184,w:192,h:112,title:`API L2`,sub:[`Точка доступа`,`Обслуживает L1`],detail:`Точка доступа к Kubernetes API клиентского кластера L2. Запросы обслуживает control plane, работающий в L1. Карточка обозначает интерфейс доступа, а не отдельное приложение или дополнительные машины в L2.`,kind:`endpoint`,tier:`l2`,at:2},{id:`hosted-applications`,x:720,y:64,w:208,h:88,title:`Applications`,sub:`Статус приложения`,detail:`Applications в L1 отражают состояние приложения Control plane L2 и передают его в Addon (CP).`,kind:`resource`,tier:`l1`,at:3},{id:`hosted-addoncp`,x:480,y:64,w:208,h:88,title:`Addon (CP)`,sub:`Статус Applications`,detail:`Addon (CP) в L1 получает состояние Applications и передаёт статус в AddonClaim в L0.`,kind:`resource`,tier:`l1`,at:3},{id:`hosted-addonclaim`,x:128,y:64,w:208,h:88,title:`AddonClaim`,sub:`Статус Addon`,detail:`AddonClaim в L0 отражает состояние Addon (CP) из L1. Через него статус Control plane L2 отражается в Cluster L2, а затем в исходном ClusterClaim.`,kind:`resource`,tier:`l0`,at:3},{id:`hosted-client-resource`,x:128,y:184,w:208,h:88,title:`Cluster L2`,sub:`Инициализирован`,kind:`resource`,tier:`l0`,at:3},{id:`hosted-clusterclaim`,x:128,y:304,w:208,h:96,title:`ClusterClaim`,sub:`Статус L2 получен`,detail:`ClusterClaim отражает состояние Cluster L2: control plane инициализирован. ClusterClaim Operator продолжает процесс установки базовых аддонов, после чего L2 можно передать пользователю.`,kind:`resource`,tier:`l0`,at:3}],edges:[{from:`hosted-infra-nodes`,to:`hosted-clientcp`,at:0,path:`M580 311V271`,kind:`link`},{from:`hosted-clientcp`,to:`hosted-etcd`,at:1,path:`M824 271V305`,kind:`link`},{from:`hosted-clientcp`,to:`hosted-api-l2`,at:2,path:`M927 228H977`,kind:`link`},{from:`hosted-clientcp`,to:`hosted-applications`,at:3,path:`M824 185V151`,kind:`status`},{from:`hosted-applications`,to:`hosted-addoncp`,at:3,path:`M721 108H687`,kind:`status`},{from:`hosted-addoncp`,to:`hosted-addonclaim`,at:3,path:`M481 108H335`,kind:`status`},{from:`hosted-addonclaim`,to:`hosted-client-resource`,at:3,path:`M232 151V185`,kind:`status`},{from:`hosted-client-resource`,to:`hosted-clusterclaim`,at:3,path:`M232 271V305`,kind:`status`}]}),[[`hosted-infra-nodes`,`hosted-clientcp`],[`hosted-clientcp`,`hosted-etcd`],[`hosted-clientcp`,`hosted-api-l2`],[`hosted-clientcp`,`hosted-applications`,`hosted-addoncp`,`hosted-addonclaim`,`hosted-client-resource`,`hosted-clusterclaim`]].forEach(function(e,t){n(4,t,e)})}t(e),n(e);var r=0,i={l0:`#80b4ff`,l1:`#68d5c8`,l2:`#bbabff`,external:`#e2b478`,actor:`#bdc9da`},a={resource:`Ресурс`,operator:`Контроллер`,cloud:`Облако`,machines:`Узлы`,app:`Приложение`,endpoint:`Точка доступа`,storage:`Хранилище`,gate:`Условие`,user:`Участник`},o={resource:`<path d="M3 1.5h8l3 3V15H3zM11 1.5v4h3M6 8h5M6 11h5"/>`,operator:`<path d="m8 1 6 3.5v7L8 15l-6-3.5v-7z"/><path d="M5 8a3 3 0 0 1 5-2M10 4v2H8M11 8a3 3 0 0 1-5 2M6 12v-2h2"/>`,cloud:`<path d="M4 13a3.5 3.5 0 0 1-.7-6.9A5 5 0 0 1 12.7 5a4 4 0 0 1-.2 8z"/>`,machines:`<rect x="2" y="1" width="12" height="5.5" rx="1.5"/><rect x="2" y="9" width="12" height="5.5" rx="1.5"/><path d="M5 3.7h.1M8 3.7h3M5 11.7h.1M8 11.7h3"/>`,app:`<rect x="1.5" y="2" width="13" height="12" rx="2"/><path d="M1.5 5.5h13M4 3.8h.1M6 3.8h.1m-.6 4 2.5 2-2.5 2M9 12h3"/>`,endpoint:`<path d="M6 2H2v12h4M10 2h4v12h-4M5 8h6M8 5l3 3-3 3"/>`,storage:`<ellipse cx="8" cy="3" rx="6" ry="2"/><path d="M2 3v10c0 2.7 12 2.7 12 0V3M2 8c0 2.7 12 2.7 12 0"/>`,gate:`<circle cx="8" cy="8" r="6.5"/><path d="m4.6 8.1 2.3 2.4 4.7-5"/>`,user:`<circle cx="8" cy="4.2" r="2.8"/><path d="M2.5 14c.2-3.4 2.1-5 5.5-5s5.3 1.6 5.5 5"/>`};function s(e){return String(e??``).replace(/[&<>"']/g,function(e){return{"&":`&amp;`,"<":`&lt;`,">":`&gt;`,'"':`&quot;`,"'":`&#39;`}[e]||e})}function c(e,t){return Number.isFinite(Number(e))?Number(e):t}function l(e){return Math.max(0,Math.floor(c(e,0)))}function u(e){return e==null?[]:(Array.isArray(e)?e:[e]).map(function(e){return String(e)}).filter(function(e){return e.trim().length>0})}function d(e){return Object.hasOwn(i,e)?e:`external`}function f(e,t,n){return`#`+[1,3,5].map(function(r){let i=parseInt(e.slice(r,r+2),16),a=parseInt(t.slice(r,r+2),16);return Math.round(i+(a-i)*n).toString(16).padStart(2,`0`)}).join(``)}function p(e,t,n=0){let r=0;return Array.from(String(e)).forEach(function(e){/\s/.test(e)?r+=.31:/[ilI1.,:;!'|]/.test(e)?r+=.32:/[MWЖШЩЮФ@%]/.test(e)?r+=.91:/[A-ZА-ЯЁ0-9]/.test(e)?r+=.66:r+=.58}),r*t+Math.max(0,Array.from(String(e)).length-1)*(n||0)}function m(e,t,n,r=0){if(e=String(e),p(e,n,r)<=t)return e;let i=Array.from(e);for(;i.length&&p(i.join(``)+`…`,n,r)>t;)i.pop();return i.join(``).trimEnd()+`…`}function h(e,t,n,r,i=0){let a=[];return u(e).forEach(function(e){let r=e.trim().split(/\s+/),o=``;r.forEach(function(e){let r=o?o+` `+e:e;o&&p(r,n,i)>t?(a.push(m(o,t,n,i)),o=e):o=r}),(o||!e)&&a.push(m(o,t,n,i))}),a.length>r&&(a=a.slice(0,r),a[r-1]=m(a[r-1]+` …`,t,n,i)),a}function g(){return`<style>.nd-root{font-family:"Golos Text",Arial,sans-serif;font-weight:400;overflow:visible}.nd-root text{user-select:none;pointer-events:none}.nd-node{cursor:pointer;outline:none}.nd-node .nd-outline{transition:stroke-width .16s,stroke-opacity .16s}.nd-node:hover .nd-outline,.nd-node:focus .nd-outline{stroke-width:2.2;stroke-opacity:1}.nd-node:focus-visible .nd-outline{stroke-dasharray:5 3}.nd-reveal{animation:nd-enter .64s cubic-bezier(.2,.7,.3,1) both}.nd-edge-reveal{animation:nd-edge .7s ease-out both}.nd-edge-pulse{pointer-events:none}@keyframes nd-enter{from{opacity:0}to{opacity:1}}@keyframes nd-edge{from{opacity:0}to{opacity:1}}@media(prefers-reduced-motion:reduce){.nd-root *{animation:none!important;transition:none!important}.nd-root .nd-edge-pulse{display:none!important}}</style>`}function _(e,t,n,r,i){let a=` class="nd-outline" fill="`+(i?f(`#111e2f`,r,.13):`#111e2f`)+`" stroke="`+r+`" stroke-opacity="`+(i?`.85`:`.3`)+`" stroke-width="`+(i?`1.6`:`1.1`)+`"`,o=``;if(e===`resource`)o=`<path d="M9 1H`+(t-20)+`L`+(t-1)+` 20V`+(n-9)+`Q`+(t-1)+` `+(n-1)+` `+(t-9)+` `+(n-1)+`H9Q1 `+(n-1)+` 1 `+(n-9)+`V9Q1 1 9 1Z"`+a+`/><path d="M`+(t-20)+` 1V20H`+(t-1)+`" fill="none" stroke="`+r+`" stroke-opacity=".48"/>`;else if(e===`machines`)o=`<rect x="8" y="1" width="`+(t-9)+`" height="`+(n-9)+`" rx="4" fill="#0d1726" stroke="`+r+`" stroke-opacity=".22"/><rect x="4" y="4" width="`+(t-9)+`" height="`+(n-9)+`" rx="4" fill="#101b2b" stroke="`+r+`" stroke-opacity=".32"/><rect x="1" y="7" width="`+(t-9)+`" height="`+(n-8)+`" rx="4"`+a+`/>`;else if(e===`endpoint`)o=`<rect x="1" y="1" width="`+(t-2)+`" height="`+(n-2)+`" rx="6"`+a+` stroke-dasharray="5 5"/>`;else if(e===`gate`)o=`<path d="M14 1H`+(t-14)+`L`+(t-1)+` `+n/2+` `+(t-14)+` `+(n-1)+`H14L1 `+n/2+`Z"`+a+`/>`;else if(e===`storage`)o=`<path d="M1 5Q`+t/2+` -3 `+(t-1)+` 5V`+(n-5)+`Q`+t/2+` `+(n+3)+` 1 `+(n-5)+`Z"`+a+`/><path d="M1 5Q`+t/2+` 11 `+(t-1)+` 5M1 `+(n-5)+`Q`+t/2+` `+(n-11)+` `+(t-1)+` `+(n-5)+`" fill="none" stroke="`+r+`" stroke-opacity=".23"/>`;else{let i=e===`app`?4:6;o=`<rect x="1" y="1" width="`+(t-2)+`" height="`+(n-2)+`" rx="`+i+`"`+a+`/>`,e===`app`&&(o+=`<rect x="5" y="36" width="2" height="`+Math.max(5,n-48)+`" rx="1" fill="`+r+`" fill-opacity=".35"/>`),e===`operator`&&(o+=`<path d="M5 28V`+(n-12)+`" stroke="`+r+`" stroke-opacity=".3" stroke-width="2"/>`)}return o}function v(e,t){t=l(t);let n=`narrative-`+ ++r,v=Array.isArray(e.nodes)?e.nodes:[],y=Array.isArray(e.zones)?e.zones:[],b=Array.isArray(e.edges)?e.edges:[],x=Array.isArray(e.beats)?e.beats[t]:null,S=new Set(x&&Array.isArray(x.active)?x.active.map(String):[]),C=v.filter(function(e){return e&&l(e.at)<=t}).map(function(e,r){let i={...e,clip:n+`-clip-`+r,ready:!1,visibleBadges:[]};return(Array.isArray(e.variants)?e.variants:[]).filter(function(e){return l(e.at)<=t}).slice().sort(function(e,t){return l(e.at)-l(t.at)}).forEach(function(e){e.title!==void 0&&(i.title=e.title),e.sub!==void 0&&(i.sub=e.sub)}),i.id=String(e.id==null?`node-`+r:e.id),i.x=c(e.x,0),i.y=c(e.y,0),i.w=Math.max(32,c(e.w,190)),i.h=Math.max(32,c(e.h,94)),i.tier=d(e.tier),i.kind=o[e.kind]?e.kind:`resource`,i.clip=n+`-clip-`+r,i.ready=typeof e.readyAt==`number`&&Number.isFinite(e.readyAt)&&t>=e.readyAt,i.visibleBadges=(Array.isArray(e.badges)?e.badges:[]).filter(function(e){return e&&l(e.at)<=t}),i}),w=[...v,...y].filter(Boolean),T=w.length?Math.min.apply(null,w.map(function(e){return c(e.x,0)})):16,E=w.length?Math.max.apply(null,w.map(function(e){return c(e.x,0)+c(e.w,0)})):1184,D=Math.max(1,E-T),O=D*420/1168,k=new Map(C.map(function(e){return[e.id,e]})),A=`<defs><marker id="`+n+`-arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M1 1 8.5 5 1 9" fill="none" stroke="#8093ab" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></marker>`;C.forEach(function(e){A+=`<clipPath id="`+e.clip+`"><rect x=".5" y=".5" width="`+(e.w-1)+`" height="`+(e.h-1)+`" rx="5"/></clipPath>`}),A+=`</defs>`;let j=`<svg xmlns="http://www.w3.org/2000/svg" class="nd-root" viewBox="`+T+` 0 `+D+` `+O+`" width="100%" height="100%" role="group" aria-labelledby="`+n+`-title" data-step="`+t+`"><title id="`+n+`-title">`+s(e.label||e.title||`Схема создания платформы`)+`</title>`+A+g();y.filter(function(e){return e&&l(e.at)<=t}).forEach(function(e){let t=c(e.x,0),n=c(e.y,0),r=Math.max(1,c(e.w,100)),a=Math.max(1,c(e.h,100)),o=i[d(e.tier)];j+=`<g data-zoneid="`+s(e.id||``)+`"><rect x="`+t+`" y="`+n+`" width="`+r+`" height="`+a+`" rx="8" fill="`+f(`#0d1726`,o,.035)+`" stroke="`+o+`" stroke-opacity=".2" stroke-width="1"`+(e.tier===`external`?` stroke-dasharray="5 5"`:``)+`/><rect x="`+(t+8)+`" y="`+(n+11)+`" width="2" height="14" rx="1" fill="`+o+`" fill-opacity=".85"/><path d="M`+(t+17)+` `+(n+33)+`H`+(t+r-17)+`" stroke="`+o+`" stroke-opacity=".12"/><text x="`+(t+18)+`" y="`+(n+22)+`" fill="`+o+`" font-size="11" font-weight="500" letter-spacing="1.05">`+s(m(e.label||String(e.id||``).toUpperCase(),Math.max(10,r-36),11))+`</text></g>`});let M=``;return b.filter(function(e){return e&&l(e.at)<=t&&k.has(String(e.from))&&k.has(String(e.to))&&typeof e.path==`string`}).forEach(function(e){let r=e.kind||`command`,a=S.has(String(e.from))||S.has(String(e.to)),o=k.get(String(e.from));if(!o)return;let u=i[o.tier],d=l(e.at)===t&&(r===`command`||r===`status`);if(j+=`<g`+(d?` class="nd-edge-reveal"`:``)+`><path d="`+s(e.path)+`" fill="none" stroke="`+(a?u:`#8093ab`)+`" stroke-opacity="`+(a?`.95`:`.8`)+`" stroke-width="`+(e.emphasis?`2.5`:r===`link`?`1`:`1.55`)+`" stroke-linecap="round" stroke-linejoin="round"`+(r===`status`?` stroke-dasharray="6 5"`:``)+(r===`link`?``:` marker-end="url(#`+n+`-arrow)"`)+`/></g>`,d&&(j+=`<g class="nd-edge-pulse" opacity="0" aria-hidden="true"><circle r="2.8" fill="`+u+`"/><animateMotion path="`+s(e.path)+`" dur=".82s" begin="0s" repeatCount="1" calcMode="paced" fill="freeze"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.12;.78;1" dur=".82s" begin="0s" repeatCount="1" fill="freeze"/></g>`),e.label){let t=m(e.label,340,12),n=p(t,12)+18,r=Math.max(5,Math.min(1195-n,c(e.lx,600)-n/2)),i=Math.max(4,Math.min(392,c(e.ly,210)-12));M+=`<g`+(d?` class="nd-edge-reveal"`:``)+`><title>`+s(e.label)+`</title><rect x="`+r+`" y="`+i+`" width="`+n+`" height="24" rx="4" fill="#0d1726" stroke="#34465c" stroke-opacity=".5"/><text x="`+(r+n/2)+`" y="`+(i+16)+`" text-anchor="middle" font-size="12" fill="#b6c4d6">`+s(t)+`</text></g>`}}),j+=M,C.forEach(function(e){let n=i[e.tier],r=S.has(e.id),c=e.visibleBadges,d=e.w>=205?22:e.w>=180?21:20,g=Math.max(10,e.w-32-(e.kind===`machines`?7:0)),v=e.h-(c.length?32:12),y=h(e.title,g,d,3,-.45),b=h(e.sub,g,15,3),x=44+Math.max(0,y.length-1)*28,C=e.phase?68:x+24,w=Math.max(0,Math.min(3,Math.floor((v-C)/18)+1)),T=x>v||b.length>w;b.length>w&&(b=w?h(e.sub,g,15,w):[]);let E=u(e.title).concat(u(e.sub)).concat(c.map(function(e){return String(e.label||``)})).join(`. `)+(e.ready?`. Готово`:``);j+=`<g class="nd-node" data-nodeid="`+s(e.id)+`" data-title-baseline="44"`+(T?` data-layout-overflow="true"`:``)+` tabindex="0" role="button" aria-label="`+s(E)+`" transform="translate(`+e.x+` `+e.y+`)"><title>`+s(E)+`</title><g`+(l(e.at)===t?` class="nd-reveal"`:``)+`>`,j+=`<g clip-path="url(#`+e.clip+`)">`+_(e.kind,e.w,e.h,n,r);let D=e.kind===`gate`&&!e.ready?`<circle cx="8" cy="8" r="6.5"/><path d="M4.5 8h7"/>`:o[e.kind],O=a[e.kind],k=e.w-16-(e.kind===`resource`?8:0)-12;e.phase?j+=`<g class="nd-phase"><text x="16" y="20" font-size="9.5" font-weight="500" letter-spacing="1" fill="`+n+`">ФАЗА `+s(e.phase)+`</text></g>`:(j+=`<g transform="translate(16 8) scale(.875)" fill="none" stroke="`+n+`" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">`+D+`</g>`,j+=`<text class="nd-metadata" x="38" y="20" font-size="9.5" font-weight="400" letter-spacing=".1" fill="`+n+`">`+s(O)+`</text>`),e.ready&&(j+=`<g class="nd-ready" role="img" aria-label="Готово"><title>Готово</title><path d="M`+k+` 15.5l3.5 3.5 7-8" fill="none" stroke="`+n+`" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></g>`),y.forEach(function(e,t){j+=`<text class="nd-title" x="16" y="`+(44+t*28)+`" fill="`+(r?f(`#eaf1fb`,n,.22):`#eaf1fb`)+`" font-size="`+d+`" font-weight="550" letter-spacing="-.45">`+s(e)+`</text>`}),b.forEach(function(e,t){j+=`<text class="nd-subtitle" x="16" y="`+(C+t*18)+`" fill="#b6c4d6" font-size="15" font-weight="400">`+s(e)+`</text>`});let A=16,M=e.h-24,N=e.w-16;c.forEach(function(e,t){if(A>=N-20)return;let r=c.length-t,i=N-A,a=m(e.label||``,Math.max(10,i-12),10.5),o=p(a,10.5)+12;t&&o+A>N&&(a=`+`+r,o=p(a,10.5)+12),!(o+A>N)&&(j+=`<g><text x="`+A+`" y="`+(M+11.5)+`" fill="`+n+`" font-size="10.5" font-weight="400">`+s(a)+`</text></g>`,A+=o+5)}),j+=`</g></g></g>`}),j+`</svg>`}function y(e,t){if(!e.length)throw Error(`The classic presentation requires chapters.`);let n={"&":`&amp;`,"<":`&lt;`,">":`&gt;`,'"':`&quot;`,"'":`&#39;`},r=e=>String(e).replace(/[&<>"']/g,e=>n[e]),i=e=>Array.isArray(e)?e.join(` `):e;function a(e){let t=document.getElementById(e);if(!t)throw Error(`Missing classic element: ${e}`);return t}let o=a(`details-dialog`),s=e=>e.nav||e.label||e.title,c=0,l=0,u,d=e.reduce((e,t)=>e+t.beats.length,0);function f(){let t=location.hash.match(/^#(?:chapter|scene)-(\d+)(?:-step-(\d+))?$/),n=Math.max(0,Math.min(e.length-1,t?Number(t[1])-1:0));return{scene:n,step:Math.max(0,Math.min(e[n].beats.length-1,t?.[2]?Number(t[2])-1:0))}}function p(){history.replaceState(null,``,`#chapter-${c+1}-step-${l+1}`)}function m(e,t,n,r=!1){o.classList.toggle(`wide`,r),a(`dialog-kicker`).textContent=e,a(`dialog-title`).textContent=t,a(`dialog-content`).innerHTML=n,o.open||o.showModal()}function h(t){let n=e[c].nodes.find(e=>e.id===t&&e.at<=l);if(!n)return;let a=(n.variants||[]).filter(e=>e.at<=l).sort((e,t)=>e.at-t.at),o=Object.assign({},n,...a);m({l0:`L0`,l1:`L1`,l2:`L2`,external:`Внешний сервис`,actor:`Участник`}[n.tier],i(o.title),`<p>${r(n.detail||i(o.sub))}</p>`)}function g(){m(`ПОЛНЫЙ ПУТЬ`,`От заказа к работающему приложению`,`<div class="overview-fallback">`+e.map((e,t)=>`<button class="overview-chapter" data-chapter="${t}"><span>${String(t+1).padStart(2,`0`)}</span><div><h3>${r(s(e))}</h3><p>${r(e.question)}</p><small>${e.beats.length} шагов · ${r(e.duration)}</small></div></button>`).join(``)+`</div>`,!0)}function _(){let n=e[c],i=n.beats[l];a(`scene-eyebrow`).textContent=`${String(c+1).padStart(2,`0`)} / ${n.kicker}`,a(`scene-title`).textContent=i.title,a(`scene-description`).textContent=i.summary,a(`visual-kicker`).textContent=s(n).toUpperCase(),a(`scene-duration`).textContent=`≈ ${n.duration}`,a(`stage-list`).innerHTML=n.beats.map((e,t)=>`<button class="step-button${t<l?` done`:``}" data-step="${t}" ${t===l?`aria-current="step"`:``} title="${r(e.title)}" aria-label="Шаг ${t+1}: ${r(e.title)}"><span class="step-number">${t<l?`✓`:String(t+1).padStart(2,`0`)}</span><span class="step-label">${r(e.title)}</span></button>`).join(``),a(`step-count`).textContent=`ШАГ ${String(l+1).padStart(2,`0`)} / ${String(n.beats.length).padStart(2,`0`)}`;let o=c===e.length-1&&l===n.beats.length-1;a(`next-button`).innerHTML=(l<n.beats.length-1?`Следующий шаг`:o?`Весь путь`:`Следующая глава`)+` <span aria-hidden="true">${o?`↗`:`→`}</span>`,a(`previous-button`).disabled=c===0&&l===0,a(`forward-button`).disabled=o,a(`current-number`).textContent=String(c+1).padStart(2,`0`),a(`takeaway`).textContent=i.result,a(`takeaway`).classList.remove(`pending`),a(`takeaway`).removeAttribute(`aria-hidden`),document.querySelectorAll(`.chapter`).forEach((e,t)=>{e.classList.toggle(`done`,t<c),t===c?e.setAttribute(`aria-current`,`step`):e.removeAttribute(`aria-current`)});let u={"#80b4ff":`#ff825c`,"#68d5c8":`#65d9e5`,"#bbabff":`#d2f58b`,"#e2b478":`#d4b780`,"#111e2f":`#141e2a`,"#0d1726":`#101923`},d=t(n,l).replace(/#80b4ff|#68d5c8|#bbabff|#e2b478|#111e2f|#0d1726/g,e=>u[e]);a(`diagram`).innerHTML=d,a(`notes-title`).textContent=i.title,a(`notes-duration`).textContent=`ГЛАВА ${String(c+1).padStart(2,`0`)} · ШАГ ${l+1} / ${n.beats.length}`,a(`notes-content`).innerHTML=`<p>${r(i.note)}</p>`,document.title=`${String(c+1).padStart(2,`0`)} · ${i.title} · Beget`,a(`deck`).dataset.chapter=String(c+1),a(`deck`).dataset.step=String(l+1)}function v(t,n=0){c=Math.max(0,Math.min(e.length-1,t)),l=Math.max(0,Math.min(e[c].beats.length-1,n)),p(),_()}function y(){l<e[c].beats.length-1?v(c,l+1):c<e.length-1?v(c+1):g()}function b(){l>0?v(c,l-1):c>0&&v(c-1,e[c-1].beats.length-1)}function x(){let e=a(`notes-panel`);e.hidden=!e.hidden,a(`notes-button`).setAttribute(`aria-expanded`,String(!e.hidden))}function S(e){u&&clearTimeout(u),a(`toast`).textContent=e,a(`toast`).hidden=!1,u=setTimeout(()=>{a(`toast`).hidden=!0},4e3)}async function C(){try{document.fullscreenElement?await document.exitFullscreen():await document.documentElement.requestFullscreen()}catch{S(`Для полного экрана откройте HTML в отдельном браузере и нажмите F11.`)}}a(`chapters`).innerHTML=e.map((e,t)=>`<button class="chapter" data-scene="${t}" aria-label="Глава ${t+1}: ${r(s(e))}"><span class="chapter-number">${String(t+1).padStart(2,`0`)}</span><span class="chapter-title">${r(s(e))}</span></button>`).join(``);let w=document.querySelector(`.total-number`);w&&(w.textContent=`/ ${String(e.length).padStart(2,`0`)}`),a(`chapters`).addEventListener(`click`,e=>{let t=e.target.closest(`[data-scene]`);t&&v(Number(t.dataset.scene))}),a(`stage-list`).addEventListener(`click`,e=>{let t=e.target.closest(`[data-step]`);t&&v(c,Number(t.dataset.step))}),a(`next-button`).addEventListener(`click`,y),a(`forward-button`).addEventListener(`click`,y),a(`previous-button`).addEventListener(`click`,b),a(`diagram`).addEventListener(`click`,e=>{let t=e.target.closest(`[data-nodeid]`);t?.dataset.nodeid&&h(t.dataset.nodeid)}),a(`diagram`).addEventListener(`keydown`,e=>{if(e.key!==`Enter`&&e.key!==` `)return;let t=e.target.closest(`[data-nodeid]`);t?.dataset.nodeid&&(e.preventDefault(),e.stopPropagation(),h(t.dataset.nodeid))}),a(`dialog-content`).addEventListener(`click`,e=>{let t=e.target.closest(`[data-chapter]`);t&&(o.close(),v(Number(t.dataset.chapter)))}),a(`overview-button`).addEventListener(`click`,g),a(`notes-button`).addEventListener(`click`,x),a(`close-notes`).addEventListener(`click`,x),a(`fullscreen-button`).addEventListener(`click`,()=>{C()}),a(`close-dialog`).addEventListener(`click`,()=>o.close()),o.addEventListener(`click`,e=>{if(e.target!==o)return;let t=o.getBoundingClientRect();(e.clientX<t.left||e.clientX>t.right||e.clientY<t.top||e.clientY>t.bottom)&&o.close()}),a(`sources-button`).addEventListener(`click`,()=>m(`СЦЕНАРИЙ ВЕБИНАРА`,`От заявки до работающего приложения`,`<p>${e.length} глав и ${d} последовательных событий: заказ, подготовка L1, настройка Vault, создание и инициализация L2, базовые аддоны и пользовательские приложения.</p><p>Содержание, схемы и направления связей синхронизированы с итоговой презентацией Beget. Эта версия сохраняет классическое оформление.</p><p class="detail-label">Управление</p><p>← / → или пробел: шаги. 1–${e.length}: главы. Home / End: начало / финал. N: заметки. F: полный экран.</p>`)),document.addEventListener(`keydown`,t=>{if(!(t.altKey||t.ctrlKey||t.metaKey||o.open||t.target.closest(`input,textarea,select`))){if(t.key===`Escape`&&!a(`notes-panel`).hidden){x();return}t.key===`ArrowRight`||t.key===`PageDown`?(t.preventDefault(),y()):t.key===`ArrowLeft`||t.key===`PageUp`?(t.preventDefault(),b()):t.key===` `&&!t.target.closest(`button,a,[role=button]`)?(t.preventDefault(),y()):t.key===`Home`?(t.preventDefault(),v(0)):t.key===`End`?(t.preventDefault(),v(e.length-1,e[e.length-1].beats.length-1)):/^[1-9]$/.test(t.key)&&Number(t.key)<=e.length?v(Number(t.key)-1):[`n`,`т`].includes(t.key.toLowerCase())?x():[`f`,`а`].includes(t.key.toLowerCase())&&C()}}),window.addEventListener(`hashchange`,()=>{({scene:c,step:l}=f()),_()}),{scene:c,step:l}=f(),_()}var b=[{name:`platform-beget`,title:`Beget · Космос`,switcherLabel:`Beget · Космос`,family:`beget`,guide:`platform-beget-guide`},{name:`platform-beget-light-v1`,title:`Beget · Светлая версия`,switcherLabel:`Beget · Светлая`,family:`narrative`,guide:`platform-beget-light-v1-guide`},{name:`platform-story`,title:`Путь кластера · Тёмная история`,switcherLabel:`История · Тёмная`,family:`narrative`,guide:`platform-story-guide`},{name:`platform-story-dark-v1`,title:`Путь кластера · Тёмная версия v1`,switcherLabel:`История · Версия v1`,family:`narrative`,guide:`platform-story-dark-v1-guide`},{name:`platform-flight`,title:`Platform Odyssey · Космический маршрут`,switcherLabel:`Полёт · Космический маршрут`,family:`flight`,guide:`platform-flight-guide`},{name:`platform-flight-v1`,title:`Platform Odyssey · Маршрут v1`,switcherLabel:`Полёт · Версия v1`,family:`flight`,guide:`platform-flight-v1-guide`},{name:`platform-webinar`,title:`Путь кластера · Классическая презентация`,switcherLabel:`Вебинар · Классика`,family:`classic`,guide:`webinar-guide`},{name:`platform-webinar-classic`,title:`Путь кластера · Classic`,switcherLabel:`Вебинар · Classic`,family:`classic`,guide:`webinar-guide-classic`}];function x(e,t=`./`){if(document.querySelector(`.view-switcher`))return;if(!e.length||e.some(e=>!Number.isInteger(e)||e<1))throw Error(`View switching requires positive chapter lengths.`);let n=document.querySelector(`header .header-tools, header .header-actions, header .tools`);if(!n)throw Error(`Presentation header tools are missing.`);let r=location.pathname.split(`/`).pop()?.replace(/\.html$/,``)||`platform-beget`,i=b.find(e=>e.name===r)||b[0],a=t.endsWith(`/`)?t:`${t}/`,o=document.createElement(`details`);o.className=`view-switcher`,o.dataset.theme=i.name===`platform-beget-light-v1`?`light`:`dark`,o.dataset.currentView=i.name;let s=document.createElement(`summary`);s.className=`view-switcher-trigger`,s.setAttribute(`aria-label`,`Выбрать оформление презентации`),s.title=`Оформление: ${i.switcherLabel}`,s.innerHTML=`<svg class="view-switcher-icon" width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2" y="2" width="6" height="6" rx="1.5"/><rect x="12" y="2" width="6" height="6" rx="1.5"/><rect x="2" y="12" width="6" height="6" rx="1.5"/><rect x="12" y="12" width="6" height="6" rx="1.5"/></svg><span class="view-switcher-trigger-label">Вид</span><svg class="view-switcher-chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="m2 4 3 3 3-3"/></svg>`;let c=document.createElement(`nav`);c.className=`view-switcher-panel`,c.setAttribute(`aria-label`,`Сохранённые оформления презентации`);let l=document.createElement(`p`);l.className=`view-switcher-caption`,l.textContent=`Оформление`;let u=document.createElement(`p`);u.className=`view-switcher-hint`,u.textContent=`Текущий шаг сохранится`,c.append(l,u);let d=document.createElement(`ul`);d.className=`view-switcher-list`;let f=b.map(e=>{let t=document.createElement(`li`),n=document.createElement(`a`);n.className=`view-switcher-link`,n.dataset.view=e.name;let r=document.createElement(`span`);r.className=`view-switcher-swatch view-switcher-swatch-${e.name}`,r.setAttribute(`aria-hidden`,`true`);let a=document.createElement(`span`);if(a.className=`view-switcher-label`,a.textContent=e.switcherLabel,n.append(r,a),e.name===i.name){n.setAttribute(`aria-current`,`page`);let e=document.createElement(`span`);e.className=`view-switcher-check`,e.setAttribute(`aria-hidden`,`true`),e.textContent=`✓`,n.append(e)}return t.append(n),d.append(t),{link:n,version:e}});c.append(d),o.append(s,c),n.dataset.viewSwitcherHost=``,n.prepend(o);function p(){let t=location.hash.match(/^#(?:chapter|scene)-(\d+)(?:-step-(\d+))?$/);if(t){let n=Math.max(0,Math.min(e.length-1,Number(t[1])-1));return{chapter:n,step:Math.max(0,Math.min(e[n]-1,Number(t[2]||`1`)-1))}}let n=location.hash.match(/^#stop-(\d+)$/);if(n){let t=e.reduce((e,t)=>e+t,0),r=Math.max(0,Math.min(t-1,Number(n[1])-1));for(let t=0;t<e.length;t++){if(r<e[t])return{chapter:t,step:r};r-=e[t]}}return null}function m(e,t){return t?`#chapter-${t.chapter+1}-step-${t.step+1}`:e.family===`flight`?`#overview`:e.family===`classic`?`#chapter-1-step-1`:`#intro`}function h(){let e=p();for(let{link:t,version:n}of f)t.setAttribute(`href`,`${a}${n.name}.html${m(n,e)}`)}function g(e=!1){o.open=!1,e&&s.focus({preventScroll:!0})}h(),o.addEventListener(`toggle`,h),o.addEventListener(`focusin`,h),o.addEventListener(`pointerdown`,h,!0),o.addEventListener(`click`,h,!0),o.addEventListener(`auxclick`,h,!0),o.addEventListener(`contextmenu`,h,!0),window.addEventListener(`hashchange`,h),o.addEventListener(`keydown`,e=>{if(e.stopPropagation(),h(),e.key===`Escape`){e.preventDefault(),g(!0);return}if(![`ArrowDown`,`ArrowUp`,`Home`,`End`].includes(e.key))return;e.preventDefault(),o.open=!0;let t=f.findIndex(({link:e})=>e===document.activeElement),n=t;n=e.key===`Home`?0:e.key===`End`?f.length-1:e.key===`ArrowDown`?(t+1)%f.length:t<=0?f.length-1:t-1,f[n].link.focus({preventScroll:!0})}),o.addEventListener(`keyup`,e=>e.stopPropagation()),o.addEventListener(`focusout`,e=>{e.relatedTarget instanceof Node&&!o.contains(e.relatedTarget)&&g()}),document.addEventListener(`pointerdown`,e=>{e.target instanceof Node&&!o.contains(e.target)&&g()})}y(e,v),x(e.map(e=>e.beats.length))})();</script>
 </body></html>

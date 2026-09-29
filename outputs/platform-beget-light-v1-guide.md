@@ -1,6 +1,6 @@
-# Beget · Космос — сценарий вебинара
+# Beget · Светлая версия — сценарий вебинара
 
-[Открыть презентацию](platform-beget.html)
+[Открыть презентацию](platform-beget-light-v1.html)
 
 Все сохранённые оформления используют единый актуальный флоу: **7 глав, 36 событий**, около **14:30**. Сценарий и схемы формируются из общих исходников; обозначение v1 сохраняет название оформления.
 
@@ -44,7 +44,7 @@
 
 ### 01. Собираем версию платформы
 
-[Показать шаг](platform-beget.html#chapter-1-step-1)
+[Показать шаг](platform-beget-light-v1.html#chapter-1-step-1)
 
 Сети, версии аддонов, L1 и L2, ресурсы мастеров собираются в ClusterClaim. Эта конфигурация задаёт версию платформы.
 
@@ -54,7 +54,7 @@
 
 ### 02. Передаём заявку оператору
 
-[Показать шаг](platform-beget.html#chapter-1-step-2)
+[Показать шаг](platform-beget-light-v1.html#chapter-1-step-2)
 
 ClusterClaim Operator читает конфигурацию и начинает подготовку. Заявка превращается в действия над зависимостями.
 
@@ -64,7 +64,7 @@ ClusterClaim Operator читает конфигурацию и начинает 
 
 ### 03. Заказываем бакет у облака
 
-[Показать шаг](platform-beget.html#chapter-1-step-3)
+[Показать шаг](platform-beget-light-v1.html#chapter-1-step-3)
 
 Оператор запрашивает S3-бакет для резервных копий. Облако создаёт бакет и возвращает необходимые данные доступа.
 
@@ -74,7 +74,7 @@ ClusterClaim Operator читает конфигурацию и начинает 
 
 ### 04. Подготавливаем сертификаты
 
-[Показать шаг](platform-beget.html#chapter-1-step-4)
+[Показать шаг](platform-beget-light-v1.html#chapter-1-step-4)
 
 Система сертификатов подготавливает материал доверия для компонентов. Сертификаты становятся ещё одной зависимостью платформы.
 
@@ -84,7 +84,7 @@ ClusterClaim Operator читает конфигурацию и начинает 
 
 ### 05. Сохраняем зависимости в Vault
 
-[Показать шаг](platform-beget.html#chapter-1-step-5)
+[Показать шаг](platform-beget-light-v1.html#chapter-1-step-5)
 
 Credentials бакета и подготовленные сертификаты записываются в Vault. Они будут доступны следующим компонентам платформы.
 
@@ -98,7 +98,7 @@ Credentials бакета и подготовленные сертификаты 
 
 ### 06. Создаём Cluster L1
 
-[Показать шаг](platform-beget.html#chapter-2-step-1)
+[Показать шаг](platform-beget-light-v1.html#chapter-2-step-1)
 
 ClusterClaim Operator читает ClusterClaim и создаёт Cluster L1. Параллельно он создаёт CSR approver и CCM в L0.
 
@@ -108,7 +108,7 @@ ClusterClaim Operator читает ClusterClaim и создаёт Cluster L1. П
 
 ### 07. CAPI заказывает машины
 
-[Показать шаг](platform-beget.html#chapter-2-step-2)
+[Показать шаг](platform-beget-light-v1.html#chapter-2-step-2)
 
 Cluster API подхватывает созданный Cluster L1 и заказывает у облака виртуальные машины для L1.
 
@@ -118,7 +118,7 @@ Cluster API подхватывает созданный Cluster L1 и заказ
 
 ### 08. Подтверждаем инициализацию L1
 
-[Показать шаг](platform-beget.html#chapter-2-step-3)
+[Показать шаг](platform-beget-light-v1.html#chapter-2-step-3)
 
 Статус L1 проходит через CAPI и Cluster L1 в ClusterClaim. В заявке отражено «L1 инициализирован»; далее начинается bootstrap.
 
@@ -128,7 +128,7 @@ Cluster API подхватывает созданный Cluster L1 и заказ
 
 ### 09. Запускаем сеть и DNS
 
-[Показать шаг](platform-beget.html#chapter-2-step-4)
+[Показать шаг](platform-beget-light-v1.html#chapter-2-step-4)
 
 После инициализации L1 bootstrap устанавливает Cilium и CoreDNS. L1 получает сеть и DNS.
 
@@ -138,7 +138,7 @@ Cluster API подхватывает созданный Cluster L1 и заказ
 
 ### 10. Включаем доставку аддонов
 
-[Показать шаг](platform-beget.html#chapter-2-step-5)
+[Показать шаг](platform-beget-light-v1.html#chapter-2-step-5)
 
 Bootstrap также устанавливает Argo CD и AddonOperator. В L1 появляются средства доставки компонентов и управления их очередностью.
 
@@ -152,7 +152,7 @@ Bootstrap также устанавливает Argo CD и AddonOperator. В L1 
 
 ### 11. Устанавливаем аддоны L1
 
-[Показать шаг](platform-beget.html#chapter-3-step-1)
+[Показать шаг](platform-beget-light-v1.html#chapter-3-step-1)
 
 AddonOperator ведёт фазы L1 через Argo CD Applications. Параллельно ClusterClaimOperator из L0 настраивает внешний Vault.
 
@@ -162,7 +162,7 @@ AddonOperator ведёт фазы L1 через Argo CD Applications. Парал
 
 ### 12. Настраиваем mTLS и политики
 
-[Показать шаг](platform-beget.html#chapter-3-step-2)
+[Показать шаг](platform-beget-light-v1.html#chapter-3-step-2)
 
 Фазы аддонов настраивают mTLS и сетевые политики в L1. Компоненты получают предусмотренную защиту соединений и сети.
 
@@ -172,7 +172,7 @@ AddonOperator ведёт фазы L1 через Argo CD Applications. Парал
 
 ### 13. Настраиваем вход и роли в Vault
 
-[Показать шаг](platform-beget.html#chapter-3-step-3)
+[Показать шаг](platform-beget-light-v1.html#chapter-3-step-3)
 
 ClusterClaimOperator из L0 регистрирует кластер в Vault auth, создаёт точечные роли и привязывает ServiceAccount L1.
 
@@ -182,7 +182,7 @@ ClusterClaimOperator из L0 регистрирует кластер в Vault au
 
 ### 14. Добавляем мониторинг и логи
 
-[Показать шаг](platform-beget.html#chapter-3-step-4)
+[Показать шаг](platform-beget-light-v1.html#chapter-3-step-4)
 
 Следующая показанная фаза L1 разворачивает мониторинг и сбор логов. Платформа получает средства наблюдения за компонентами.
 
@@ -192,7 +192,7 @@ ClusterClaimOperator из L0 регистрирует кластер в Vault au
 
 ### 15. Создаём индивидуальные секреты
 
-[Показать шаг](platform-beget.html#chapter-3-step-5)
+[Показать шаг](platform-beget-light-v1.html#chapter-3-step-5)
 
 ClusterClaimOperator создаёт в Vault индивидуальные высокоэнтропийные секреты для кластера. Vault хранит эти данные.
 
@@ -202,7 +202,7 @@ ClusterClaimOperator создаёт индивидуальные высокоэ�
 
 ### 16. Готовим KMS для L2
 
-[Показать шаг](platform-beget.html#chapter-3-step-6)
+[Показать шаг](platform-beget-light-v1.html#chapter-3-step-6)
 
 ClusterClaimOperator из L0 настраивает в Vault KMS transit для L2. Ключ и доступы готовятся до запуска control plane L2.
 
@@ -212,7 +212,7 @@ ClusterClaimOperator из L0 настраивает в Vault KMS transit для 
 
 ### 17. Включаем host firewall
 
-[Показать шаг](platform-beget.html#chapter-3-step-7)
+[Показать шаг](platform-beget-light-v1.html#chapter-3-step-7)
 
 Завершающая фаза L1 включает host firewall с default deny. Финальные сетевые ограничения применяются после подготовки компонентов.
 
@@ -222,7 +222,7 @@ ClusterClaimOperator из L0 настраивает в Vault KMS transit для 
 
 ### 18. Собираем условия для L2
 
-[Показать шаг](platform-beget.html#chapter-3-step-8)
+[Показать шаг](platform-beget-light-v1.html#chapter-3-step-8)
 
 Аддоны L1 готовы. ClusterClaimOperator подготовил в Vault настройки этого кластера: доступы, секреты и KMS transit для L2.
 
@@ -236,7 +236,7 @@ ClusterClaimOperator из L0 настраивает в Vault KMS transit для 
 
 ### 19. Создаём Cluster L2
 
-[Показать шаг](platform-beget.html#chapter-4-step-1)
+[Показать шаг](platform-beget-light-v1.html#chapter-4-step-1)
 
 После готовности L1 ClusterClaim Operator читает ClusterClaim и создаёт в L0 Cluster L2, CSR approver и CCM.
 
@@ -246,7 +246,7 @@ ClusterClaimOperator из L0 настраивает в Vault KMS transit для 
 
 ### 20. CAPI создаёт AddonClaim
 
-[Показать шаг](platform-beget.html#chapter-4-step-2)
+[Показать шаг](platform-beget-light-v1.html#chapter-4-step-2)
 
 Cluster API подхватывает Cluster L2 и приводит к созданию AddonClaim. Control plane L2 заказан как аддон платформы.
 
@@ -256,7 +256,7 @@ Cluster API подхватывает Cluster L2 и приводит к созд�
 
 ### 21. Создаём Addon (CP) в L1
 
-[Показать шаг](platform-beget.html#chapter-4-step-3)
+[Показать шаг](platform-beget-light-v1.html#chapter-4-step-3)
 
 Контроллер AddonClaim создаёт ресурс Addon (CP) в L1. Этот ресурс описывает аддон, из которого будет развёрнут Control plane L2.
 
@@ -266,7 +266,7 @@ Cluster API подхватывает Cluster L2 и приводит к созд�
 
 ### 22. Создаём Applications
 
-[Показать шаг](platform-beget.html#chapter-4-step-4)
+[Показать шаг](platform-beget-light-v1.html#chapter-4-step-4)
 
 AddonOperator подхватывает Addon (CP) в L1 и создаёт Applications. Они описывают компоненты, которые затем развернёт Argo CD.
 
@@ -276,7 +276,7 @@ AddonOperator подхватывает Addon (CP) в L1 и создаёт Applic
 
 ### 23. Разворачиваем Control plane L2 в L1
 
-[Показать шаг](platform-beget.html#chapter-4-step-5)
+[Показать шаг](platform-beget-light-v1.html#chapter-4-step-5)
 
 Argo CD обрабатывает созданные Applications и разворачивает приложение Control plane L2 в L1. Цепочка доставки завершена.
 
@@ -290,7 +290,7 @@ Argo CD обрабатывает созданные Applications и развор
 
 ### 24. Размещаем control plane L2 на нодах L1
 
-[Показать шаг](platform-beget.html#chapter-5-step-1)
+[Показать шаг](platform-beget-light-v1.html#chapter-5-step-1)
 
 DaemonSet размещает control plane L2 на нодах L1. Управляющие компоненты L2 работают как обычное приложение внутри L1.
 
@@ -300,7 +300,7 @@ DaemonSet размещает control plane L2 на нодах L1. Управля
 
 ### 25. Выделяем префикс в общем etcd
 
-[Показать шаг](platform-beget.html#chapter-5-step-2)
+[Показать шаг](platform-beget-light-v1.html#chapter-5-step-2)
 
 Control plane L2 использует общий etcd L1. Данные L2 размещаются в отдельном префиксе.
 
@@ -310,7 +310,7 @@ Control plane L2 использует общий etcd L1. Данные L2 раз
 
 ### 26. Открываем API L2
 
-[Показать шаг](platform-beget.html#chapter-5-step-3)
+[Показать шаг](platform-beget-light-v1.html#chapter-5-step-3)
 
 Компоненты control plane исполняются в L1. API L2 — точка доступа к ним для управления клиентским кластером.
 
@@ -320,7 +320,7 @@ Control plane L2 использует общий etcd L1. Данные L2 раз
 
 ### 27. Возвращаем статус в ClusterClaim
 
-[Показать шаг](platform-beget.html#chapter-5-step-4)
+[Показать шаг](platform-beget-light-v1.html#chapter-5-step-4)
 
 Статус Control plane L2 проходит через Applications → Addon (CP) → AddonClaim → Cluster L2 и возвращается в ClusterClaim.
 
@@ -334,7 +334,7 @@ Control plane L2 использует общий etcd L1. Данные L2 раз
 
 ### 28. Заказываем базовые аддоны L2
 
-[Показать шаг](platform-beget.html#chapter-6-step-1)
+[Показать шаг](platform-beget-light-v1.html#chapter-6-step-1)
 
 ClusterClaim Operator в L0 создаёт AddonClaim на базовые аддоны L2. Заявка запускает доставку через компоненты L1.
 
@@ -344,7 +344,7 @@ ClusterClaim Operator в L0 создаёт AddonClaim на базовые адд
 
 ### 29. Создаём Addon для L2 в L1
 
-[Показать шаг](platform-beget.html#chapter-6-step-2)
+[Показать шаг](platform-beget-light-v1.html#chapter-6-step-2)
 
 Контроллер AddonClaim создаёт Addon в L1. Ресурс описывает стандартные аддоны, которые предстоит развернуть в L2.
 
@@ -354,7 +354,7 @@ ClusterClaim Operator в L0 создаёт AddonClaim на базовые адд
 
 ### 30. Создаём Applications для L2
 
-[Показать шаг](platform-beget.html#chapter-6-step-3)
+[Показать шаг](platform-beget-light-v1.html#chapter-6-step-3)
 
 AddonOperator в L1 подхватывает Addon и создаёт Applications. Они задают Argo CD развёртывание базовых компонентов в L2.
 
@@ -364,7 +364,7 @@ AddonOperator в L1 подхватывает Addon и создаёт Application
 
 ### 31. Готовим стандартный набор L2
 
-[Показать шаг](platform-beget.html#chapter-6-step-4)
+[Показать шаг](platform-beget-light-v1.html#chapter-6-step-4)
 
 Argo CD в L1 обрабатывает Applications и разворачивает ресурсы Cilium, CoreDNS и Konnectivity в L2. Базовый набор готов.
 
@@ -374,7 +374,7 @@ Argo CD в L1 обрабатывает Applications и разворачивае�
 
 ### 32. Передаём готовый кластер
 
-[Показать шаг](platform-beget.html#chapter-6-step-5)
+[Показать шаг](platform-beget-light-v1.html#chapter-6-step-5)
 
 После подготовки стандартных аддонов платформа передаёт пользователю готовый Kubernetes. Путь исходного ClusterClaim завершён.
 
@@ -388,7 +388,7 @@ Argo CD в L1 обрабатывает Applications и разворачивае�
 
 ### 33. Заказываем приложение
 
-[Показать шаг](platform-beget.html#chapter-7-step-1)
+[Показать шаг](platform-beget-light-v1.html#chapter-7-step-1)
 
 Пользователь создаёт заказ на приложение. Платформа формирует AddonClaim в L0 и запускает уже знакомую цепочку доставки.
 
@@ -398,7 +398,7 @@ L2 уже подготовлен. Теперь пользователь зака
 
 ### 34. Создаём Addon приложения
 
-[Показать шаг](platform-beget.html#chapter-7-step-2)
+[Показать шаг](platform-beget-light-v1.html#chapter-7-step-2)
 
 Контроллер AddonClaim обрабатывает заказ и создаёт Addon в L1. Этот ресурс описывает пользовательское приложение для L2.
 
@@ -408,7 +408,7 @@ L2 уже подготовлен. Теперь пользователь зака
 
 ### 35. Создаём Applications приложения
 
-[Показать шаг](platform-beget.html#chapter-7-step-3)
+[Показать шаг](platform-beget-light-v1.html#chapter-7-step-3)
 
 AddonOperator в L1 читает Addon и создаёт Applications. Argo CD получает описание того, что нужно развернуть в L2.
 
@@ -418,7 +418,7 @@ AddonOperator в L1 читает Addon и создаёт Applications. Argo CD �
 
 ### 36. Запускаем приложение в L2
 
-[Показать шаг](platform-beget.html#chapter-7-step-4)
+[Показать шаг](platform-beget-light-v1.html#chapter-7-step-4)
 
 Argo CD в L1 обрабатывает Applications и разворачивает ресурсы приложения в L2. Пользователь получает заказанное приложение.
 
