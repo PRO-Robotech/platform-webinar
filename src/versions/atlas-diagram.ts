@@ -238,7 +238,11 @@ export interface DiagramView {
  * Builds a chapter diagram once, 1:1 in slide pixels. Steps only switch state
  * classes, so CSS transitions move between states instead of redrawing.
  */
-export function createDiagram(id: string, scene: DiagramScene, label: string, options: { marksNew?: boolean } = {}): DiagramView {
+/**
+ * `still` draws a scheme for print: every block at full strength (`focusAll`), no marks
+ * for what is new, no shimmer.
+ */
+export function createDiagram(id: string, scene: DiagramScene, label: string, options: { marksNew?: boolean; focusAll?: boolean; still?: boolean } = {}): DiagramView {
   // The opening scene has no steps, so nothing on it is marked as new.
   const marksNew = options.marksNew ?? true;
   const geometry = layoutScene(id, scene, neededHeight);
@@ -365,7 +369,7 @@ export function createDiagram(id: string, scene: DiagramScene, label: string, op
   function apply(step: number, direction: -1 | 0 | 1): void {
     const active = new Set(scene.beats[step]?.active ?? []);
     // A step without named participants (the opening) shows everything at full strength.
-    const focused = (id: string): boolean => !active.size || active.has(id);
+    const focused = (id: string): boolean => !!options.focusAll || !active.size || active.has(id);
     const animate = direction > 0 && !matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     svg.querySelectorAll<SVGGElement>('.z').forEach(zone => zone.classList.toggle('hidden', Number(zone.dataset.at) > step));
@@ -396,7 +400,7 @@ export function createDiagram(id: string, scene: DiagramScene, label: string, op
         part.classList.toggle('new', fresh);
       }
       // The label's sweep starts with the line's shimmer (same 0.6 s delay) and stops with it.
-      const shimmer = hot && edge.at <= step && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const shimmer = hot && edge.at <= step && !options.still && !matchMedia('(prefers-reduced-motion: reduce)').matches;
       const flows = !!g.querySelector('.flow');
       if (flows && shimmer !== view.moving) {
         view.moving = shimmer;

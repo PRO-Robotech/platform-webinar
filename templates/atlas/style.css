@@ -63,6 +63,11 @@ a{color:inherit}
 
 .sky{position:fixed;inset:0;display:block;width:100%;height:100%}
 .viewport{position:fixed;inset:0;overflow:hidden}
+/* A frame larger than the window (a phone) is dragged: native panning for touch, grab for the mouse. */
+.viewport.pan{overflow:auto;overscroll-behavior:none;scrollbar-width:none;cursor:grab}
+.viewport.pan::-webkit-scrollbar{display:none}
+.viewport.dragging{cursor:grabbing;user-select:none}
+.viewport-size{position:absolute;left:0;top:0;pointer-events:none}
 .slide{position:absolute;left:0;top:0;width:1280px;height:784px;transform-origin:0 0}
 .frame{position:absolute;top:0;bottom:0;left:var(--frame-left,40px);width:1200px}
 
@@ -78,6 +83,7 @@ a{color:inherit}
 .header-tools{display:flex;align-items:center;gap:8px}
 .tool{height:32px;min-width:32px;padding:0 10px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;background:var(--button);border-radius:2px;color:var(--button-fg);font-size:14px;line-height:20px;cursor:pointer;transition:background-color .16s}
 .tool:hover{background:var(--button-hover)}
+a.tool{text-decoration:none}
 /* Icon-only controls are square. */
 .tool-square{width:32px;padding:0}
 /* The theme toggle shows the theme it switches to; scoped to .tool to outrank `.tool svg`. */
@@ -243,3 +249,21 @@ noscript{position:fixed;inset:auto 0 0;padding:16px;text-align:center;background
 .header-tools .view-switcher-swatch{border-radius:2px}
 
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* ---------- печать: 8 страниц 1280×720, схема по центру, таймлайн и логотип внизу ---------- */
+.print-pages{display:none}
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{height:auto;overflow:visible;background:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .sky,.viewport,.toast,noscript{display:none!important}
+  .print-pages{display:block}
+  .print-page{position:relative;width:1280px;height:720px;overflow:hidden;background:var(--ink);break-after:page}
+  .print-page:last-child{break-after:auto}
+  .print-diagram{position:absolute;left:40px;right:40px;top:40px;bottom:120px;display:grid;place-items:center}
+  .print-diagram>svg{display:block;overflow:visible}
+  .print-deck{position:absolute;left:40px;bottom:24px;width:1200px;height:56px;display:grid;grid-template-columns:894px 282px;column-gap:24px;align-items:center}
+  .print-deck::before{content:'';position:absolute;left:-40px;right:-40px;top:-20px;height:1px;background:var(--rule)}
+  .print-deck .brand-logo{justify-self:end;width:61px;height:28px;color:var(--paper)}
+  .print-pages .flow,.print-pages .head-glint,.print-pages .s-tip{display:none}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}

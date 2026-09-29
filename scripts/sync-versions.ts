@@ -84,10 +84,10 @@ for (const version of versions) {
 // Publish every saved theme at its actual URL, as well as the outputs/ paths in
 // documentation. A missing version must never silently fall back to index.html.
 for (const file of await readdir(outputs)) {
-  if (!/\.(html|md|png)$/.test(file)) continue;
+  if (!/\.(html|md|png|pdf)$/.test(file)) continue;
   await copyFile(resolve(outputs, file), resolve(dist, file));
   await copyFile(resolve(outputs, file), resolve(dist, 'outputs', file));
 }
-const index = await readFile(resolve(dist, 'index.html'), 'utf8');
-await writeFile(resolve(dist, 'index.html'), stamp(index));
+// The atlas is the default view: the site root serves it. Cosmos stays at platform-beget.html.
+await copyFile(resolve(outputs, 'platform-beget-atlas.html'), resolve(dist, 'index.html'));
 console.log(`Synchronized ${versions.length} presentations and guides: ${chapters.length} chapters, ${chapters.reduce((sum, chapter) => sum + chapter.beats.length, 0)} events.`);

@@ -1,6 +1,6 @@
 export const versions = [
-  { name: 'platform-beget', title: 'Beget · Космос', switcherLabel: 'Beget · Космос', family: 'beget', guide: 'platform-beget-guide' },
   { name: 'platform-beget-atlas', title: 'Beget · Атлас', switcherLabel: 'Beget · Атлас', family: 'atlas', guide: 'platform-beget-atlas-guide' },
+  { name: 'platform-beget', title: 'Beget · Космос', switcherLabel: 'Beget · Космос', family: 'beget', guide: 'platform-beget-guide' },
   { name: 'platform-beget-light-v1', title: 'Beget · Светлая версия', switcherLabel: 'Beget · Светлая', family: 'narrative', guide: 'platform-beget-light-v1-guide' },
   { name: 'platform-story', title: 'Путь кластера · Тёмная история', switcherLabel: 'История · Тёмная', family: 'narrative', guide: 'platform-story-guide' },
   { name: 'platform-story-dark-v1', title: 'Путь кластера · Тёмная версия v1', switcherLabel: 'История · Версия v1', family: 'narrative', guide: 'platform-story-dark-v1-guide' },

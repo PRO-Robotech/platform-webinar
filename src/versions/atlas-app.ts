@@ -7,6 +7,8 @@ const NS = 'http://www.w3.org/2000/svg';
 const SLIDE_WIDTH = 1280;
 const SLIDE_HEIGHT = 784;
 const GRID_WIDTH = 1200;
+// Below this the frame is not shrunk further: it stays readable and is dragged around instead.
+const MIN_SCALE = .6;
 const TRACK_WIDTH = 894;
 // Track rows, px: level labels above, the line at 24, chapter names below.
 const TRACK_BASE = 24.5;
@@ -43,6 +45,8 @@ function svg<K extends keyof SVGElementTagNameMap>(tag: K, attrs: Record<string,
 
 export function mountAtlas(chapters: Chapter[]): void {
   const dom = {
+    viewport: find('.viewport', HTMLElement),
+    viewportSize: find('.viewport-size', HTMLElement),
     slide: find('.slide', HTMLElement),
     sky: find('#sky', HTMLCanvasElement),
     log: find('.log', HTMLElement),
@@ -59,6 +63,8 @@ export function mountAtlas(chapters: Chapter[]): void {
     next: find('#next', HTMLButtonElement),
     grid: find('#grid', HTMLElement),
     fullscreen: find('#fullscreen', HTMLButtonElement),
+    printPages: find('#print-pages', HTMLElement),
+    pdf: find('#pdf', HTMLAnchorElement),
     theme: find('#theme', HTMLButtonElement),
     toast: find('#toast', HTMLElement),
   };
@@ -75,10 +81,16 @@ export function mountAtlas(chapters: Chapter[]): void {
   const sceneId = (index: number): string => index < 0 ? 'intro' : chapters[index].id;
 
   // ---------- fit: the frame is at least 1280×784 and always fills the window ----------
+  // On a small screen (a phone) the whole frame would be too small to read, so it keeps a
+  // readable scale, filling the height of a portrait screen, and is dragged around instead.
   function fit(): void {
-    const scale = Math.min(innerWidth / SLIDE_WIDTH, innerHeight / SLIDE_HEIGHT);
-    const width = innerWidth / scale;
-    const height = innerHeight / scale;
+    const fitScale = Math.min(innerWidth / SLIDE_WIDTH, innerHeight / SLIDE_HEIGHT);
+    const scale = fitScale >= MIN_SCALE ? fitScale : Math.max(MIN_SCALE, Math.min(1, innerHeight / SLIDE_HEIGHT));
+    const width = Math.max(SLIDE_WIDTH, innerWidth / scale);
+    const height = Math.max(SLIDE_HEIGHT, innerHeight / scale);
+    dom.viewportSize.style.width = `${width * scale}px`;
+    dom.viewportSize.style.height = `${height * scale}px`;
+    dom.viewport.classList.toggle('pan', width * scale > innerWidth + 1 || height * scale > innerHeight + 1);
     dom.slide.style.width = `${width}px`;
     dom.slide.style.height = `${height}px`;
     dom.slide.style.transform = `scale(${scale})`;
@@ -121,7 +133,15 @@ export function mountAtlas(chapters: Chapter[]): void {
 
   // ---------- theme: dark or light, revealed as a circle growing from the toggle ----------
   const skyTheme = { ink: '#27272A', tint: '244,244,245' };
+  // The download button offers the PDF in the theme on screen.
+  const updatePdfLink = (): void => {
+    const light = document.documentElement.dataset.theme === 'light';
+    dom.pdf.href = light ? 'platform-beget-atlas-light.pdf' : 'platform-beget-atlas.pdf';
+    dom.pdf.download = light ? 'Beget-Atlas-light.pdf' : 'Beget-Atlas.pdf';
+  };
+
   function readSkyTheme(): void {
+    updatePdfLink();
     const style = getComputedStyle(document.documentElement);
     skyTheme.ink = style.getPropertyValue('--ink').trim() || skyTheme.ink;
     skyTheme.tint = style.getPropertyValue('--tint').trim() || skyTheme.tint;
@@ -236,72 +256,112 @@ export function mountAtlas(chapters: Chapter[]): void {
 
   // ---------- trajectory: every event is a tick; chapter width follows its duration ----------
   const durations = chapters.map(value => seconds(value.duration));
-  const widths = (() => {
-    // Proportional to duration, with a floor so every chapter name stays legible.
-    const sum = durations.reduce((a, b) => a + b, 0);
-    let result = durations.map(value => value / sum * TRACK_WIDTH);
-    const small = result.map(value => value < TRACK_MIN_CHAPTER);
-    const rest = TRACK_WIDTH - small.filter(Boolean).length * TRACK_MIN_CHAPTER;
-    const restSum = durations.filter((_, index) => !small[index]).reduce((a, b) => a + b, 0);
-    result = durations.map((value, index) => small[index] ? TRACK_MIN_CHAPTER : value / restSum * rest);
-    return result;
-  })();
-  const chapterX = (index: number): number => widths.slice(0, index).reduce((a, b) => a + b, 0);
-  const tickX = (index: number, beat: number): number =>
-    Math.round(chapterX(index) + 8 + (beat + .5) * (widths[index] - 16) / chapters[index].beats.length) + .5;
   // A level's stage starts in the first chapter where it appears on the map as a zone.
   const stages = LEVELS.map(level => ({ level, chapter: chapters.findIndex(value => value.zones.some(zone => zone.tier === level)) }))
     .filter(stage => stage.chapter >= 0);
   const stageStarts = new Map(stages.map(stage => [stage.chapter, stage.level]));
-  const track = {
-    ticks: [] as { tick: SVGPathElement; chapter: number; step: number }[],
-    names: [] as SVGTextElement[],
-    marker: null as SVGPathElement | null, progress: null as SVGPathElement | null,
-  };
 
-  function buildTrack(): void {
-    svg('path', { class: 't-line', d: `M0 ${TRACK_BASE}H${TRACK_WIDTH}` }, dom.track);
-    track.progress = svg('path', { class: 't-progress', d: `M0 ${TRACK_BASE}H${TRACK_WIDTH}` }, dom.track);
+  /**
+   * Draws a trajectory into `host` at the given width. The slide's is interactive; the
+   * printed pages get a still copy. Returns how to show a position on it.
+   */
+  function createTrack(host: SVGSVGElement, trackWidth: number, interactive: boolean): (at: number, beat: number, complete?: boolean) => void {
+    // Proportional to duration, with a floor so every chapter name stays legible.
+    const sum = durations.reduce((a, b) => a + b, 0);
+    const small = durations.map(value => value / sum * trackWidth < TRACK_MIN_CHAPTER);
+    const rest = trackWidth - small.filter(Boolean).length * TRACK_MIN_CHAPTER;
+    const restSum = durations.filter((_, index) => !small[index]).reduce((a, b) => a + b, 0);
+    const widths = durations.map((value, index) => small[index] ? TRACK_MIN_CHAPTER : value / restSum * rest);
+    const chapterX = (index: number): number => widths.slice(0, index).reduce((a, b) => a + b, 0);
+    const tickX = (index: number, beat: number): number =>
+      Math.round(chapterX(index) + 8 + (beat + .5) * (widths[index] - 16) / chapters[index].beats.length) + .5;
+    const ticks: { tick: SVGPathElement; chapter: number; step: number }[] = [];
+    const names: SVGTextElement[] = [];
+
+    svg('path', { class: 't-line', d: `M0 ${TRACK_BASE}H${trackWidth}` }, host);
+    const progress = svg('path', { class: 't-progress', d: `M0 ${TRACK_BASE}H${trackWidth}` }, host);
     chapters.forEach((value, index) => {
       const x = Math.round(chapterX(index)) + .5;
-      if (!stageStarts.has(index)) svg('path', { class: 't-bound', d: `M${x} ${TRACK_BASE - 6}V${TRACK_BASE + 6}` }, dom.track);
+      if (!stageStarts.has(index)) svg('path', { class: 't-bound', d: `M${x} ${TRACK_BASE - 6}V${TRACK_BASE + 6}` }, host);
       value.beats.forEach((_, beat) => {
-        track.ticks.push({ tick: svg('path', { class: 't-tick', d: `M${tickX(index, beat)} ${TRACK_BASE - 3}V${TRACK_BASE + 3}` }, dom.track), chapter: index, step: beat });
+        ticks.push({ tick: svg('path', { class: 't-tick', d: `M${tickX(index, beat)} ${TRACK_BASE - 3}V${TRACK_BASE + 3}` }, host), chapter: index, step: beat });
       });
-      const name = svg('text', { class: 't-name', x: Math.round(chapterX(index)), y: 50 }, dom.track);
+      const name = svg('text', { class: 't-name', x: Math.round(chapterX(index)), y: 50 }, host);
       name.textContent = `${index + 1} ${chapterNames[index] ?? value.title}`;
-      track.names.push(name);
+      names.push(name);
     });
-    svg('path', { class: 't-bound', d: `M${TRACK_WIDTH - .5} ${TRACK_BASE - 6}V${TRACK_BASE + 6}` }, dom.track);
+    svg('path', { class: 't-bound', d: `M${trackWidth - .5} ${TRACK_BASE - 6}V${TRACK_BASE + 6}` }, host);
     // Stage marks: longer ticks reaching above the line, labelled once.
     for (const { level, chapter: index } of stages) {
       const x = Math.round(chapterX(index)) + .5;
-      svg('path', { class: 't-stage', d: `M${x} ${TRACK_BASE - 18}V${TRACK_BASE + 8}` }, dom.track);
-      svg('text', { class: 't-stage-label', x: x + 5.5, y: TRACK_BASE - 10 }, dom.track).textContent = level.toUpperCase();
+      svg('path', { class: 't-stage', d: `M${x} ${TRACK_BASE - 18}V${TRACK_BASE + 8}` }, host);
+      svg('text', { class: 't-stage-label', x: x + 5.5, y: TRACK_BASE - 10 }, host).textContent = level.toUpperCase();
     }
-    track.marker = svg('path', { class: 't-marker', d: `M0 ${TRACK_BASE - 8}V${TRACK_BASE + 8}` }, dom.track);
-    chapters.forEach((value, index) => {
-      const x0 = chapterX(index);
-      const spacing = (widths[index] - 16) / value.beats.length;
-      value.beats.forEach((beat, number) => {
-        const width = Math.min(16, spacing);
-        const hit = svg('rect', { class: 't-hit', x: tickX(index, number) - width / 2, y: TRACK_BASE - 10, width, height: 20, tabindex: -1, 'data-chapter': index, 'data-step': number }, dom.track);
-        svg('title', {}, hit).textContent = `${offsets[index] + number + 1}. ${beat.title}`;
+    const marker = svg('path', { class: 't-marker', d: `M0 ${TRACK_BASE - 8}V${TRACK_BASE + 8}` }, host);
+    if (interactive) {
+      chapters.forEach((value, index) => {
+        const x0 = chapterX(index);
+        const spacing = (widths[index] - 16) / value.beats.length;
+        value.beats.forEach((beat, number) => {
+          const width = Math.min(16, spacing);
+          const hit = svg('rect', { class: 't-hit', x: tickX(index, number) - width / 2, y: TRACK_BASE - 10, width, height: 20, tabindex: -1, 'data-chapter': index, 'data-step': number }, host);
+          svg('title', {}, hit).textContent = `${offsets[index] + number + 1}. ${beat.title}`;
+        });
+        const hit = svg('rect', { class: 't-hit', x: x0, y: 36, width: widths[index], height: 20, tabindex: 0, role: 'button', 'data-chapter': index, 'aria-label': `Глава ${index + 1}: ${value.title}` }, host);
+        svg('title', {}, hit).textContent = value.title;
       });
-      const hit = svg('rect', { class: 't-hit', x: x0, y: 36, width: widths[index], height: 20, tabindex: 0, role: 'button', 'data-chapter': index, 'aria-label': `Глава ${index + 1}: ${value.title}` }, dom.track);
-      svg('title', {}, hit).textContent = value.title;
-    });
+    }
+
+    // `complete` marks the whole position as done, as on a printed chapter page.
+    // The talk's last event fills the line to its end: the story is complete.
+    return (at: number, beat: number, complete = false): void => {
+      const final = at === chapters.length - 1 && beat === chapters[at].beats.length - 1;
+      if (final) complete = true;
+      const x = at < 0 ? 0 : final ? trackWidth - .5 : tickX(at, beat) - .5;
+      ticks.forEach(({ tick, chapter: index, step: tickStep }) =>
+        tick.classList.toggle('past', at >= 0 && (index < at || (index === at && (tickStep < beat || (complete && tickStep === beat))))));
+      names.forEach((name, index) => name.classList.toggle('cur', index === at));
+      marker.classList.toggle('hidden', at < 0);
+      marker.style.transform = `translateX(${x}px)`;
+      progress.style.transform = `scaleX(${x / trackWidth})`;
+    };
   }
 
-  function updateTrack(): void {
-    const x = chapter < 0 ? 0 : tickX(chapter, step) - .5;
-    track.ticks.forEach(({ tick, chapter: index, step: beat }) =>
-      tick.classList.toggle('past', chapter >= 0 && (index < chapter || (index === chapter && beat < step))));
-    track.names.forEach((name, index) => name.classList.toggle('cur', index === chapter));
-    track.marker?.classList.toggle('hidden', chapter < 0);
-    if (track.marker) track.marker.style.transform = `translateX(${x}px)`;
-    if (track.progress) track.progress.style.transform = `scaleX(${x / TRACK_WIDTH})`;
+  // ---------- print: one page per stage, the finished scheme and the timeline ----------
+  // Printing (or `npm run export:pdf`) gives eight pages: the star map, then each chapter
+  // as it stands after its last step, every block at full strength. No interface: only the
+  // content in the middle, the timeline below and the Beget logo where the buttons are.
+  function buildPrintPages(): void {
+    const host = dom.printPages;
+    host.replaceChildren();
+    const logo = document.querySelector('.brand-logo');
+    for (let index = -1; index < chapters.length; index++) {
+      const page = document.createElement('section');
+      page.className = 'print-page';
+      const area = document.createElement('div');
+      area.className = 'print-diagram';
+      page.append(area);
+      const scene = sceneOf(index);
+      const last = index < 0 ? 0 : chapters[index].beats.length - 1;
+      const drawing = index < 0
+        ? createStarMap(chapters, { entrance: false })
+        : createDiagram(sceneId(index), scene, scene.label ?? scene.title ?? 'Схема', { marksNew: false, focusAll: true, still: true });
+      area.append(drawing.svg);
+      drawing.apply(last, 0);
+      const deck = document.createElement('div');
+      deck.className = 'print-deck';
+      const track = document.createElementNS(NS, 'svg');
+      for (const [key, value] of Object.entries({ class: 'trajectory', width: TRACK_WIDTH, height: 56, viewBox: `0 0 ${TRACK_WIDTH} 56` })) track.setAttribute(key, String(value));
+      deck.append(track);
+      if (logo) deck.append(logo.cloneNode(true));
+      page.append(deck);
+      createTrack(track, TRACK_WIDTH, false)(index, last, true);
+      host.append(page);
+    }
   }
+
+  let showTrack: (at: number, beat: number, complete?: boolean) => void = () => undefined;
+  const updateTrack = (): void => showTrack(chapter, step);
 
   // ---------- typewriter: the step's text is erased and typed with a full-block carriage ----------
   // Two tracks run side by side, each with its own caret: the story (headline, then the
@@ -645,6 +705,33 @@ export function mountAtlas(chapters: Chapter[]): void {
   });
   window.addEventListener('resize', fit, { passive: true });
 
+  // Dragging a frame larger than the window: touch pans natively; the mouse drags here.
+  let drag: { x: number; y: number; left: number; top: number; moved: boolean } | null = null;
+  let dragEnded = 0;
+  dom.viewport.addEventListener('pointerdown', event => {
+    if (event.pointerType !== 'mouse' || event.button !== 0 || !dom.viewport.classList.contains('pan')) return;
+    if (closest(event, 'button,a,[role=button],[data-go],[tabindex]')) return;
+    drag = { x: event.clientX, y: event.clientY, left: dom.viewport.scrollLeft, top: dom.viewport.scrollTop, moved: false };
+  });
+  addEventListener('pointermove', event => {
+    if (!drag) return;
+    const dx = event.clientX - drag.x;
+    const dy = event.clientY - drag.y;
+    if (!drag.moved && Math.hypot(dx, dy) < 4) return;
+    drag.moved = true;
+    dom.viewport.classList.add('dragging');
+    dom.viewport.scrollLeft = drag.left - dx;
+    dom.viewport.scrollTop = drag.top - dy;
+  });
+  addEventListener('pointerup', () => {
+    if (!drag) return;
+    if (drag.moved) dragEnded = performance.now();
+    drag = null;
+    dom.viewport.classList.remove('dragging');
+  });
+  // A drag is not a click on whatever it ended over.
+  addEventListener('click', event => { if (performance.now() - dragEnded < 100) event.stopPropagation(); }, { capture: true });
+
   for (let index = 0; index < 12; index++) {
     const column = document.createElement('i');
     column.style.left = `${index * 102}px`;
@@ -654,7 +741,8 @@ export function mountAtlas(chapters: Chapter[]): void {
   function start(): void {
     fit();
     if (!reducedMotion.matches) requestAnimationFrame(skyLoop);
-    buildTrack();
+    showTrack = createTrack(dom.track, TRACK_WIDTH, true);
+    buildPrintPages();
     const initial = hashState();
     go(initial.chapter, initial.step, { fromHash: true });
     requestAnimationFrame(() => requestAnimationFrame(() => dom.track.classList.add('live')));

@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -6,8 +7,8 @@ import { defineConfig, type Plugin } from 'vite';
 const root = dirname(fileURLToPath(import.meta.url));
 
 /**
- * Serves the atlas skin from its sources during development, at the same path as
- * the built file, so the view switcher and hash links behave as in the export.
+ * Serves the atlas skin from its sources during development, at the site root (the
+ * default view) and at the path of the built file.
  */
 function atlasDevPage(): Plugin {
   return {
@@ -15,8 +16,14 @@ function atlasDevPage(): Plugin {
     apply: 'serve',
     configureServer(server) {
       server.middlewares.use(async (request, response, next) => {
-        const path = request.url?.split(/[?#]/)[0];
-        if (path !== '/outputs/platform-beget-atlas.html') return next();
+        const path = request.url?.split(/[?#]/)[0] ?? '';
+        // Files the atlas links to relatively (PDFs, the guide) live in outputs/.
+        if (/^\/platform-[\w-]+\.(pdf|md|png)$/.test(path) && existsSync(resolve(root, `outputs${path}`))) {
+          request.url = `/outputs${request.url}`;
+          return next();
+        }
+        // The site root serves the default view, the atlas; Cosmos stays at /index.html.
+        if (path !== '/' && path !== '/outputs/platform-beget-atlas.html') return next();
         try {
           const shell = (await readFile(resolve(root, 'templates/atlas/shell.html'), 'utf8'))
             .replace('<style>__STYLE__</style>', () => [

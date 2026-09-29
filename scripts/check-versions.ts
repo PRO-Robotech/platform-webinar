@@ -62,7 +62,8 @@ for (const version of versions) {
   const file = `${version.name}.html`;
   const html = await readFile(resolve(root, 'outputs', file), 'utf8');
   assert(html.includes(`<meta name="platform-flow" content="${fingerprint}">`), `${file}: stale flow`);
-  assert(html.includes('view-switcher'), `${file}: missing display switcher`);
+  // Every variant links to the others, except the default atlas, which hides the switcher.
+  if (version.family !== 'atlas') assert(html.includes('class="view-switcher') || html.includes('mountViewSwitcher') || html.includes('view-switcher-trigger'), `${file}: missing display switcher`);
   assert(!/PRO[\s-]*Robotech/i.test(html), `${file}: old company branding`);
   assert(!/__NARRATIVE_CONTENT__|__STYLE__|__SCRIPT__|__CONTENT__|__ENGINE__/.test(html), `${file}: unresolved template`);
   assert(!/<script\b[^>]*\bsrc=/.test(html), `${file}: external script in offline presentation`);

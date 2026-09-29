@@ -1,0 +1,7 @@
+services:
+  webinar:
+    build: .
+    image: platform-webinar
+    ports:
+      - "${PORT:-8080}:80"
+    restart: unless-stopped
