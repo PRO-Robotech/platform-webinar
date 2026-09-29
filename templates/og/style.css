@@ -1,0 +1,28 @@
+/* Link preview, 1200×630: the platform's constellation behind the question the talk answers. */
+html,body{width:1200px;height:630px;overflow:hidden}
+.og{position:relative;width:1200px;height:630px;overflow:hidden;background:var(--ink)}
+.og-sky{position:absolute;inset:0}
+.og-sky .arc{fill:none;stroke:rgba(var(--tint),.06)}
+.og-sky .dot{fill:rgb(var(--tint))}
+/* The whole star map, set to the right, behind the text and above the timeline. */
+.og-map{position:absolute;left:200px;top:132px;width:1200px;height:416px;transform:scale(.86);transform-origin:0 0}
+.og-map .s-region-label,.og-map .s-tip{display:none}
+/* Ink over the left, so the text reads cleanly over the constellation. */
+.og-veil{position:absolute;inset:0;background:linear-gradient(90deg,rgba(39,39,42,.94) 0,rgba(39,39,42,.9) 36%,rgba(39,39,42,.55) 52%,rgba(39,39,42,0) 68%)}
+.og-brand{position:absolute;left:64px;top:56px;display:flex;align-items:flex-start;gap:24px;color:var(--paper)}
+.og-brand .brand-logo{display:block;width:74px;height:34px}
+.og-brand span{margin-top:3px;font-size:20px;line-height:28px;color:var(--paper-2)}
+.og-text{position:absolute;left:64px;top:178px;width:640px}
+.og-text h1{margin:0;font-family:var(--caption);font-weight:700;font-size:56px;line-height:64px;letter-spacing:-.015em;color:var(--paper)}
+.og-text p{margin:24px 0 0;width:520px;font-size:24px;line-height:34px;color:var(--paper-2)}
+.og-foot{position:absolute;left:64px;right:64px;bottom:40px;height:40px}
+.og-foot svg{display:block;overflow:visible}
+.og-foot .line{stroke:var(--paper-3);stroke-opacity:.5}
+.og-foot .tick{stroke:var(--paper-3)}
+.og-foot .bound{stroke:var(--paper-3)}
+.og-foot .stage{stroke:var(--paper-2)}
+.og-foot .stage-label{fill:var(--paper-2);font-family:var(--sans);font-weight:700;font-size:14px}
+.og-foot .count{fill:var(--paper-3);font-family:var(--sans);font-size:16px}
+.og-foot .end{stroke:var(--signal);stroke-width:2}
+/* The same edge-to-edge rule as above the timeline in the talk. */
+.og-foot::before{content:'';position:absolute;left:-64px;right:-64px;top:-20px;height:1px;background:var(--rule)}
