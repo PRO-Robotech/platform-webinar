@@ -1,0 +1,269 @@
+/* Beget · Атлас. Кадр не меньше 1280×784 и растягивается на все окно. Сетка 1200 по центру:
+   12 колонок, колонка 78, средник 24. Вертикальный шаг 8.
+   Шапка 72 (20 · 32 · 20) → 32 → рассказ 96 → 32 → схема → 20 → линия → 20 → траектория 56 → 24.
+   Траектория: подписи уровней над линией, линия, названия глав под ней.
+   Рассказ в колонках 1–8, итог шага в 10–12; траектория в 1–9, управление в 10–12.
+   Шрифты: PT Sans Caption — заголовки, PT Sans — текст. */
+:root{
+  /* Темная тема. Контраст на --ink: paper ≈13:1, paper-2 ≈10:1, paper-3 ≈5.8:1. */
+  --ink:#27272A;
+  --surface:#27272A;
+  --lift:#323236;
+  --paper:#F4F4F5;
+  --paper-2:#D4D4D8;
+  --paper-3:#A1A1AA;
+  /* Тон линий, неба и подсветок как тройка RGB, чтобы задавать прозрачность на месте. */
+  --tint:244,244,245;
+  --rule:rgba(var(--tint),.18);
+  --rule-2:rgba(var(--tint),.32);
+  --signal:#60A5FA;
+  --ready:#4ADE80;
+  /* Edges and outlines: resting edges, and the outline and edges of the step's participants. */
+  --edge:var(--paper-3);
+  --focus-line:var(--paper);
+  /* Buttons in the accent blue, always with white icons and text. */
+  --button:#60A5FA;
+  --button-hover:#82B7FB;
+  --button-fg:#FFFFFF;
+  --shadow:rgba(0,0,0,.5);
+  --sans:"PT Sans","Segoe UI",Arial,sans-serif;
+  --caption:"PT Sans Caption","PT Sans","Segoe UI",Arial,sans-serif;
+  --ease:cubic-bezier(.25,.7,.25,1);
+  color-scheme:dark;
+}
+/* Светлая тема: палитра светлого Beget, акцент тот же. */
+:root[data-theme=light]{
+  --ink:#F3F3F4;
+  --surface:#FAFAFB;
+  --lift:#FFFFFF;
+  --paper:#1E293B;
+  --paper-2:#526176;
+  --paper-3:#5B6B81;
+  --tint:30,41,59;
+  --rule:rgba(var(--tint),.14);
+  --rule-2:rgba(var(--tint),.26);
+  --ready:#16A34A;
+  /* Participants are outlined in grey rather than black; resting edges stay lighter still. */
+  --edge:rgba(var(--tint),.26);
+  --focus-line:#A1A1AA;
+  --button:#0E7CE9;
+  --button-hover:#0B6BCB;
+  --button-fg:#FFFFFF;
+  --shadow:rgba(15,23,42,.16);
+  color-scheme:light;
+}
+/* Theme switch: the new theme is revealed as a growing circle from the toggle. */
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--ink);color:var(--paper);font:16px/24px var(--sans);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+a{color:inherit}
+[hidden]{display:none!important}
+:focus-visible{outline:1px solid var(--signal);outline-offset:2px}
+
+.sky{position:fixed;inset:0;display:block;width:100%;height:100%}
+.viewport{position:fixed;inset:0;overflow:hidden}
+/* A frame larger than the window (a phone) is dragged: native panning for touch, grab for the mouse. */
+.viewport.pan{overflow:auto;overscroll-behavior:none;scrollbar-width:none;cursor:grab}
+.viewport.pan::-webkit-scrollbar{display:none}
+.viewport.dragging{cursor:grabbing;user-select:none}
+.viewport-size{position:absolute;left:0;top:0;pointer-events:none}
+.slide{position:absolute;left:0;top:0;width:1280px;height:784px;transform-origin:0 0}
+.frame{position:absolute;top:0;bottom:0;left:var(--frame-left,40px);width:1200px}
+
+/* ---------- шапка ---------- */
+.s-head{position:absolute;left:0;right:0;top:0;height:72px;display:flex;align-items:center;justify-content:space-between}
+/* The rule under the header runs edge to edge: it reaches past the grid by the side margins. */
+.s-head::after{content:'';position:absolute;left:calc(-1 * var(--frame-left,40px));right:calc(-1 * var(--frame-left,40px));bottom:0;height:1px;background:var(--rule);pointer-events:none}
+/* The logo is lettering: its baseline sits at 25 of 40 units (17.5 px at 28 px tall), below it only the tail of «g».
+   The caption is set on the same baseline: 17.5 − 15.2 (PT Sans 14/20 baseline) ≈ 2 px lower than the logo top. */
+.brand{display:grid;grid-template-columns:78px auto;column-gap:24px;align-items:start;color:var(--paper);text-decoration:none;margin-top:6px}
+.brand-logo{display:block;width:61px;height:28px}
+.brand span{margin-top:2px;font-size:14px;line-height:20px;color:var(--paper-2);white-space:nowrap}
+.header-tools{display:flex;align-items:center;gap:8px}
+.tool{height:32px;min-width:32px;padding:0 10px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;background:var(--button);border-radius:2px;color:var(--button-fg);font-size:14px;line-height:20px;cursor:pointer;transition:background-color .16s}
+.tool:hover{background:var(--button-hover)}
+a.tool{text-decoration:none}
+/* Icon-only controls are square. */
+.tool-square{width:32px;padding:0}
+/* The theme toggle shows the theme it switches to; scoped to .tool to outrank `.tool svg`. */
+.tool .theme-to-light,:root[data-theme=light] .tool .theme-to-dark{display:block}
+.tool .theme-to-dark,:root[data-theme=light] .tool .theme-to-light{display:none}
+
+/* ---------- рассказ и итог ---------- */
+.log{position:absolute;left:0;top:104px;width:1200px;height:96px;display:grid;grid-template-columns:792px 282px;column-gap:126px;align-items:start}
+.story{min-width:0}
+.story h1{margin:0;font-family:var(--caption);font-weight:700;font-size:32px;line-height:40px;letter-spacing:-.01em;color:var(--paper);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.story p{margin:8px 0 0;font-size:16px;line-height:24px;color:var(--paper-2);text-wrap:pretty}
+.term{color:var(--paper);font-weight:700}
+/* Typewriter carriage: a full block at the insertion point; it blinks once typing is done. */
+.caret{display:inline-block;width:.55em;height:.95em;margin-left:.06em;vertical-align:-.1em;background:var(--signal)}
+.caret.idle{animation:caret-blink 1s steps(1) infinite}
+@keyframes caret-blink{50%{opacity:0}}
+.result{display:grid;align-content:start;padding-top:4px}
+.result-label{font-family:var(--caption);font-weight:700;font-size:12px;line-height:16px;color:var(--paper-3)}
+.result p{margin:8px 0 0;font-size:16px;line-height:24px;color:var(--paper);text-wrap:pretty}
+
+/* ---------- схема ---------- */
+.diagram{position:absolute;left:0;right:0;top:232px;bottom:120px;display:grid;place-items:center}
+.diagram>svg{grid-area:1/1;display:block;overflow:visible}
+.diagram>svg.leaving,.diagram>svg.arriving{pointer-events:none}
+.dg text{user-select:none;pointer-events:none}
+.z{transition:opacity .24s var(--ease)}
+.z.hidden{opacity:0}
+.z-box{fill:var(--ink);fill-opacity:.6;stroke:var(--rule-2)}
+.z.external .z-box{stroke-dasharray:5 4}
+.z-label{fill:var(--paper-2);font-family:var(--sans);font-weight:700;font-size:12px}
+.z-label-bg{fill:var(--ink)}
+
+.n{outline:none;transition:opacity .32s var(--ease)}
+.n.hidden{opacity:0;pointer-events:none}
+.n .box{fill:var(--surface);stroke:rgba(var(--tint),.32);stroke-width:1.5;transition:stroke .24s var(--ease),fill .24s var(--ease)}
+.n .kind{fill:var(--paper-3);font-family:var(--sans);font-size:12px;transition:fill .24s var(--ease)}
+.n .title{fill:var(--paper-2);font-family:var(--caption);font-weight:700;font-size:18px;transition:fill .24s var(--ease)}
+.n .sub{fill:var(--paper-3);font-family:var(--sans);font-size:14px;transition:fill .24s var(--ease)}
+.n .badges{fill:var(--paper-3);font-family:var(--sans);font-style:italic;font-size:14px}
+.n .sym{color:var(--paper-3);transition:color .24s var(--ease)}
+.n .check{fill:none;stroke:var(--ready);stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;opacity:0;transition:opacity .24s var(--ease)}
+.n.on .box{fill:var(--lift);stroke:var(--focus-line)}
+.n.on .title{fill:var(--paper)}
+.n.on .sub,.n.on .badges{fill:var(--paper-2)}
+.n.on .sym{color:var(--paper)}
+.n.on .kind{fill:var(--paper-2)}
+.n.new .box{stroke:var(--signal)}
+/* Frame marks by kind: coloured like the frame, so they follow the block's state. */
+.n .deco{fill:none;stroke:rgba(var(--tint),.32);stroke-width:1.5;stroke-linejoin:round;transition:stroke .24s var(--ease),fill .24s var(--ease)}
+.n.on .deco{stroke:var(--focus-line)}
+.n.new .deco{stroke:var(--signal)}
+.n.dashed .box{stroke-dasharray:6 4}
+.n.new .kind{fill:var(--signal)}
+.n.new .sym{color:var(--signal)}
+.n.ready .check{opacity:1}
+.n.ready .gate-mark{fill:currentColor}
+
+.e{transition:opacity .24s var(--ease)}
+.e.hidden{opacity:0}
+.e .line,.e .head{fill:none;stroke:var(--edge);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;transition:stroke .24s var(--ease),fill .24s var(--ease)}
+/* Filled arrowheads with well rounded corners: a wide round join over a small triangle. */
+.e .head{fill:var(--edge);stroke-width:2.5}
+.e .head-glint{fill:var(--signal);stroke:var(--signal);stroke-width:2.5;stroke-linejoin:round;opacity:0;pointer-events:none}
+.e.new .head-glint{fill:var(--paper);stroke:var(--paper)}
+.e.status .line{stroke-dasharray:6 4}
+.e.link .line{stroke-width:1.25}
+.e.emphasis .line,.e.emphasis .head{stroke-width:2.25}
+.e.hot .line,.e.hot .head{stroke:var(--focus-line)}
+.e.hot .head{fill:var(--focus-line)}
+.e.new .line,.e.new .head{stroke:var(--signal)}
+.e.new .head{fill:var(--signal)}
+/* Motion on the step's edges: a soft shimmer runs along directed edges (actions and returned
+   statuses) that touch the step's participants; status dashes also flow back. The shimmer is stacked dashes of the line's own width
+   with flat ends, so it never leaves the line; shorter dashes add up to a brighter middle.
+   Each dash's gap is longer than the edge, so outside its run it is off the line. */
+.e .flow-layer{fill:none;stroke:transparent;stroke-width:1.5;stroke-linecap:butt;stroke-opacity:.3;
+  stroke-dasharray:calc(var(--dash) * 1px) calc(var(--len) * 1px + 200px);stroke-dashoffset:calc(var(--dash) * .5px + 40px)}
+.e.hot .flow-layer{stroke:var(--signal);animation:edge-flow var(--cycle,2s) cubic-bezier(.45,0,.55,1) .6s infinite}
+.e.new .flow-layer{stroke:var(--paper)}
+.e.hidden .flow-layer{animation:none}
+.e.status.hot .line{animation:edge-return 1.6s linear infinite}
+@keyframes edge-flow{0%{stroke-dashoffset:calc(var(--dash) * .5px + 40px)}60%,100%{stroke-dashoffset:calc(var(--dash) * .5px - var(--len) * 1px - 40px)}}
+@keyframes edge-return{from{stroke-dashoffset:10}to{stroke-dashoffset:0}}
+/* The label's sweep: its base is the label's own colour, the shine matches the shimmer. */
+.sweep-base{stop-color:var(--paper-3)}
+.sweep-shine{stop-color:var(--signal)}
+.e.hot .sweep-base{stop-color:var(--paper)}
+.e.new .sweep-base{stop-color:var(--signal)}
+.e.new .sweep-shine{stop-color:var(--paper)}
+.e-caption-bg{fill:var(--ink)}
+.e-caption{fill:var(--paper-2);font-family:var(--sans);font-style:italic;font-size:14px;transition:fill .24s var(--ease)}
+.e.hot .e-caption{fill:var(--paper)}
+.e.new .e-caption{fill:var(--signal)}
+
+/* ---------- звездная карта платформы (вступление) ---------- */
+.s-region-label{fill:var(--paper-2);font-family:var(--sans);font-weight:700;font-size:12px}
+.s-count{fill:var(--paper-3);font-weight:400}
+.s-link{fill:none;stroke:var(--edge);stroke-width:1}
+.s-link.cross{stroke-opacity:.28}
+.s-star{cursor:pointer;outline:none}
+.s-hit{fill:transparent}
+.s-plate{fill:var(--ink)}
+.s-mark{color:var(--paper);transition:color .16s var(--ease)}
+.s-name{fill:var(--signal);font-family:var(--sans);font-style:italic;font-size:14px}
+.s-star.origin .s-mark{color:var(--signal)}
+.s-star.origin .s-name{font-weight:700;font-style:normal}
+.s-halo{fill:none;stroke:var(--signal);stroke-opacity:.5;stroke-width:1.25}
+.s-star:hover .s-mark,.s-star:focus-visible .s-mark{color:var(--signal)}
+.s-tip{pointer-events:none}
+.s-tip-box{fill:var(--lift);stroke:var(--rule-2)}
+.s-tip-title{fill:var(--paper);font-family:var(--caption);font-weight:700;font-size:14px}
+.s-tip-meta{fill:var(--paper-3);font-family:var(--sans);font-size:12px}
+.s-tip-body{fill:var(--paper-2);font-family:var(--sans);font-size:14px}
+
+/* ---------- траектория и управление ---------- */
+.deck{position:absolute;left:0;bottom:24px;width:1200px;height:56px;display:grid;grid-template-columns:894px 282px;column-gap:24px;align-items:center}
+/* Same edge-to-edge rule as under the header, 20 px above the timeline. */
+.deck::before{content:'';position:absolute;left:calc(-1 * var(--frame-left,40px));right:calc(-1 * var(--frame-left,40px));top:-20px;height:1px;background:var(--rule);pointer-events:none}
+.trajectory{display:block;overflow:visible}
+.t-line{stroke:var(--paper-3);stroke-opacity:.4}
+.t-progress{stroke:var(--paper);stroke-opacity:.6}
+.t-bound{stroke:var(--paper-3)}
+.t-tick{stroke:var(--paper-3);transition:stroke .24s var(--ease)}
+.t-tick.past{stroke:var(--paper)}
+.t-name{fill:var(--paper-2);font-family:var(--sans);font-size:12px;transition:fill .24s var(--ease)}
+.t-name.cur{fill:var(--paper);font-weight:700}
+.t-stage{stroke:var(--paper-2)}
+.t-stage-label{fill:var(--paper-2);font-family:var(--sans);font-weight:700;font-size:12px}
+.t-marker{stroke:var(--signal);stroke-width:2;transition:opacity .24s var(--ease)}
+.t-marker.hidden{opacity:0}
+.t-progress,.t-marker{transform-box:view-box;transform-origin:0 0}
+.trajectory.live .t-progress{transition:transform .4s var(--ease)}
+.trajectory.live .t-marker{transition:transform .4s var(--ease),opacity .24s var(--ease)}
+.t-hit{cursor:pointer;fill:transparent;outline:none}
+.t-hit:hover,.t-hit:focus-visible{fill:rgba(var(--tint),.06)}
+
+.transport{display:flex;align-items:center;justify-content:flex-end;gap:8px}
+.counter{margin-right:auto;white-space:nowrap;font-size:14px;line-height:20px;color:var(--paper-3);font-variant-numeric:tabular-nums}
+.btn{height:40px;border:0;background:var(--button);border-radius:2px;cursor:pointer;color:var(--button-fg);display:inline-flex;align-items:center;justify-content:center;gap:12px;font-size:14px;line-height:20px;transition:background-color .16s,opacity .16s}
+.btn:hover:not(:disabled){background:var(--button-hover)}
+.btn svg,.tool svg{display:block;flex:none}
+.btn:disabled{opacity:.35;cursor:default}
+.btn-back{width:40px}
+.btn-next{width:120px;padding:0 12px 0 16px;justify-content:space-between}
+
+/* ---------- сетка (Shift+G) ---------- */
+.grid-overlay{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,rgba(var(--tint),.07) 0 1px,transparent 1px 8px);z-index:50}
+.grid-overlay i{position:absolute;top:0;bottom:0;width:78px;background:rgba(96,165,250,.08);box-shadow:inset 1px 0 rgba(96,165,250,.3),inset -1px 0 rgba(96,165,250,.3)}
+
+.toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%);max-width:calc(100% - 32px);padding:12px 16px;border:1px solid var(--rule-2);border-radius:2px;background:var(--ink);font-size:14px;line-height:20px;color:var(--paper);z-index:100}
+noscript{position:fixed;inset:auto 0 0;padding:16px;text-align:center;background:var(--ink)}
+
+/* ---------- переключатель «Вид» в языке атласа ---------- */
+.header-tools .view-switcher{--vs-bg:var(--ink);--vs-fg:var(--paper);--vs-muted:var(--paper-2);--vs-line:var(--rule-2);--vs-accent:var(--paper);--vs-hover:rgba(var(--tint),.08);font-family:var(--sans)}
+.header-tools .view-switcher-trigger{width:32px;height:32px;min-width:32px;padding:0;border:0;border-radius:2px;background:var(--button);color:var(--button-fg);transition:background-color .16s}
+.header-tools .view-switcher-trigger:hover,.header-tools .view-switcher[open]>.view-switcher-trigger{background:var(--button-hover);color:var(--button-fg)}
+/* Icon only: the label and chevron are dropped in the atlas. */
+.header-tools .view-switcher-trigger-label,.header-tools .view-switcher-chevron{display:none}
+.header-tools .view-switcher-panel{top:calc(100% + 8px);border-radius:2px;padding:16px 8px 8px;box-shadow:0 24px 80px var(--shadow)}
+.header-tools .view-switcher-caption{margin:0 8px 4px;font-family:var(--caption);font-size:14px;line-height:20px;font-weight:700}
+.header-tools .view-switcher-hint{margin:0 8px 12px;font-size:12px;line-height:16px}
+.header-tools .view-switcher-link{border-radius:2px;font-size:14px;line-height:20px;padding:8px}
+.header-tools .view-switcher-swatch{border-radius:2px}
+
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* ---------- печать: 8 страниц 1280×720, схема по центру, таймлайн и логотип внизу ---------- */
+.print-pages{display:none}
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{height:auto;overflow:visible;background:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .sky,.viewport,.toast,noscript{display:none!important}
+  .print-pages{display:block}
+  .print-page{position:relative;width:1280px;height:720px;overflow:hidden;background:var(--ink);break-after:page}
+  .print-page:last-child{break-after:auto}
+  .print-diagram{position:absolute;left:40px;right:40px;top:40px;bottom:120px;display:grid;place-items:center}
+  .print-diagram>svg{display:block;overflow:visible}
+  .print-deck{position:absolute;left:40px;bottom:24px;width:1200px;height:56px;display:grid;grid-template-columns:894px 282px;column-gap:24px;align-items:center}
+  .print-deck::before{content:'';position:absolute;left:-40px;right:-40px;top:-20px;height:1px;background:var(--rule)}
+  .print-deck .brand-logo{justify-self:end;width:61px;height:28px;color:var(--paper)}
+  .print-pages .flow,.print-pages .head-glint,.print-pages .s-tip{display:none}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}

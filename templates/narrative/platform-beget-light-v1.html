@@ -63,7 +63,7 @@ dialog{background:#fff;color:var(--fg);border:1px solid #d9e0e9;border-radius:10
       if(/\s/.test(c))units+=.31;
       else if(/[ilI1.,:;!'|]/.test(c))units+=.32;
       else if(/[MWЖШЩЮФ@%]/.test(c))units+=.91;
-      else if(/[A-ZА-ЯЁ0-9]/.test(c))units+=.66;
+      else if(/[A-ZА-ЯЕ0-9]/.test(c))units+=.66;
       else units+=.58;
     });
     return units*size+Math.max(0,Array.from(String(text)).length-1)*(tracking||0);
@@ -227,13 +227,13 @@ dialog{background:#fff;color:var(--fg);border:1px solid #d9e0e9;border-radius:10
  const total=chapters.reduce((n,c)=>n+c.beats.length,0);
  const eventWord=total%100>=11&&total%100<=14?'СОБЫТИЙ':total%10===1?'СОБЫТИЕ':total%10>=2&&total%10<=4?'СОБЫТИЯ':'СОБЫТИЙ';
  let chapter=-1,step=0,toastTimer;
- const intro={title:'Три уровня одной платформы',zones:[{id:'intro-l0',x:20,y:55,w:355,h:310,label:'L0',tier:'l0'},{id:'intro-l1',x:424,y:55,w:355,h:310,label:'L1',tier:'l1'},{id:'intro-l2',x:827,y:55,w:353,h:310,label:'L2',tier:'l2'}],nodes:[{id:'intro-management',at:0,x:54,y:132,w:287,h:159,title:'Принимает заказ',sub:['Операторы и Cluster API','управляют созданием'],kind:'operator',tier:'l0'},{id:'intro-infra',at:0,x:457,y:132,w:287,h:159,title:'Строит инфраструктуру',sub:['Узлы L1 и','Control plane L2'],kind:'machines',tier:'l1'},{id:'intro-client',at:0,x:860,y:132,w:287,h:159,title:'Предоставляет L2',sub:['API L2 и','пользовательские приложения'],kind:'endpoint',tier:'l2'}],edges:[{from:'intro-management',to:'intro-infra',at:0,path:'M341 212H457',label:'создаёт',lx:398,ly:191,kind:'command'},{from:'intro-infra',to:'intro-client',at:0,path:'M744 212H860',label:'обслуживает',lx:803,ly:191,kind:'link'}],beats:[{active:[]}]};
+ const intro={title:'Три уровня одной платформы',zones:[{id:'intro-l0',x:20,y:55,w:355,h:310,label:'L0',tier:'l0'},{id:'intro-l1',x:424,y:55,w:355,h:310,label:'L1',tier:'l1'},{id:'intro-l2',x:827,y:55,w:353,h:310,label:'L2',tier:'l2'}],nodes:[{id:'intro-management',at:0,x:54,y:132,w:287,h:159,title:'Принимает заказ',sub:['Операторы и Cluster API','управляют созданием'],kind:'operator',tier:'l0'},{id:'intro-infra',at:0,x:457,y:132,w:287,h:159,title:'Строит инфраструктуру',sub:['Узлы L1 и','Control plane L2'],kind:'machines',tier:'l1'},{id:'intro-client',at:0,x:860,y:132,w:287,h:159,title:'Предоставляет L2',sub:['API L2 и','пользовательские приложения'],kind:'endpoint',tier:'l2'}],edges:[{from:'intro-management',to:'intro-infra',at:0,path:'M341 212H457',label:'создает',lx:398,ly:191,kind:'command'},{from:'intro-infra',to:'intro-client',at:0,path:'M744 212H860',label:'обслуживает',lx:803,ly:191,kind:'link'}],beats:[{active:[]}]};
  function render(fly){
   const opening=chapter<0,c=opening?null:chapters[chapter],b=c&&c.beats[step];
   $('chapter-label').textContent=opening?'ИСТОРИЯ ОДНОГО ЗАКАЗА':String(chapter+1).padStart(2,'0')+' / '+c.kicker;
   $('event-position').textContent=opening?'L0 → L1 → L2':'СОБЫТИЕ '+String(offsets[chapter]+step+1).padStart(2,'0')+' / '+total;
   $('headline').textContent=opening?'Что происходит после «Создать кластер»?':b.title;
-  $('explanation').textContent=opening?'Одна заявка запускает создание целой платформы. Проследим, кто действует, что появляется и почему разрешён следующий шаг.':b.summary;
+  $('explanation').textContent=opening?'Одна заявка запускает создание целой платформы. Проследим, кто действует, что появляется и почему разрешен следующий шаг.':b.summary;
   $('context-line').textContent=opening?'ТРИ УРОВНЯ ОДНОЙ ПЛАТФОРМЫ':chapter===2?'ВЕТКИ ИДУТ ОДНОВРЕМЕННО · МЕНЯЕТСЯ ТОЛЬКО ФОКУС РАССКАЗА':c.question;
   document.querySelector('.scene-context').classList.toggle('parallel',chapter===2);
   $('diagram').innerHTML=renderer.render(opening?intro:c,opening?0:step);

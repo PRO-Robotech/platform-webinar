@@ -26,7 +26,7 @@ export function mountViewSwitcher(chapterLengths: readonly number[], basePath = 
   summary.innerHTML = '<svg class="view-switcher-icon" width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2" y="2" width="6" height="6" rx="1.5"/><rect x="12" y="2" width="6" height="6" rx="1.5"/><rect x="2" y="12" width="6" height="6" rx="1.5"/><rect x="12" y="12" width="6" height="6" rx="1.5"/></svg><span class="view-switcher-trigger-label">Вид</span><svg class="view-switcher-chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="m2 4 3 3 3-3"/></svg>';
   const panel = document.createElement('nav');
   panel.className = 'view-switcher-panel';
-  panel.setAttribute('aria-label', 'Сохранённые оформления презентации');
+  panel.setAttribute('aria-label', 'Сохраненные оформления презентации');
   const caption = document.createElement('p');
   caption.className = 'view-switcher-caption';
   caption.textContent = 'Оформление';

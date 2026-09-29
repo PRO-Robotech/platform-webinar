@@ -7,6 +7,9 @@ import { Script } from 'node:vm';
 import { chapters } from '../src/flow.ts';
 import { versions } from '../src/versions/catalog.ts';
 import { createFlightContent } from '../src/versions/flight.ts';
+import { validatePlacement } from '../src/versions/atlas-layout.ts';
+import { validateStarMap } from '../src/versions/atlas-intro.ts';
+import { intro } from '../src/navigation.ts';
 import type { Chapter } from '../src/types.ts';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -41,6 +44,10 @@ for (const chapter of chapters) {
   }
 }
 
+// The atlas skin places every zone, block and edge override on its own grid.
+const placementProblems = [validatePlacement('intro', intro), ...chapters.map(chapter => validatePlacement(chapter.id, chapter)), validateStarMap(chapters)].flat();
+assert.deepEqual(placementProblems, [], `Atlas layout is out of date:\n${placementProblems.join('\n')}`);
+
 const flight = createFlightContent(chapters);
 assert.equal(flight.scenes.length, beats.length);
 flight.scenes.forEach((scene, index) => {
@@ -55,7 +62,8 @@ for (const version of versions) {
   const file = `${version.name}.html`;
   const html = await readFile(resolve(root, 'outputs', file), 'utf8');
   assert(html.includes(`<meta name="platform-flow" content="${fingerprint}">`), `${file}: stale flow`);
-  assert(html.includes('view-switcher'), `${file}: missing display switcher`);
+  // Every variant links to the others, except the default atlas, which hides the switcher.
+  if (version.family !== 'atlas') assert(html.includes('class="view-switcher') || html.includes('mountViewSwitcher') || html.includes('view-switcher-trigger'), `${file}: missing display switcher`);
   assert(!/PRO[\s-]*Robotech/i.test(html), `${file}: old company branding`);
   assert(!/__NARRATIVE_CONTENT__|__STYLE__|__SCRIPT__|__CONTENT__|__ENGINE__/.test(html), `${file}: unresolved template`);
   assert(!/<script\b[^>]*\bsrc=/.test(html), `${file}: external script in offline presentation`);

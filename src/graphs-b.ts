@@ -146,7 +146,7 @@ export function applyGraphsB(chapters: Chapter[]): void {
       {
         id: 'hosted-addoncp', x: 480, y: 64, w: 208, h: 88,
         title: 'Addon (CP)', sub: 'Статус Applications',
-        detail: 'Addon (CP) в L1 получает состояние Applications и передаёт статус в AddonClaim в L0.',
+        detail: 'Addon (CP) в L1 получает состояние Applications и передает статус в AddonClaim в L0.',
         kind: 'resource', tier: 'l1', at: 3
       },
       {

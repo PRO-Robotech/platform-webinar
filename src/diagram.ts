@@ -37,7 +37,7 @@ function widthOf(text: string,size: number,tracking = 0): number{
     if(/\s/.test(c))units+=.31;
     else if(/[ilI1.,:;!'|]/.test(c))units+=.32;
     else if(/[MWЖШЩЮФ@%]/.test(c))units+=.91;
-    else if(/[A-ZА-ЯЁ0-9]/.test(c))units+=.66;
+    else if(/[A-ZА-ЯЕ0-9]/.test(c))units+=.66;
     else units+=.58;
   });
   return units*size+Math.max(0,Array.from(String(text)).length-1)*(tracking||0);

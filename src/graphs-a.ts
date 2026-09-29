@@ -37,11 +37,11 @@ export function applyGraphsA(chapters: Chapter[]): void {
   zones:[{id:'l0',x:16,y:16,w:800,h:232,label:'L0',tier:'l0'},{id:'ext',x:856,y:16,w:328,h:232,label:'ВНЕШНЕЕ ОБЛАКО',tier:'external'},{id:'l1',x:16,y:264,w:1168,h:144,label:'L1',tier:'l1',at:1}],
   nodes:[
    N('infra-claim',0,40,64,208,88,'ClusterClaim','Исходный заказ','resource','l0',{variants:[{at:2,sub:'L1 инициализирован'}]}),
-   N('infra-operator',0,304,64,208,88,['ClusterClaim','Operator'],'','operator','l0',{detail:'ClusterClaim Operator наблюдает исходный ClusterClaim и создаёт ресурс Cluster L1. Параллельно он заказывает CSR approver для подписи сертификатов нод и CCM для интеграции с облаком; оба компонента работают в L0.'}),
+   N('infra-operator',0,304,64,208,88,['ClusterClaim','Operator'],'','operator','l0',{detail:'ClusterClaim Operator наблюдает исходный ClusterClaim и создает ресурс Cluster L1. Параллельно он заказывает CSR approver для подписи сертификатов нод и CCM для интеграции с облаком; оба компонента работают в L0.'}),
    N('infra-resource',0,568,64,208,88,'Cluster L1','Описание в L0','resource','l0',{variants:[{at:2,sub:'Инициализирован'}]}),
-   N('services',0,304,176,208,64,'CSR + CCM','','operator','l0',{detail:'ClusterClaim Operator создаёт CSR approver для подписи сертификатов нод и CCM для интеграции с облаком параллельно с Cluster L1. Оба компонента работают в L0.'}),
+   N('services',0,304,176,208,64,'CSR + CCM','','operator','l0',{detail:'ClusterClaim Operator создает CSR approver для подписи сертификатов нод и CCM для интеграции с облаком параллельно с Cluster L1. Оба компонента работают в L0.'}),
    N('capi',1,568,176,208,64,'Cluster API','','operator','l0',{detail:'Cluster API наблюдает ресурс Cluster L1 и запрашивает создание виртуальных машин в облаке. Статус инициализации возвращается от машин через Cluster API и Cluster L1 в исходный ClusterClaim.'}),
-   N('cloud',1,880,176,272,64,'Облако','','cloud','external',{detail:'По запросу Cluster API облако создаёт виртуальные машины инфраструктурного кластера L1.'}),
+   N('cloud',1,880,176,272,64,'Облако','','cloud','external',{detail:'По запросу Cluster API облако создает виртуальные машины инфраструктурного кластера L1.'}),
    N('machines',1,888,304,264,96,'Машины L1','Кластер инициализируется','machines','l1',{variants:[{at:2,sub:'L1 инициализирован'}]}),
    N('network',3,464,304,264,96,['Cilium','CoreDNS'],'','app','l1'),
    N('delivery',4,40,304,264,96,['Argo CD','AddonOperator'],'','operator','l1')
@@ -65,8 +65,8 @@ export function applyGraphsA(chapters: Chapter[]): void {
   zones:[{id:'l0',x:24,y:24,w:744,h:384,label:'L0',tier:'l0'},{id:'l1',x:808,y:24,w:368,h:384,label:'L1',tier:'l1'}],
   nodes:[
    N('client-claim',0,48,72,208,112,'ClusterClaim','Исходный заказ','resource','l0'),
-   N('client-operator',0,304,72,208,112,['ClusterClaim','Operator'],'Исполняет заказ','operator','l0',{detail:'ClusterClaim Operator наблюдает ClusterClaim и создаёт ресурс Cluster L2. Параллельно он заказывает CSR approver для подписи сертификатов нод и CCM для интеграции с облаком. CSR approver и CCM работают в L0.'}),
-   N('client-services',0,560,72,184,112,'CSR + CCM',['Сертификаты нод','Облако'],'operator','l0',{detail:'ClusterClaim Operator создаёт CSR approver для подписи сертификатов нод и CCM для интеграции с облаком параллельно с Cluster L2. Оба компонента работают в L0.'}),
+   N('client-operator',0,304,72,208,112,['ClusterClaim','Operator'],'Исполняет заказ','operator','l0',{detail:'ClusterClaim Operator наблюдает ClusterClaim и создает ресурс Cluster L2. Параллельно он заказывает CSR approver для подписи сертификатов нод и CCM для интеграции с облаком. CSR approver и CCM работают в L0.'}),
+   N('client-services',0,560,72,184,112,'CSR + CCM',['Сертификаты нод','Облако'],'operator','l0',{detail:'ClusterClaim Operator создает CSR approver для подписи сертификатов нод и CCM для интеграции с облаком параллельно с Cluster L2. Оба компонента работают в L0.'}),
    N('client-resource',0,48,272,208,112,'Cluster L2','Описание L2 в L0','resource','l0'),
    N('client-capi',1,304,272,208,112,'Cluster API','Запрашивает Control plane L2','operator','l0'),
    N('addonclaim',1,560,272,184,112,'AddonClaim','Заявка на аддон','resource','l0'),
@@ -96,7 +96,7 @@ export function applyGraphsA(chapters: Chapter[]): void {
    N('default-addons',3,872,88,288,128,'Аддоны L2',['Cilium · CoreDNS','Konnectivity'],'app','l2',{detail:'Итоговые базовые ресурсы L2: Cilium, CoreDNS и Konnectivity.'}),
    N('hand-off',4,872,272,288,120,['Пользователь','получает кластер'],'Можно запускать приложения','user','actor')
   ],
-  edges:[E('defaults-operator','defaults-claim',0,'M148 273V215','создаёт',216,244),E('defaults-claim','defaults-addon',1,'M255 152H329'),E('defaults-addon','defaults-applications',2,'M535 152H585'),E('defaults-applications','default-addons',3,'M799 152H873','Argo CD',836,128),E('default-addons','hand-off',4,'M1016 215V273','L2 готов',1080,244,'status')]
+  edges:[E('defaults-operator','defaults-claim',0,'M148 273V215','создает',216,244),E('defaults-claim','defaults-addon',1,'M255 152H329'),E('defaults-addon','defaults-applications',2,'M535 152H585'),E('defaults-applications','default-addons',3,'M799 152H873','Argo CD',836,128),E('default-addons','hand-off',4,'M1016 215V273','L2 готов',1080,244,'status')]
  } satisfies DiagramGraph);
  [['defaults-operator','defaults-claim'],['defaults-claim','defaults-addon'],['defaults-addon','defaults-applications'],['defaults-applications','default-addons'],['default-addons','hand-off']].forEach((active,i)=>activate(5,i,active));
  Object.assign(chapterAt(6),{
@@ -106,7 +106,7 @@ export function applyGraphsA(chapters: Chapter[]): void {
    N('user-addonclaim',0,240,160,200,136,'AddonClaim',['Заказ приложения','пользователя'],'resource','l0'),
    N('user-addon',1,488,160,184,136,'Addon',['Описание','приложения'],'resource','l1'),
    N('user-applications',2,720,160,208,136,'Applications',['Ресурсы Argo CD','Целевая среда — L2'],'resource','l1'),
-   N('user-workload',3,984,160,184,136,'Приложение',['Для пользователя','Работает в L2'],'app','l2',{detail:'Приложение, заказанное пользователем через AddonClaim. Его ресурсы развёрнуты и работают в L2.'})
+   N('user-workload',3,984,160,184,136,'Приложение',['Для пользователя','Работает в L2'],'app','l2',{detail:'Приложение, заказанное пользователем через AddonClaim. Его ресурсы развернуты и работают в L2.'})
   ],
   edges:[E('user-order','user-addonclaim',0,'M191 228H241'),E('user-addonclaim','user-addon',1,'M439 228H489'),E('user-addon','user-applications',2,'M671 228H721'),E('user-applications','user-workload',3,'M927 228H985')]
  } satisfies DiagramGraph);

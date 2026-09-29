@@ -25,9 +25,9 @@ export function mountFlight(content: FlightContent): void {
  const map=createFlightMap($('universe'),content,{onSelect:index=>go(index),onMotion:()=>{pause();$('map-hint').textContent='Свободный ракурс · выберите главу или верните ракурс';}});
  function updateAuto(){
   $('autoplay').setAttribute('aria-pressed',String(auto));
-  $('autoplay-label').textContent=auto?'Пауза':'Автополёт';
+  $('autoplay-label').textContent=auto?'Пауза':'Автополет';
   $('autoplay').querySelector<HTMLElement>('.play-icon')!.textContent=auto?'Ⅱ':'▷';
-  $('flight-state').textContent=auto?'АВТОПОЛЁТ · 18 СЕК / ШАГ':current<0?'ОБЗОР МАРШРУТА':'ГЛАВА '+(scenes[current].chapter+1)+' · ШАГ '+(scenes[current].step+1);
+  $('flight-state').textContent=auto?'АВТОПОЛЕТ · 18 СЕК / ШАГ':current<0?'ОБЗОР МАРШРУТА':'ГЛАВА '+(scenes[current].chapter+1)+' · ШАГ '+(scenes[current].step+1);
  }
  function pause(){auto=false;clearTimeout(flightTimer);updateAuto();}
  function schedule(){clearTimeout(flightTimer);if(!auto)return;flightTimer=window.setTimeout(()=>{if(current>=last){pause();return;}go(current+1,{keepAuto:true});schedule();},18000);}
@@ -40,7 +40,7 @@ export function mountFlight(content: FlightContent): void {
   $('story-title').innerHTML=overview?'Одна заявка.<br><span>Целая платформа.</span>':esc(s.title);
   $('story-summary').textContent=overview?'Маршрут через три уровня Kubernetes. Проследите, как операторы создают инфраструктуру, готовят доступы и запускают клиентский кластер.':s.summary;
   $('facts').innerHTML=overview?'<div class="intro-layer"><b>L0</b><span>Управление и оркестрация</span></div><div class="intro-layer"><b>L1</b><span>Инфраструктура и Control plane L2</span></div><div class="intro-layer"><b>L2</b><span>Клиентский Kubernetes</span></div>':s.facts.map(f=>'<details class="fact" name="flight-facts"><summary>'+esc(f.label)+'</summary><p>'+esc(f.body)+'</p></details>').join('');
-  $('next').innerHTML=(overview?'Начать полёт':current===last?'Весь маршрут':'Следующий шаг')+' <span aria-hidden="true">'+(current===last?'↗':'→')+'</span>';
+  $('next').innerHTML=(overview?'Начать полет':current===last?'Весь маршрут':'Следующий шаг')+' <span aria-hidden="true">'+(current===last?'↗':'→')+'</span>';
   $('previous').disabled=overview;
   $('takeaway').textContent=overview?stations.length+' глав · '+scenes.length+' шагов · одна готовая платформа.':s.takeaway;
   $('takeaway').classList.remove('with-parallel');
@@ -51,7 +51,7 @@ export function mountFlight(content: FlightContent): void {
   $('step-route').setAttribute('aria-label',overview?'Шаги главы':'Шаги главы '+(s.chapter+1));
   $('notes-title').textContent=overview?'От заявки до готовой платформы':s.title;
   $('notes-time').textContent=overview?'10–15 МИНУТ · '+stations.length+' ГЛАВ':'ГЛАВА '+(s.chapter+1)+' · ШАГ '+(s.step+1)+' / '+station.count;
-  $('notes-body').textContent=overview?'Каждая глава — область космической карты. Внутри неё ресурсы и связи появляются по шагам. Направление стрелки и движущихся импульсов совпадает с направлением действия или статуса. Нижняя панель переключает главы, малые кнопки — шаги внутри главы.':s.note;
+  $('notes-body').textContent=overview?'Каждая глава — область космической карты. Внутри нее ресурсы и связи появляются по шагам. Направление стрелки и движущихся импульсов совпадает с направлением действия или статуса. Нижняя панель переключает главы, малые кнопки — шаги внутри главы.':s.note;
   updateAuto();document.title=(overview?'Platform Odyssey':s.title+' · Platform Odyssey')+' · Beget';
   document.body.dataset.chapter=overview?'overview':String(s.chapter+1);
   document.body.dataset.step=overview?'0':String(s.step+1);
